@@ -1,0 +1,25 @@
+{
+  "name": "smartpdfs-bench",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "benchmark": "tsx src/benchmark.ts",
+    "download": "tsx src/download.ts",
+    "merge": "tsx src/merge-results.ts",
+    "report": "tsx src/report.ts",
+    "test": "node --import tsx --test src/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "pdfjs-dist": "6.2.108"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "tsx": "4.23.5",
+    "typescript": "7.0.2"
+  }
+}

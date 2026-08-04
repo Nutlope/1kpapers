@@ -1,0 +1,56 @@
+[
+  {
+    "id": "deepseek-v3-v2",
+    "title": "DeepSeek-V3 Technical Report",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2412.19437",
+    "pdfUrl": "https://arxiv.org/pdf/2412.19437v2",
+    "publisher": "DeepSeek-AI / arXiv",
+    "availability": "Publicly downloadable from arXiv"
+  },
+  {
+    "id": "deepseek-r1-v2",
+    "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2501.12948",
+    "pdfUrl": "https://arxiv.org/pdf/2501.12948v2",
+    "publisher": "DeepSeek-AI / arXiv",
+    "availability": "Publicly downloadable from arXiv"
+  },
+  {
+    "id": "attention-v7",
+    "title": "Attention Is All You Need",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/1706.03762",
+    "pdfUrl": "https://arxiv.org/pdf/1706.03762v7",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv"
+  },
+  {
+    "id": "alice-1890",
+    "title": "Alice's Adventures in Wonderland (1890 scan)",
+    "kind": "public-domain-book",
+    "landingPage": "https://commons.wikimedia.org/wiki/File:Alice%27s_adventures_in_wonderland_%28IA_alicesadventurescarroll%29.pdf",
+    "pdfUrl": "https://archive.org/download/alicesadventurescarroll/alicesadventurescarroll.pdf",
+    "publisher": "Internet Archive / Wikimedia Commons",
+    "availability": "Public domain in the United States"
+  },
+  {
+    "id": "nist-ai-standards-slides-2026",
+    "title": "The International AI Standards Landscape: ITL's Role, Priorities, and Progress",
+    "kind": "presentation",
+    "landingPage": "https://www.nist.gov/news-events/events/2026/03/nist-information-technology-laboratory-ai-webinar-series-international-ai",
+    "pdfUrl": "https://www.nist.gov/document/2026-03-06-itl-ai-webinar-series-slides-ai-standards-landscape",
+    "publisher": "National Institute of Standards and Technology",
+    "availability": "Official NIST webinar slides"
+  },
+  {
+    "id": "stanford-ai-index-2026",
+    "title": "The 2026 AI Index Report",
+    "kind": "long-report",
+    "landingPage": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+    "pdfUrl": "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf",
+    "publisher": "Stanford Institute for Human-Centered Artificial Intelligence",
+    "availability": "Publicly downloadable from Stanford HAI; do not redistribute"
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "deepseek-v3-v2": [
+    ["671b", "671 billion"],
+    ["37b", "37 billion"],
+    ["14.8t", "14.8 trillion"],
+    ["2.788m", "2.788 million"],
+    ["$5.576m", "5.576 million"]
+  ],
+  "deepseek-r1-v2": [
+    ["deepseek-r1-zero"],
+    ["reinforcement learning"],
+    ["cold-start", "cold start"],
+    ["671b", "671 billion"],
+    ["1.5b", "1.5 billion"]
+  ],
+  "attention-v7": [
+    ["transformer"],
+    ["recurrent", "recurrence"],
+    ["wmt 2014"],
+    ["28.4"],
+    ["41.8"]
+  ],
+  "alice-1890": [
+    ["white rabbit"],
+    ["rabbit hole"],
+    ["mad hatter"],
+    ["cheshire cat"],
+    ["queen of hearts"]
+  ],
+  "nist-ai-standards-slides-2026": [
+    ["july 23, 2025", "july 23 2025"],
+    ["31 actions", "lead 31"],
+    ["support 15", "15 others"],
+    ["iso/iec sc 42", "iso/iec jtc 1/sc 42"],
+    ["zero drafts"]
+  ],
+  "stanford-ai-index-2026": [
+    ["53%", "53 percent"],
+    ["88%", "88 percent"],
+    ["5,427", "5427"],
+    ["362"],
+    ["285.9 billion", "$285.9 billion"]
+  ]
+}

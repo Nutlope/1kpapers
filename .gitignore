@@ -1,0 +1,6 @@
+.env
+.cache/
+node_modules/
+results/raw/
+results/latest.json
+results/checkpoint.json
