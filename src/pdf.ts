@@ -28,7 +28,10 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     await writeFile(pdfPath, bytes);
   }
 
-  const pdf = await getDocument({ data: new Uint8Array(bytes) }).promise;
+  // Some otherwise-readable research PDFs contain malformed embedded-font
+  // instructions. Keep pdf.js at error-only verbosity so those recoverable
+  // warnings do not flood benchmark logs.
+  const pdf = await getDocument({ data: new Uint8Array(bytes), verbosity: 0 }).promise;
   let fullText = "";
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);

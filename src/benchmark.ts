@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
+import path from "node:path";
 import { MODELS, calculateCost } from "./models.js";
 import { prepareDocument } from "./pdf.js";
 import { summarize } from "./providers.js";
@@ -21,9 +22,8 @@ const selectedSourceIds = args.sources?.split(",").filter(Boolean);
 const models = selectedModelIds
   ? MODELS.filter((model) => selectedModelIds.includes(model.id))
   : MODELS;
-const allSources = JSON.parse(
-  await readFile(new URL("../sources.json", import.meta.url), "utf8"),
-) as Source[];
+const sourceFile = path.resolve(args["source-file"] ?? "sources.json");
+const allSources = JSON.parse(await readFile(sourceFile, "utf8")) as Source[];
 const sources = selectedSourceIds
   ? allSources.filter((source) => selectedSourceIds.includes(source.id))
   : allSources;

@@ -1,0 +1,838 @@
+[
+  {
+    "id": "arxiv-2509.08721",
+    "title": "Sharing is Caring: Efficient LM Post-Training with Collective RL Experience Sharing",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2509.08721v1",
+    "pdfUrl": "https://arxiv.org/pdf/2509.08721v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 1,
+    "arxivId": "2509.08721",
+    "officialLab": null,
+    "hfUpvotes": 665,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2604.02721",
+    "title": "GrandCode: Achieving Grandmaster Level in Competitive Programming via Agentic Reinforcement Learning",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2604.02721v2",
+    "pdfUrl": "https://arxiv.org/pdf/2604.02721v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 2,
+    "arxivId": "2604.02721",
+    "officialLab": null,
+    "hfUpvotes": 639,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2509.26507",
+    "title": "The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2509.26507v1",
+    "pdfUrl": "https://arxiv.org/pdf/2509.26507v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 3,
+    "arxivId": "2509.26507",
+    "officialLab": null,
+    "hfUpvotes": 551,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2606.09967",
+    "title": "ABot-Earth 0.5: Generative 3D Earth Model",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2606.09967v1",
+    "pdfUrl": "https://arxiv.org/pdf/2606.09967v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 7,
+    "arxivId": "2606.09967",
+    "officialLab": null,
+    "hfUpvotes": 488,
+    "topicTags": [
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2606.30534",
+    "title": "Orca: The World is in Your Mind",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2606.30534v3",
+    "pdfUrl": "https://arxiv.org/pdf/2606.30534v3",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 9,
+    "arxivId": "2606.30534",
+    "officialLab": null,
+    "hfUpvotes": 474,
+    "topicTags": [
+      "vision-multimodal-generation",
+      "robotics-embodied-ai"
+    ]
+  },
+  {
+    "id": "arxiv-2607.24653",
+    "title": "Kimi K3: Open Frontier Intelligence",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2607.24653v1",
+    "pdfUrl": "https://arxiv.org/pdf/2607.24653v1",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 10,
+    "arxivId": "2607.24653",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 457,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2605.28816",
+    "title": "Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2605.28816v1",
+    "pdfUrl": "https://arxiv.org/pdf/2605.28816v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 11,
+    "arxivId": "2605.28816",
+    "officialLab": null,
+    "hfUpvotes": 433,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2603.14473",
+    "title": "AI Can Learn Scientific Taste",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.14473v2",
+    "pdfUrl": "https://arxiv.org/pdf/2603.14473v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 12,
+    "arxivId": "2603.14473",
+    "officialLab": null,
+    "hfUpvotes": 432,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2603.16870",
+    "title": "Demystifying Video Reasoning",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.16870v3",
+    "pdfUrl": "https://arxiv.org/pdf/2603.16870v3",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 14,
+    "arxivId": "2603.16870",
+    "officialLab": null,
+    "hfUpvotes": 373,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "robotics-embodied-ai"
+    ]
+  },
+  {
+    "id": "arxiv-2605.02881",
+    "title": "MolmoAct2: Action Reasoning Models for Real-world Deployment",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2605.02881v2",
+    "pdfUrl": "https://arxiv.org/pdf/2605.02881v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 16,
+    "arxivId": "2605.02881",
+    "officialLab": null,
+    "hfUpvotes": 356,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "robotics-embodied-ai"
+    ]
+  },
+  {
+    "id": "arxiv-2508.18106",
+    "title": "A.S.E: A Repository-Level Benchmark for Evaluating Security in AI-Generated Code",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2508.18106v3",
+    "pdfUrl": "https://arxiv.org/pdf/2508.18106v3",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 19,
+    "arxivId": "2508.18106",
+    "officialLab": null,
+    "hfUpvotes": 350,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2603.28032",
+    "title": "CARLA-Air: Fly Drones Inside a CARLA World -- A Unified Infrastructure for Air-Ground Embodied Intelligence",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.28032v2",
+    "pdfUrl": "https://arxiv.org/pdf/2603.28032v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 20,
+    "arxivId": "2603.28032",
+    "officialLab": null,
+    "hfUpvotes": 344,
+    "topicTags": [
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2512.24880",
+    "title": "mHC: Manifold-Constrained Hyper-Connections",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2512.24880v2",
+    "pdfUrl": "https://arxiv.org/pdf/2512.24880v2",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 21,
+    "arxivId": "2512.24880",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 331,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2602.00919",
+    "title": "Green-VLA: Staged Vision-Language-Action Model for Generalist Robots",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2602.00919v2",
+    "pdfUrl": "https://arxiv.org/pdf/2602.00919v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 24,
+    "arxivId": "2602.00919",
+    "officialLab": null,
+    "hfUpvotes": 322,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2607.28618",
+    "title": "AskChem: Claim-Centered Infrastructure for Chemistry Literature Synthesis",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2607.28618v1",
+    "pdfUrl": "https://arxiv.org/pdf/2607.28618v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 31,
+    "arxivId": "2607.28618",
+    "officialLab": null,
+    "hfUpvotes": 297,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2604.25917",
+    "title": "Recursive Multi-Agent Systems",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2604.25917v2",
+    "pdfUrl": "https://arxiv.org/pdf/2604.25917v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 34,
+    "arxivId": "2604.25917",
+    "officialLab": null,
+    "hfUpvotes": 287,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2602.02276",
+    "title": "Kimi K2.5: Visual Agentic Intelligence",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2602.02276v1",
+    "pdfUrl": "https://arxiv.org/pdf/2602.02276v1",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 35,
+    "arxivId": "2602.02276",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 280,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2508.15763",
+    "title": "Intern-S1: A Scientific Multimodal Foundation Model",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2508.15763v2",
+    "pdfUrl": "https://arxiv.org/pdf/2508.15763v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 38,
+    "arxivId": "2508.15763",
+    "officialLab": null,
+    "hfUpvotes": 274,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "systems-efficiency",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2605.12882",
+    "title": "CiteVQA: Benchmarking Evidence Attribution for Trustworthy Document Intelligence",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2605.12882v1",
+    "pdfUrl": "https://arxiv.org/pdf/2605.12882v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 39,
+    "arxivId": "2605.12882",
+    "officialLab": null,
+    "hfUpvotes": 274,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2512.02556",
+    "title": "DeepSeek-V3.2: Pushing the Frontier of Open Large Language Models",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2512.02556v1",
+    "pdfUrl": "https://arxiv.org/pdf/2512.02556v1",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 40,
+    "arxivId": "2512.02556",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 271,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2509.09372",
+    "title": "VLA-Adapter: An Effective Paradigm for Tiny-Scale Vision-Language-Action Model",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2509.09372v2",
+    "pdfUrl": "https://arxiv.org/pdf/2509.09372v2",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 46,
+    "arxivId": "2509.09372",
+    "officialLab": null,
+    "hfUpvotes": 259,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2605.30611",
+    "title": "Crafter: A Multi-Agent Harness for Editable Scientific Figure Generation from Diverse Inputs",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2605.30611v1",
+    "pdfUrl": "https://arxiv.org/pdf/2605.30611v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 48,
+    "arxivId": "2605.30611",
+    "officialLab": null,
+    "hfUpvotes": 253,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2509.04664",
+    "title": "Why Language Models Hallucinate",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2509.04664v1",
+    "pdfUrl": "https://arxiv.org/pdf/2509.04664v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 90,
+    "arxivId": "2509.04664",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 200,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2603.15031",
+    "title": "Attention Residuals",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.15031v1",
+    "pdfUrl": "https://arxiv.org/pdf/2603.15031v1",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 98,
+    "arxivId": "2603.15031",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 194,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2606.13392",
+    "title": "MiniMax Sparse Attention",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2606.13392v2",
+    "pdfUrl": "https://arxiv.org/pdf/2606.13392v2",
+    "publisher": "MiniMax / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 160,
+    "arxivId": "2606.13392",
+    "officialLab": "MiniMax",
+    "hfUpvotes": 154,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2510.26692",
+    "title": "Kimi Linear: An Expressive, Efficient Attention Architecture",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2510.26692v2",
+    "pdfUrl": "https://arxiv.org/pdf/2510.26692v2",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 219,
+    "arxivId": "2510.26692",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 137,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2608.01964",
+    "title": "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2608.01964v1",
+    "pdfUrl": "https://arxiv.org/pdf/2608.01964v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 275,
+    "arxivId": "2608.01964",
+    "officialLab": null,
+    "hfUpvotes": 122,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2608.02023",
+    "title": "SwanTale: Unified Multi-Speaker Speech and Audio Generation for Instruct and Zero-Shot Tasks",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2608.02023v1",
+    "pdfUrl": "https://arxiv.org/pdf/2608.02023v1",
+    "publisher": "arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 310,
+    "arxivId": "2608.02023",
+    "officialLab": null,
+    "hfUpvotes": 116,
+    "topicTags": [
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2512.13687",
+    "title": "Towards Scalable Pre-training of Visual Tokenizers for Generation",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2512.13687v2",
+    "pdfUrl": "https://arxiv.org/pdf/2512.13687v2",
+    "publisher": "MiniMax / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 346,
+    "arxivId": "2512.13687",
+    "officialLab": "MiniMax",
+    "hfUpvotes": 108,
+    "topicTags": [
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2511.22570",
+    "title": "DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2511.22570v1",
+    "pdfUrl": "https://arxiv.org/pdf/2511.22570v1",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 412,
+    "arxivId": "2511.22570",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 96,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "science-medicine"
+    ]
+  },
+  {
+    "id": "arxiv-2510.18234",
+    "title": "DeepSeek-OCR: Contexts Optical Compression",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2510.18234v1",
+    "pdfUrl": "https://arxiv.org/pdf/2510.18234v1",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 420,
+    "arxivId": "2510.18234",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 95,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2606.13473",
+    "title": "MaxProof: Scaling Mathematical Proof with Generative-Verifier RL and Population-Level Test-Time Scaling",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2606.13473v1",
+    "pdfUrl": "https://arxiv.org/pdf/2606.13473v1",
+    "publisher": "MiniMax / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 430,
+    "arxivId": "2606.13473",
+    "officialLab": "MiniMax",
+    "hfUpvotes": 94,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2601.20552",
+    "title": "DeepSeek-OCR 2: Visual Causal Flow",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2601.20552v1",
+    "pdfUrl": "https://arxiv.org/pdf/2601.20552v1",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 641,
+    "arxivId": "2601.20552",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 73,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2602.21548",
+    "title": "DualPath: Breaking the Storage Bandwidth Bottleneck in Agentic LLM Inference",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2602.21548v2",
+    "pdfUrl": "https://arxiv.org/pdf/2602.21548v2",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 910,
+    "arxivId": "2602.21548",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 56,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2605.26494",
+    "title": "The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2605.26494v2",
+    "pdfUrl": "https://arxiv.org/pdf/2605.26494v2",
+    "publisher": "MiniMax / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 985,
+    "arxivId": "2605.26494",
+    "officialLab": "MiniMax",
+    "hfUpvotes": 41,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2607.05147",
+    "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2607.05147v1",
+    "pdfUrl": "https://arxiv.org/pdf/2607.05147v1",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 986,
+    "arxivId": "2607.05147",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 41,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2603.05706",
+    "title": "Reasoning Models Struggle to Control their Chains of Thought",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.05706v1",
+    "pdfUrl": "https://arxiv.org/pdf/2603.05706v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 987,
+    "arxivId": "2603.05706",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 39,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2607.24957",
+    "title": "PerceptionBench: Evaluating Atomic Visual Perception in Multimodal Large Language Models",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2607.24957v1",
+    "pdfUrl": "https://arxiv.org/pdf/2607.24957v1",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 988,
+    "arxivId": "2607.24957",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 18,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2601.20245",
+    "title": "How AI Impacts Skill Formation",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2601.20245v2",
+    "pdfUrl": "https://arxiv.org/pdf/2601.20245v2",
+    "publisher": "Anthropic / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 989,
+    "arxivId": "2601.20245",
+    "officialLab": "Anthropic",
+    "hfUpvotes": 10,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2602.02537",
+    "title": "WorldVQA: Measuring Atomic World Knowledge in Multimodal Large Language Models",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2602.02537v1",
+    "pdfUrl": "https://arxiv.org/pdf/2602.02537v1",
+    "publisher": "Moonshot AI / Kimi / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 990,
+    "arxivId": "2602.02537",
+    "officialLab": "Moonshot AI / Kimi",
+    "hfUpvotes": 6,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2510.04374",
+    "title": "GDPval: Evaluating AI Model Performance on Real-World Economically Valuable Tasks",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2510.04374v1",
+    "pdfUrl": "https://arxiv.org/pdf/2510.04374v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 991,
+    "arxivId": "2510.04374",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ]
+  },
+  {
+    "id": "arxiv-2510.07192",
+    "title": "Poisoning Attacks on LLMs Require a Near-constant Number of Poison Samples",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2510.07192v1",
+    "pdfUrl": "https://arxiv.org/pdf/2510.07192v1",
+    "publisher": "Anthropic / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 992,
+    "arxivId": "2510.07192",
+    "officialLab": "Anthropic",
+    "hfUpvotes": 0,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2511.13653",
+    "title": "Weight-sparse transformers have interpretable circuits",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2511.13653v1",
+    "pdfUrl": "https://arxiv.org/pdf/2511.13653v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 993,
+    "arxivId": "2511.13653",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 0,
+    "topicTags": []
+  },
+  {
+    "id": "arxiv-2512.08093",
+    "title": "Training LLMs for Honesty via Confessions",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2512.08093v2",
+    "pdfUrl": "https://arxiv.org/pdf/2512.08093v2",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 994,
+    "arxivId": "2512.08093",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2601.04603",
+    "title": "Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2601.04603v1",
+    "pdfUrl": "https://arxiv.org/pdf/2601.04603v1",
+    "publisher": "Anthropic / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 995,
+    "arxivId": "2601.04603",
+    "officialLab": "Anthropic",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2601.07372",
+    "title": "Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2601.07372v2",
+    "pdfUrl": "https://arxiv.org/pdf/2601.07372v2",
+    "publisher": "DeepSeek / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 996,
+    "arxivId": "2601.07372",
+    "officialLab": "DeepSeek",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ]
+  },
+  {
+    "id": "arxiv-2601.19062",
+    "title": "Who's in Charge? Disempowerment Patterns in Real-World LLM Usage",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2601.19062v1",
+    "pdfUrl": "https://arxiv.org/pdf/2601.19062v1",
+    "publisher": "Anthropic / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 997,
+    "arxivId": "2601.19062",
+    "officialLab": "Anthropic",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2602.11729",
+    "title": "Cross-Architecture Model Diffing with Crosscoders: Unsupervised Discovery of Differences Between LLMs",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2602.11729v1",
+    "pdfUrl": "https://arxiv.org/pdf/2602.11729v1",
+    "publisher": "Anthropic / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 998,
+    "arxivId": "2602.11729",
+    "officialLab": "Anthropic",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2603.10521",
+    "title": "IH-Challenge: A Training Dataset to Improve Instruction Hierarchy on Frontier LLMs",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2603.10521v1",
+    "pdfUrl": "https://arxiv.org/pdf/2603.10521v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 999,
+    "arxivId": "2603.10521",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  },
+  {
+    "id": "arxiv-2607.07184",
+    "title": "Predicting LLM Safety Before Release by Simulating Deployment",
+    "kind": "research-paper",
+    "landingPage": "https://arxiv.org/abs/2607.07184v1",
+    "pdfUrl": "https://arxiv.org/pdf/2607.07184v1",
+    "publisher": "OpenAI / arXiv",
+    "availability": "Publicly downloadable from arXiv; version pinned in the frozen corpus",
+    "rank": 1000,
+    "arxivId": "2607.07184",
+    "officialLab": "OpenAI",
+    "hfUpvotes": 0,
+    "topicTags": [
+      "llms-agents-reasoning"
+    ]
+  }
+]

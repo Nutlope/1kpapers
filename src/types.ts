@@ -6,6 +6,11 @@ export type Source = {
   pdfUrl: string;
   publisher: string;
   availability: string;
+  rank?: number;
+  arxivId?: string;
+  officialLab?: string | null;
+  hfUpvotes?: number;
+  topicTags?: string[];
 };
 
 export type DocumentInfo = Source & {

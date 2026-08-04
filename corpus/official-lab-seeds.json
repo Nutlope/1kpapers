@@ -1,0 +1,152 @@
+[
+  {
+    "lab": "OpenAI",
+    "arxivId": "2509.04664",
+    "officialEvidenceUrl": "https://openai.com/index/why-language-models-hallucinate/"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2510.04374",
+    "officialEvidenceUrl": "https://openai.com/index/gdpval/"
+  },
+  {
+    "lab": "Anthropic",
+    "arxivId": "2510.07192",
+    "officialEvidenceUrl": "https://www.anthropic.com/research/small-samples-poison"
+  },
+  {
+    "lab": "Anthropic",
+    "arxivId": "2601.04603",
+    "officialEvidenceUrl": "https://www.anthropic.com/research/next-generation-constitutional-classifiers"
+  },
+  {
+    "lab": "Anthropic",
+    "arxivId": "2601.19062",
+    "officialEvidenceUrl": "https://www.anthropic.com/research/disempowerment-patterns"
+  },
+  {
+    "lab": "Anthropic",
+    "arxivId": "2601.20245",
+    "officialEvidenceUrl": "https://www.anthropic.com/research/AI-assistance-coding-skills"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2510.18234",
+    "officialEvidenceUrl": "https://github.com/deepseek-ai/DeepSeek-OCR"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2511.22570",
+    "officialEvidenceUrl": "https://github.com/deepseek-ai/DeepSeek-Math-V2"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2601.07372",
+    "officialEvidenceUrl": "https://github.com/deepseek-ai/Engram"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2601.20552",
+    "officialEvidenceUrl": "https://github.com/deepseek-ai/DeepSeek-OCR-2"
+  },
+  {
+    "lab": "MiniMax",
+    "arxivId": "2512.13687",
+    "officialEvidenceUrl": "https://github.com/MiniMax-AI/VTP"
+  },
+  {
+    "lab": "MiniMax",
+    "arxivId": "2606.13392",
+    "officialEvidenceUrl": "https://github.com/MiniMax-AI/MiniMax-M3"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2602.02276",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/Kimi-K2.5"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2602.02537",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/WorldVQA"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2603.15031",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/Attention-Residuals"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2607.24653",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/Kimi-K3"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2607.24957",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/PerceptionBench"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2511.13653",
+    "officialEvidenceUrl": "https://openai.com/index/understanding-neural-networks-through-sparse-circuits/"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2512.08093",
+    "officialEvidenceUrl": "https://openai.com/index/how-confessions-can-keep-language-models-honest/"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2603.05706",
+    "officialEvidenceUrl": "https://openai.com/index/reasoning-models-chain-of-thought-controllability/"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2603.10521",
+    "officialEvidenceUrl": "https://openai.com/index/instruction-hierarchy-challenge/"
+  },
+  {
+    "lab": "OpenAI",
+    "arxivId": "2607.07184",
+    "officialEvidenceUrl": "https://openai.com/index/deployment-simulation/"
+  },
+  {
+    "lab": "Anthropic",
+    "arxivId": "2602.11729",
+    "officialEvidenceUrl": "https://www.anthropic.com/research/diff-tool"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2512.02556",
+    "officialEvidenceUrl": "https://huggingface.co/deepseek-ai/papers"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2512.24880",
+    "officialEvidenceUrl": "https://huggingface.co/deepseek-ai/papers"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2602.21548",
+    "officialEvidenceUrl": "https://huggingface.co/deepseek-ai/papers"
+  },
+  {
+    "lab": "DeepSeek",
+    "arxivId": "2607.05147",
+    "officialEvidenceUrl": "https://github.com/deepseek-ai/DeepSpec"
+  },
+  {
+    "lab": "MiniMax",
+    "arxivId": "2605.26494",
+    "officialEvidenceUrl": "https://huggingface.co/MiniMaxAI"
+  },
+  {
+    "lab": "MiniMax",
+    "arxivId": "2606.13473",
+    "officialEvidenceUrl": "https://huggingface.co/MiniMaxAI"
+  },
+  {
+    "lab": "Moonshot AI / Kimi",
+    "arxivId": "2510.26692",
+    "officialEvidenceUrl": "https://github.com/MoonshotAI/Kimi-Linear"
+  }
+]

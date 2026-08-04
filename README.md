@@ -1,12 +1,77 @@
-# smartpdfs-bench
+# A year in AI papers
 
-A reproducible benchmark for the cost, latency, reliability, and factual coverage of summarizing PDFs with current language models.
+What does it cost to summarize the research that defined a year of AI—and which model does it most accurately?
 
-This project was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs) and mirrors the summarization pipeline in [SmartPDFs PR #8](https://github.com/Nutlope/smartpdfs/pull/8): PDF.js text extraction, four-or-more chunks, parallel chunk summaries, and one final reduce pass. It measures the full language-model cost of producing the final PDF summary, not a one-shot estimate.
+This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, factual coverage, reliability, and latency. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs) and mirrors the summarization pipeline in [SmartPDFs PR #8](https://github.com/Nutlope/smartpdfs/pull/8).
 
-## Result from August 4, 2026
+## Frozen 1,000-paper corpus
 
-Across the four PDFs that DeepSeek V4 Flash, GLM 5.2, Claude Haiku 4.5, and GPT-5.6 Luna all completed—333 pages spanning a paper, presentation, and public-domain book:
+The August 4, 2026 snapshot contains:
+
+- **8,262** unique discovery candidates from Hugging Face Daily Papers.
+- **1,000** selected papers with unique arXiv IDs.
+- **1,000/1,000** version-pinned PDF URLs returning HTTP 200 and `application/pdf`.
+- **30 mandatory official-lab papers** backed by first-party evidence.
+- **1 inaccessible PDF and 1 out-of-window paper detected and replaced** before any model calls.
+
+Official research coverage is guaranteed rather than inferred from model-name mentions:
+
+| Lab | Verified official papers |
+| --- | ---: |
+| OpenAI | 7 |
+| Anthropic | 5 |
+| DeepSeek | 8 |
+| MiniMax | 4 |
+| Moonshot AI / Kimi | 6 |
+
+The rest of the corpus is filled by current Hugging Face Daily Papers upvotes. This makes the public description precise: **1,000 popular papers that defined a year of AI, with guaranteed official research from five frontier labs.** It is not every AI paper and it is not a citation-based claim of scientific importance.
+
+The non-exclusive topic tags show that the corpus is broader than LLM release reports:
+
+| Topic | Papers |
+| --- | ---: |
+| LLMs, agents, and reasoning | 766 |
+| Vision, multimodal work, and generation | 521 |
+| AI systems and efficiency | 378 |
+| Robotics and embodied AI | 104 |
+| AI for science and medicine | 92 |
+
+[`corpus/papers.json`](./corpus/papers.json) is the frozen manifest. It records the selection reason, version-pinned URLs, authors, abstract, categories, upvotes and snapshot time, official-lab evidence, topic/model-family tags, HTTP status, content type, byte size, and arXiv-provided SHA-256 where available. PDFs are never committed.
+
+## Rebuild the corpus
+
+Requirements: Node.js 22+ and pnpm.
+
+```bash
+pnpm install
+pnpm corpus
+```
+
+The discovery script:
+
+1. fetches candidates from Hugging Face Daily Papers and enforces the fixed window using each paper's arXiv v1 publication date;
+2. injects the verified official-lab seeds in [`corpus/official-lab-seeds.json`](./corpus/official-lab-seeds.json);
+3. fills a 1,050-paper candidate set by current upvotes;
+4. enriches it through arXiv's metadata API;
+5. verifies every version-pinned PDF using HEAD requests; and
+6. freezes the first 1,000 valid papers, failing if a mandatory lab paper is unavailable.
+
+Thank you to arXiv for use of its open access interoperability.
+
+## Benchmark plan
+
+No 1,000-paper model run has been published yet. The sequence is deliberately gated:
+
+1. Compare every candidate model on a diverse 50-paper pilot.
+2. Calibrate blind factuality judges against a human-checked subset.
+3. Select finalists using quality, completion rate, latency, and cost.
+4. Run the full corpus only with the finalists.
+
+Quality and operational reliability are reported separately. A model does not receive a good quality score for malformed or missing output, and a fast response does not imply a faithful summary. Judge inference cost is reported separately from summary inference cost.
+
+## Existing cost baseline
+
+The earlier six-document SmartPDFs benchmark remains a useful pipeline baseline, but it is not the 1,000-paper result. Across the four PDFs that all compared models completed—333 pages spanning a paper, presentation, and public-domain book:
 
 | Model | Total inference cost | Relative to Flash |
 | --- | ---: | ---: |
@@ -15,62 +80,10 @@ Across the four PDFs that DeepSeek V4 Flash, GLM 5.2, Claude Haiku 4.5, and GPT-
 | Claude Haiku 4.5 | $0.221633 | 10.21× |
 | GLM 5.2 | $0.237984 | 10.96× |
 
-That is about **$0.0054, or 0.54 cents, per successfully summarized PDF** for DeepSeek V4 Flash on the shared-success corpus.
-
-This is an inference-cost result, not a claim that every model completed every document. Kimi K3 timed out after 120 seconds on the representative NIST deck. DeepSeek, GLM, and Claude each failed at least one larger or harder document; Luna had one policy rejection. See [RESULTS.md](./RESULTS.md) for the per-PDF table, partial costs, fact checks, latencies, and exact errors.
-
-## Corpus
-
-The benchmark downloads six public PDFs at runtime:
-
-- DeepSeek-V3 Technical Report, version 2
-- DeepSeek-R1 paper, version 2
-- Attention Is All You Need, version 7
-- Alice's Adventures in Wonderland, 1890 public-domain scan
-- NIST's 2026 international AI standards presentation
-- Stanford's 425-page 2026 AI Index Report
-
-PDFs are never committed. [`sources.json`](./sources.json) contains only landing pages, version-pinned download URLs, publishers, and availability notes. Each result records the SHA-256 hash, byte size, page count, and extracted character count so corpus drift is visible.
-
-## Models and standard API prices
-
-| Model | Provider | Input / 1M tokens | Output / 1M tokens |
-| --- | --- | ---: | ---: |
-| `deepseek-ai/DeepSeek-V4-Flash-0731` | Together | $0.14 | $0.28 |
-| `moonshotai/Kimi-K3` | Together | $3.00 | $15.00 |
-| `zai-org/GLM-5.2` | Together | $1.40 | $4.40 |
-| `claude-haiku-4-5-20251001` | Anthropic | $1.00 | $5.00 |
-| `gpt-5.6-luna` | OpenAI | $0.20 | $1.20 |
-
-Prices were retrieved on August 4, 2026. The runner uses provider-reported token counts and does not assume prompt-cache or batch discounts. Source details and known catalog discrepancies are recorded in [`research/model-and-corpus-sources.md`](./research/model-and-corpus-sources.md).
-
-## Run it
-
-Requirements: Node.js 22+, pnpm, and normal API keys. A ChatGPT or Codex subscription is not an OpenAI API billing method.
-
-```bash
-pnpm install
-cp .env.example .env
-# Fill TOGETHER_API_KEY, ANTHROPIC_API_KEY, and OPENAI_API_KEY.
-
-pnpm download
-set -a && source .env && set +a
-pnpm benchmark
-pnpm report
-```
-
-Filter the matrix when needed:
-
-```bash
-pnpm benchmark \
-  --models=deepseek-ai/DeepSeek-V4-Flash-0731,gpt-5.6-luna \
-  --sources=deepseek-v3-v2,nist-ai-standards-slides-2026
-```
-
-The runner checkpoints after each PDF. Raw model outputs and downloaded PDFs stay under gitignored paths. `RESULTS.md` contains the publishable aggregate.
+See [RESULTS.md](./RESULTS.md) for the original per-PDF results, failures, partial costs, fact checks, and latencies. The eventual article headline will use the measured full-corpus cost—not a preselected `$2` claim.
 
 ## What cost includes
 
 Included: every chunk-summary call and the final reduce call.
 
-Excluded: PDF download, local text extraction, S3 storage, cover-image generation, observability, network transfer, and developer time. The accurate wording is **“LLM inference cost to summarize extracted PDF text.”**
+Excluded: PDF download, local text extraction, storage, observability, network transfer, judge inference, and developer time. The accurate wording is **“LLM inference cost to summarize extracted PDF text.”**
