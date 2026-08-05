@@ -1,6 +1,6 @@
 # Blind judge selection: Kimi K3 vs GLM 5.2
 
-Retrieved **2026-08-05**. No inference calls were made.
+Model metadata and pricing retrieved **2026-08-05**. The paid inference calls are limited to the explicitly labeled judge preflight below.
 
 ## Recommendation
 
@@ -29,7 +29,7 @@ Recommended coverage:
 | JSON / structured output | Yes | Yes | Both can return the scoring schema directly. |
 | Reasoning behavior | Always thinks. Moonshot's card documents `low`, `high`, and `max`, while Together's launch page says max effort at launch. | Together exposes two effort levels but does not name the request values on its model page. | Neither is a true no-reasoning judge. Verify the controls on Together before spending and budget for max effort until proven otherwise. |
 | Published scale | 2.8T total / 104B active MoE | ~750B total / 40B active MoE | Together's GLM page says 744B in its body and 753B in its specification, so false precision is unwarranted. Size alone is not judge quality evidence. |
-| Candidate independence | Independent of DeepSeek V4 Flash, GPT-OSS 120B, Qwen3.5 9B, MiniMax M3, and Gemma 4 31B | Independent of the same five | Both pass the summarizer-independence test. |
+| Candidate independence | Independent of DeepSeek V4 Flash, Qwen3.5 9B, MiniMax M3, Claude Haiku 4.5, and GPT-5.6 Luna | Independent of the same five | Both pass the summarizer-independence test. |
 | Corpus independence | Six guaranteed Moonshot/Kimi papers are in the corpus | No guaranteed Z.ai seed set | GLM must second-score all Kimi-authored papers to guard against lab self-favoring. |
 
 Together's current [serverless catalog](https://docs.together.ai/docs/serverless/models) lists both models, their price triples, contexts, and structured-output support. Neither ID appears in the current [Together deprecation history](https://docs.together.ai/docs/deprecations). The authenticated `GET https://api.together.xyz/v1/models` response was independently checked on the retrieval date and returned the same price triples and live chat-model IDs.

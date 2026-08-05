@@ -9,18 +9,18 @@ Use the same extracted text, chunk boundaries, prompts, output limits, and non-r
 | Provider | Model ID | Input | Cached input | Output | Why include it |
 | --- | --- | ---: | ---: | ---: | --- |
 | Together | `deepseek-ai/DeepSeek-V4-Flash-0731` | $0.14 | $0.03 | $0.28 | Subject of the cost claim and the SmartPDFs candidate. |
-| Together | `moonshotai/Kimi-K3` | $3.00 | $0.30 | $15.00 | Current general Kimi model; 1M-token context and structured outputs are listed. |
-| Together | `zai-org/GLM-5.2` | $1.40 | $0.26 | $4.40 | Current general GLM model; structured outputs are listed. |
+| Together | `Qwen/Qwen3.5-9B` | $0.17 | Not listed | $0.25 | Low-cost small-model comparison with structured-output support. |
+| Together | `MiniMaxAI/MiniMax-M3` | $0.30 | $0.06 | $1.20 | Low-cost current MiniMax comparison with structured-output support. |
 | Anthropic | `claude-haiku-4-5-20251001` | $1.00 | $0.10 | $5.00 | Anthropic describes Haiku 4.5 as its fastest current model with near-frontier intelligence. Use the pinned ID, not the alias. |
 | OpenAI | `gpt-5.6-luna` | $0.20 | $0.02 | $1.20 | OpenAI's current cost-sensitive, high-volume GPT-5.6 model and the requested OpenAI comparison. |
 
 Sources:
 
-- [Together serverless model catalog](https://docs.together.ai/docs/serverless/models) lists the exact model IDs, token prices, caching prices, and structured-output support. The authenticated [`GET /v1/models`](https://api.together.xyz/v1/models) response was also checked on the retrieval date and agreed on the three price triples above.
+- [Together serverless model catalog](https://docs.together.ai/docs/serverless/models) lists the exact model IDs, token prices, caching prices where available, and structured-output support. The authenticated [`GET /v1/models`](https://api.together.xyz/v1/models) response was also checked on the retrieval date and agreed on the three Together price entries above.
 - [Anthropic models overview](https://platform.claude.com/docs/en/about-claude/models/overview) gives the pinned Haiku ID, calls it the fastest current Claude model, and lists $1 input / $5 output. [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing) gives its $0.10 cache-hit rate and confirms that `MTok` means one million tokens.
 - [OpenAI GPT-5.6 Luna model page](https://developers.openai.com/api/docs/models/gpt-5.6-luna) lists $0.20 input, $0.02 cached input, and $1.20 output, a 1.05M context window, structured outputs, and a long-context surcharge above 272K input tokens. Keep each request below 272K input tokens so the standard rate applies. For reference, [GPT-5.4 nano](https://developers.openai.com/api/docs/models/gpt-5.4-nano) is also $0.20 input but $1.25 output; Luna is the better requested current-family cost comparator.
 
-`moonshotai/Kimi-K2.7-Code` is cheaper ($0.95 / $4.00) but is explicitly code-oriented, so it is not the clean general-document Kimi comparator. It can be an optional sixth row if continuity with earlier Kimi 2.7 experiments matters.
+Kimi K3 and GLM 5.2 are intentionally reserved for blind judging. Using either as both a summarizer and a judge would weaken candidate independence unless every self-judged row were routed exclusively to the other judge.
 
 ### OpenAI subscription boundary
 
