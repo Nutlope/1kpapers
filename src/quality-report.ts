@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { prepareDocument } from "./pdf.js";
+import { isValidFinalSummaryMarkdown } from "./prompts.js";
 import type { BenchmarkRow } from "./types.js";
 
 const args = Object.fromEntries(
@@ -103,22 +104,20 @@ lines.push(
   "",
   "## Deterministic checks",
   "",
-  "`Numbers found in source` is an exact normalized-text check, not a semantic factuality score. It detects unsupported numerical strings but cannot determine whether a supported number is used in the correct context. `Final format pass` verifies the published 3,000-character ceiling and required paragraph/list HTML structure.",
+  "`Numbers found in source` is an exact normalized-text check, not a semantic factuality score. It detects unsupported numerical strings but cannot determine whether a supported number is used in the correct context. `Final format pass` verifies the published word and character ceilings and restricted-Markdown safety rules.",
   "",
 );
 await writeFile(args.output ?? "PILOT_QUALITY.md", `${lines.join("\n")}\n`);
 console.log(`Wrote ${args.output ?? "PILOT_QUALITY.md"}`);
 
 function deterministicChecks(row: BenchmarkRow, source: string) {
-  const summary = `${row.finalTitle ?? ""} ${stripHtml(row.finalSummary ?? "")}`;
+  const summary = `${row.finalTitle ?? ""} ${stripMarkdown(row.finalSummary ?? "")}`;
   const sourceNumbers = new Set(extractNumbers(source));
   const summaryNumbers = extractNumbers(summary);
   return {
     totalNumbers: summaryNumbers.length,
     matchedNumbers: summaryNumbers.filter((number) => sourceNumbers.has(number)).length,
-    formatPass:
-      (row.finalSummary?.length ?? Infinity) <= 3_000 &&
-      /^<p>[\s\S]*<\/p>\s*<ul>[\s\S]*<\/ul>$/.test(row.finalSummary?.trim() ?? ""),
+    formatPass: isValidFinalSummaryMarkdown(row.finalSummary ?? ""),
   };
 }
 
@@ -128,8 +127,10 @@ function extractNumbers(value: string) {
   );
 }
 
-function stripHtml(value: string) {
-  return value.replace(/<[^>]+>/g, " ");
+function stripMarkdown(value: string) {
+  return value
+    .replace(/^\s*[-*+]\s+/gm, " ")
+    .replace(/[*_~`#>]/g, " ");
 }
 
 function pairedJudgments(rows: Judgment[]) {

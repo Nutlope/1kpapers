@@ -101,7 +101,7 @@ pnpm judge -- --input=results/runs/pilot/result.json --calibration=corpus/calibr
 pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judges/pilot-judges/result.json --calibration=corpus/calibration-15.json
 ```
 
-The benchmark requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request, enforces a 90-second request timeout, and aborts the complete paper after 180 seconds. These values are fingerprinted into the run metadata.
+The benchmark requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request, enforces a 90-second request timeout, and aborts the complete paper after 180 seconds. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report. These values and contracts are fingerprinted into the run metadata.
 
 ## Existing cost baseline
 

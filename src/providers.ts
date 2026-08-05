@@ -1,5 +1,10 @@
 import { performance } from "node:perf_hooks";
-import { buildSummaryPrompt, summarySchema } from "./prompts.js";
+import {
+  buildSummaryPrompt,
+  isValidFinalSummaryMarkdown,
+  normalizeSummaryForStage,
+  summarySchema,
+} from "./prompts.js";
 import type { Inference, ModelConfig } from "./types.js";
 
 const TIMEOUT_MS = Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000);
@@ -43,7 +48,7 @@ async function summarizeOpenAICompatible(
     payload.max_tokens = stage === "reduce" ? 1_600 : 2_400;
     payload.response_format = {
       type: "json_schema",
-      json_schema: { name: "summary", schema: summarySchema },
+      json_schema: { name: "summary", schema: summarySchema(stage) },
     };
     payload.reasoning = { enabled: false };
     payload.temperature = 0;
@@ -51,7 +56,7 @@ async function summarizeOpenAICompatible(
     payload.max_completion_tokens = stage === "reduce" ? 1_600 : 2_400;
     payload.response_format = {
       type: "json_schema",
-      json_schema: { name: "summary", strict: true, schema: summarySchema },
+      json_schema: { name: "summary", strict: true, schema: summarySchema(stage) },
     };
     payload.reasoning_effort = "none";
   }
@@ -75,6 +80,7 @@ async function summarizeOpenAICompatible(
     );
   }
   return parseInference({
+    stage,
     content: body.choices?.[0]?.message?.content,
     inputTokens: body.usage?.prompt_tokens,
     outputTokens: body.usage?.completion_tokens,
@@ -121,6 +127,7 @@ async function summarizeAnthropic(
     .map((part: { text: string }) => part.text)
     .join("\n");
   return parseInference({
+    stage,
     content,
     inputTokens: body.usage?.input_tokens,
     outputTokens: body.usage?.output_tokens,
@@ -130,6 +137,7 @@ async function summarizeAnthropic(
 }
 
 function parseInference(input: {
+  stage: "chunk" | "reduce";
   content: unknown;
   inputTokens: unknown;
   outputTokens: unknown;
@@ -155,9 +163,18 @@ function parseInference(input: {
   ) {
     throw new Error("Model response did not match the summary schema");
   }
+  const normalized = normalizeSummaryForStage(parsed.summary, input.stage);
+  if (
+    input.stage === "reduce" &&
+    (!normalized || !isValidFinalSummaryMarkdown(normalized.summary))
+  ) {
+    throw new Error("Model response did not match the final Markdown contract");
+  }
+  if (!normalized) throw new Error("Model returned an empty summary");
   return {
     title: parsed.title,
-    summary: parsed.summary,
+    summary: normalized.summary,
+    normalized: normalized.normalized,
     usage: {
       inputTokens: Number(input.inputTokens ?? 0),
       outputTokens: Number(input.outputTokens ?? 0),

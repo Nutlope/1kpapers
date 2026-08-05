@@ -48,6 +48,7 @@ export type Inference = {
   latencyMs: number;
   finishReason: string | null;
   attempts: number;
+  normalized: boolean;
 };
 
 export type RequestResult = Inference & {
