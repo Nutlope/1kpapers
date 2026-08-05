@@ -11,6 +11,7 @@ The August 4, 2026 snapshot contains:
 - **8,262** unique discovery candidates from Hugging Face Daily Papers.
 - **1,000** selected papers with unique arXiv IDs.
 - **1,000/1,000** version-pinned PDF URLs returning HTTP 200 and `application/pdf`.
+- **1,000/1,000** PDFs downloaded and text-extracted: 30,681 pages and 102,740,868 characters.
 - **30 mandatory official-lab papers** backed by first-party evidence.
 - **1 inaccessible PDF and 1 out-of-window paper detected and replaced** before any model calls.
 
@@ -37,6 +38,8 @@ The non-exclusive topic tags show that the corpus is broader than LLM release re
 | AI for science and medicine | 92 |
 
 [`corpus/papers.json`](./corpus/papers.json) is the frozen manifest. It records the selection reason, version-pinned URLs, authors, abstract, categories, upvotes and snapshot time, official-lab evidence, topic/model-family tags, HTTP status, content type, byte size, and arXiv-provided SHA-256 where available. PDFs are never committed.
+
+[`corpus/full-1000-profile.json`](./corpus/full-1000-profile.json) records the successful extraction profile for every paper, including the downloaded SHA-256, byte size, page count, and extracted character count. The median paper is 25 pages and 83,501 characters; the largest extraction is 1,018,185 characters. PDFs remain local and gitignored.
 
 ## Rebuild the corpus
 
