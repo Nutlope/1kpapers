@@ -37,6 +37,12 @@ const concurrency = positiveInteger(
   args.concurrency ?? process.env.BENCHMARK_CONCURRENCY ?? "4",
   "concurrency",
 );
+const documentConcurrency = positiveInteger(
+  args["document-concurrency"] ??
+    process.env.BENCHMARK_DOCUMENT_CONCURRENCY ??
+    "1",
+  "document-concurrency",
+);
 const runConfig = {
   methodologyVersion,
   sourceFile,
@@ -49,6 +55,7 @@ const runConfig = {
   })),
   sources: sources.map((source) => source.id),
   concurrency,
+  ...(documentConcurrency === 1 ? {} : { documentConcurrency }),
   requestPolicy: {
     timeoutMs: Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000),
     maxAttempts: Number(process.env.BENCHMARK_MAX_ATTEMPTS ?? 2),
@@ -89,20 +96,43 @@ const completed = new Set(
     .filter((row) => args["rerun-failed"] !== "true" || row.status === "ok")
     .map(rowKey),
 );
+let checkpointQueue = Promise.resolve();
 for (const model of models) {
-  for (const document of documents) {
+  const pendingDocuments = documents.filter((document) => {
     const key = rowKey({ model, source: document });
     if (completed.has(key)) {
       console.error(`Resuming: keeping ${model.label} / ${document.title}`);
-      continue;
+      return false;
     }
-    const existingIndex = rows.findIndex((row) => rowKey(row) === key);
-    if (existingIndex >= 0) rows.splice(existingIndex, 1);
-    console.error(`Running ${model.label} on ${document.title} (${document.chunks.length} chunks)`);
-    const row = await runDocument(model, document);
-    rows.push(row);
-    completed.add(key);
-    await writeCheckpoint(rows, true);
+    return true;
+  });
+  const settledDocuments = await settleWithConcurrency(
+    pendingDocuments,
+    documentConcurrency,
+    async (document) => {
+      const key = rowKey({ model, source: document });
+      const existingIndex = rows.findIndex((row) => rowKey(row) === key);
+      if (existingIndex >= 0) rows.splice(existingIndex, 1);
+      console.error(
+        `Running ${model.label} on ${document.title} (${document.chunks.length} chunks)`,
+      );
+      const row = await runDocument(model, document);
+      rows.push(row);
+      completed.add(key);
+      const snapshot = [...rows];
+      const checkpoint = checkpointQueue.then(() =>
+        writeCheckpoint(snapshot, true),
+      );
+      checkpointQueue = checkpoint.catch(() => undefined);
+      await checkpoint;
+      return row;
+    },
+  );
+  const rejectedDocument = settledDocuments.find(
+    (result): result is PromiseRejectedResult => result.status === "rejected",
+  );
+  if (rejectedDocument) {
+    throw rejectedDocument.reason;
   }
 }
 

@@ -2,7 +2,7 @@
 
 What does it cost to summarize the research that defined a year of AI—and which model does it most accurately?
 
-This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, factual coverage, reliability, and latency. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs), but it is a standalone benchmark rather than a production-app replica.
+This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, throughput, reliability, and corpus-wide trends. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs), but it is a standalone benchmark rather than a production-app replica.
 
 ## Frozen 1,000-paper corpus
 
@@ -63,14 +63,14 @@ Thank you to arXiv for use of its open access interoperability.
 
 ## Benchmark plan
 
-No 1,000-paper model run has been published yet. The sequence is deliberately gated:
+No 1,000-paper model run has been published yet. The execution sequence is:
 
-1. Compare every candidate model on a diverse 50-paper pilot.
-2. Calibrate blind factuality judges against a human-checked subset.
-3. Select finalists using quality, completion rate, latency, and cost.
-4. Run the full corpus only with the finalists.
+1. Compare every candidate model on a diverse 50-paper cost, latency, and completion pilot.
+2. Use the matched successful-paper subset for a like-for-like cost comparison.
+3. Run all 1,000 papers with DeepSeek V4 Flash, the cheapest pilot model, using recoverable checkpoints and a longer offline deadline.
+4. Publish total inference cost, elapsed time, tokens, pages, paper-length distribution, labs, and topics.
 
-Quality and operational reliability are reported separately. A model does not receive a good quality score for malformed or missing output, and a fast response does not imply a faithful summary. Judge inference cost is reported separately from summary inference cost.
+The full run is a corpus-scale cost and statistics experiment, not a factuality benchmark. A blind-judge experiment was started, then intentionally stopped because judge inference cost exceeded summarization cost without improving the requested general-statistics story.
 
 ### Frozen summarizer matrix
 
@@ -86,30 +86,21 @@ The pilot uses standard synchronous, uncached pricing retrieved on August 5, 202
 
 The dated source snapshot is committed at [`research/model-pricing-snapshot-2026-08-05.json`](./research/model-pricing-snapshot-2026-08-05.json). Together requests disable reasoning and use strict JSON Schema. Claude Haiku uses the standard synchronous Messages API with Anthropic's GA `output_config.format` JSON Schema, not Batch.
 
-### Blind quality judging
-
-Kimi K3 is the primary blind judge at high reasoning effort. GLM 5.2 independently scores the entire pilot to measure agreement; disagreements of 20 points or more require human review. Candidate identities, providers, prices, latency, and the held-out human calibration checklists are hidden from both judges. The full run uses a disclosed stratified GLM audit instead of needlessly paying to double-score every row.
-
-Judge inputs use a conservative three-characters-per-token context estimate. A paper that would leave insufficient response space is recorded as a context skip rather than truncated; Kimi and human review cover any row that exceeds GLM's lower public context limit.
-
-Judge inference is intentionally excluded from summarization cost. See [`research/judge-model-selection-2026-08-05.md`](./research/judge-model-selection-2026-08-05.md) for the measured high-versus-max Kimi preflight and projected judge spend.
-
-### Human calibration gate
-
-Before inspecting any candidate summaries or judge scores, a human reviewer reads each of the 15 linked papers in [`corpus/calibration-15.json`](./corpus/calibration-15.json), records the central question, main contribution, strongest results, limitations, and qualification risks, then changes `reviewStatus` to `human-reviewed`. `pnpm calibration:check` must report 15/15 before the benchmark is described as human-calibrated. Machine-generated checklists do not satisfy this gate; Kimi K3 and GLM 5.2 never receive these held-out answers in their prompts.
-
 ### Run it
 
 ```bash
 pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-profile.json
 pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
 pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
-pnpm judge -- --input=results/runs/pilot/result.json --run-id=pilot-judges
-pnpm calibration:check
-pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judges/pilot-judges/result.json --calibration=corpus/calibration-15.json
+
+BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark -- \
+  --source-file=corpus/sources-1000.json \
+  --models=deepseek-ai/DeepSeek-V4-Flash-0731 \
+  --document-concurrency=4 \
+  --run-id=full-1000-deepseek-v11
 ```
 
-The benchmark requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request, enforces a 90-second request timeout, and aborts the complete paper after 180 seconds. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report. These values and contracts are fingerprinted into the run metadata.
+The five-model pilot requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`; the DeepSeek-only full run requires `TOGETHER_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The strict pilot aborts the complete paper after 180 seconds; the offline full run raises that document deadline to 15 minutes and processes four papers concurrently. Both settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
 
 Text is split only when it exceeds 50,000 characters. Short papers therefore need one chunk-summary call plus the final reduce call rather than an artificial four-way fan-out; every model still receives identical extracted text and chunk boundaries.
 

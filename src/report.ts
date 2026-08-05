@@ -116,7 +116,7 @@ lines.push(
   "- Every model receives the same locally extracted text, chunk boundaries, prompt, and final reduce pass.",
   "- Extended reasoning is disabled. Provider-reported token usage and the frozen standard synchronous price produce each cost.",
   "- Transient timeouts, rate limits, and server errors are retried with bounded exponential backoff; retry counts remain visible.",
-  "- Completion rate, quality, cost, and latency are separate axes. Judge scores and judge cost are reported separately.",
+  "- Completion rate, cost, and latency are separate axes; a cheap or fast response is not presented as a factuality score.",
   "",
 );
 
