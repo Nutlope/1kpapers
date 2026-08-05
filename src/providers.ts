@@ -105,13 +105,7 @@ async function summarizeAnthropic(
       "anthropic-version": "2023-06-01",
       "content-type": "application/json",
     },
-    body: JSON.stringify({
-      model: model.id,
-      system: buildSummaryPrompt("english", stage),
-      messages: [{ role: "user", content: text }],
-      max_tokens: stage === "reduce" ? 1_600 : 2_400,
-      temperature: 0,
-    }),
+    body: JSON.stringify(buildAnthropicPayload(model, text, stage)),
     signal: requestSignal(signal),
   });
   const body = await responseBody(response, model.id);
@@ -134,6 +128,26 @@ async function summarizeAnthropic(
     finishReason: body.stop_reason,
     latencyMs: performance.now() - started,
   });
+}
+
+export function buildAnthropicPayload(
+  model: ModelConfig,
+  text: string,
+  stage: "chunk" | "reduce",
+) {
+  return {
+    model: model.id,
+    system: buildSummaryPrompt("english", stage),
+    messages: [{ role: "user", content: text }],
+    max_tokens: stage === "reduce" ? 1_600 : 2_400,
+    temperature: 0,
+    output_config: {
+      format: {
+        type: "json_schema",
+        schema: summarySchema(stage),
+      },
+    },
+  };
 }
 
 function parseInference(input: {

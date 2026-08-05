@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildAnthropicPayload,
   ProviderError,
   isRetryableStatus,
   retryAfterMs,
   withRetry,
 } from "./providers.js";
+import { MODELS } from "./models.js";
 
 test("retries transient provider failures and reports the attempt count", async () => {
   let calls = 0;
@@ -40,4 +42,12 @@ test("classifies retryable statuses and retry-after seconds", () => {
   assert.equal(isRetryableStatus(503), true);
   assert.equal(isRetryableStatus(400), false);
   assert.equal(retryAfterMs("1.5"), 1_500);
+});
+
+test("uses Anthropic's GA JSON-schema output contract", () => {
+  const model = MODELS.find((candidate) => candidate.provider === "anthropic")!;
+  const payload = buildAnthropicPayload(model, "paper text", "reduce");
+  assert.equal(payload.output_config.format.type, "json_schema");
+  assert.deepEqual(payload.output_config.format.schema.required, ["title", "summary"]);
+  assert.equal(payload.output_config.format.schema.properties.summary.maxLength, 3_000);
 });

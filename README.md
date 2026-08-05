@@ -81,7 +81,7 @@ The pilot uses standard synchronous, uncached pricing retrieved on August 5, 202
 | GPT-5.6 Luna | OpenAI | $0.20 / $1.20 |
 | Claude Haiku 4.5 | Anthropic | $1.00 / $5.00 |
 
-The dated source snapshot is committed at [`research/model-pricing-snapshot-2026-08-05.json`](./research/model-pricing-snapshot-2026-08-05.json). Together requests disable reasoning and use strict JSON Schema. Claude Haiku uses the standard synchronous Messages API, not Batch.
+The dated source snapshot is committed at [`research/model-pricing-snapshot-2026-08-05.json`](./research/model-pricing-snapshot-2026-08-05.json). Together requests disable reasoning and use strict JSON Schema. Claude Haiku uses the standard synchronous Messages API with Anthropic's GA `output_config.format` JSON Schema, not Batch.
 
 ### Blind quality judging
 
