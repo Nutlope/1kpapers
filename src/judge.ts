@@ -5,6 +5,7 @@ import { performance } from "node:perf_hooks";
 import { prepareDocument } from "./pdf.js";
 import { judgeContextDecision } from "./judge-policy.js";
 import {
+  ModelOutputError,
   ProviderError,
   isRetryableStatus,
   retryAfterMs,
@@ -96,7 +97,14 @@ if (prior && prior.fingerprint !== fingerprint) {
   throw new Error(`Checkpoint ${checkpointPath} belongs to a different judge configuration`);
 }
 const judgments: Judgment[] = prior?.judgments ?? [];
-const completed = new Set(judgments.map(judgmentKey));
+const completed = new Set(
+  judgments
+    .filter(
+      (judgment) =>
+        args["rerun-failed"] !== "true" || judgment.status !== "failed",
+    )
+    .map(judgmentKey),
+);
 const sources = new Map<string, Awaited<ReturnType<typeof prepareDocument>>>();
 for (const row of rows) {
   if (!sources.has(row.source.id)) {
@@ -125,6 +133,10 @@ for (const judge of judges) {
       }),
     );
     for (const judgment of batchResults) {
+      const existingIndex = judgments.findIndex(
+        (existing) => judgmentKey(existing) === judgmentKey(judgment),
+      );
+      if (existingIndex >= 0) judgments.splice(existingIndex, 1);
       judgments.push(judgment);
       completed.add(judgmentKey(judgment));
     }
@@ -287,7 +299,8 @@ async function requestJudgment(input: {
     );
   }
   const content = payload.choices?.[0]?.message?.content;
-  if (typeof content !== "string") throw new Error("Judge returned no content");
+  if (typeof content !== "string")
+    throw new ModelOutputError("Judge returned no content");
   let body: JudgeBody;
   try {
     body = JSON.parse(content) as JudgeBody;
@@ -382,13 +395,14 @@ function judgeSchema() {
 function validateScores(body: JudgeBody) {
   for (const value of Object.values(body.scores ?? {})) {
     if (typeof value !== "number" || value < 0 || value > 100)
-      throw new Error("Judge returned an invalid dimension score");
+      throw new ModelOutputError("Judge returned an invalid dimension score");
   }
   if (Object.keys(body.scores ?? {}).length !== 5)
-    throw new Error("Judge omitted a dimension score");
+    throw new ModelOutputError("Judge omitted a dimension score");
   if (!["low", "medium", "high"].includes(body.confidence))
-    throw new Error("Judge returned invalid confidence");
-  if (!Array.isArray(body.penalties)) throw new Error("Judge omitted penalties");
+    throw new ModelOutputError("Judge returned invalid confidence");
+  if (!Array.isArray(body.penalties))
+    throw new ModelOutputError("Judge omitted penalties");
   return body.scores;
 }
 
