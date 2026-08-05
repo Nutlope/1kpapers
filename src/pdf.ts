@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { DocumentInfo, Source } from "./types.js";
@@ -20,6 +20,35 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
       throw new Error(`Downloaded file is not a PDF: ${source.pdfUrl}`);
     }
     await writeFile(pdfPath, bytes);
+  }
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const extractedDirectory = path.resolve(".cache/extracted");
+  const extractedPath = path.join(
+    extractedDirectory,
+    `${source.id}-${sha256}.json`,
+  );
+  try {
+    const cached = JSON.parse(await readFile(extractedPath, "utf8")) as {
+      version?: unknown;
+      pages?: unknown;
+      fullText?: unknown;
+    };
+    if (
+      cached.version === 1 &&
+      typeof cached.pages === "number" &&
+      typeof cached.fullText === "string"
+    ) {
+      return documentInfo(
+        source,
+        pdfPath,
+        sha256,
+        bytes.byteLength,
+        cached.pages,
+        cached.fullText,
+      );
+    }
+  } catch {
+    // A missing or invalid extraction cache falls through to PDF parsing.
   }
 
   // Some otherwise-readable research PDFs contain malformed embedded-font
@@ -45,13 +74,38 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     fullText += `${pageText}\n\n`;
   }
   fullText = sanitizeExtractedText(fullText);
+  await mkdir(extractedDirectory, { recursive: true });
+  const temporaryPath = `${extractedPath}.${process.pid}.tmp`;
+  await writeFile(
+    temporaryPath,
+    JSON.stringify({ version: 1, pages: pdf.numPages, fullText }),
+  );
+  await rename(temporaryPath, extractedPath);
 
+  return documentInfo(
+    source,
+    pdfPath,
+    sha256,
+    bytes.byteLength,
+    pdf.numPages,
+    fullText,
+  );
+}
+
+function documentInfo(
+  source: Source,
+  pdfPath: string,
+  sha256: string,
+  bytes: number,
+  pages: number,
+  fullText: string,
+): DocumentInfo {
   return {
     ...source,
     path: pdfPath,
-    sha256: createHash("sha256").update(bytes).digest("hex"),
-    bytes: bytes.byteLength,
-    pages: pdf.numPages,
+    sha256,
+    bytes,
+    pages,
     characters: fullText.length,
     chunks: chunkText(fullText),
   };

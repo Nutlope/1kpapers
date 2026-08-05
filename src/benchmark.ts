@@ -43,6 +43,9 @@ const documentConcurrency = positiveInteger(
     "1",
   "document-concurrency",
 );
+const singlePass =
+  args["single-pass"] === "true" ||
+  process.env.BENCHMARK_SINGLE_PASS === "true";
 const runConfig = {
   methodologyVersion,
   sourceFile,
@@ -56,6 +59,7 @@ const runConfig = {
   sources: sources.map((source) => source.id),
   concurrency,
   ...(documentConcurrency === 1 ? {} : { documentConcurrency }),
+  ...(singlePass ? { singlePass: true } : {}),
   requestPolicy: {
     timeoutMs: Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000),
     maxAttempts: Number(process.env.BENCHMARK_MAX_ATTEMPTS ?? 2),
@@ -181,6 +185,22 @@ async function runDocument(
   );
   let completedRequests: RequestResult[] = [];
   try {
+    const directText = singlePass ? singlePassText(model, document) : null;
+    if (directText !== null) {
+      const inference = await summarize(
+        model,
+        directText,
+        "reduce",
+        controller.signal,
+      );
+      const request = toRequest(model, inference, "reduce", null);
+      return completeRow(
+        document,
+        model,
+        [request],
+        performance.now() - started,
+      );
+    }
     const settledChunks = await settleWithConcurrency(
       document.chunks,
       concurrency,
@@ -229,6 +249,18 @@ async function runDocument(
   } finally {
     clearTimeout(documentTimer);
   }
+}
+
+function singlePassText(
+  model: ModelConfig,
+  document: Awaited<ReturnType<typeof prepareDocument>>,
+) {
+  const text = document.chunks.join("");
+  // Character counts are only a proxy for tokens. Reserving half the context
+  // window keeps unusually token-dense PDF extraction safely below the model
+  // limit; oversized documents retain the existing map/reduce path.
+  const maxCharacters = model.contextWindowTokens * 2;
+  return text.length <= maxCharacters ? text : null;
 }
 
 function failedRow(

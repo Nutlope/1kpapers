@@ -1,6 +1,6 @@
 # A year in AI papers
 
-What does it cost to summarize the research that defined a year of AI—and which model does it most accurately?
+What does it cost to summarize the research that defined a year of AI, and how do current models compare on cost and speed?
 
 This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, throughput, reliability, and corpus-wide trends. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs), but it is a standalone benchmark rather than a production-app replica.
 
@@ -67,8 +67,8 @@ No 1,000-paper model run has been published yet. The execution sequence is:
 
 1. Compare every candidate model on a diverse 50-paper cost, latency, and completion pilot.
 2. Use the matched successful-paper subset for a like-for-like cost comparison.
-3. Run all 1,000 papers with DeepSeek V4 Flash, the cheapest pilot model, using recoverable checkpoints and a longer offline deadline.
-4. Publish total inference cost, elapsed time, tokens, pages, paper-length distribution, labs, and topics.
+3. Run all 1,000 papers with DeepSeek V4 Flash, GPT-5.6 Luna, and Claude Haiku 4.5 using independent, recoverable checkpoints.
+4. Publish per-model inference cost, elapsed time, tokens, completion coverage, and corpus-wide page, length, lab, and topic statistics.
 
 The full run is a corpus-scale cost and statistics experiment, not a factuality benchmark. A blind-judge experiment was started, then intentionally stopped because judge inference cost exceeded summarization cost without improving the requested general-statistics story.
 
@@ -93,17 +93,18 @@ pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-pr
 pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
 pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
 
-BENCHMARK_TIMEOUT_MS=300000 BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark -- \
+BENCHMARK_TIMEOUT_MS=600000 BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark -- \
   --source-file=corpus/sources-1000.json \
   --models=deepseek-ai/DeepSeek-V4-Flash-0731 \
-  --concurrency=1 \
-  --document-concurrency=4 \
-  --run-id=full-1000-deepseek-steady-v11
+  --concurrency=4 \
+  --document-concurrency=8 \
+  --single-pass=true \
+  --run-id=full-1000-deepseek-single-pass-v11
 ```
 
-The five-model pilot requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`; the DeepSeek-only full run requires `TOGETHER_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The strict pilot aborts the complete paper after 180 seconds; the offline full run raises individual requests to five minutes and the complete-document deadline to 15 minutes. It processes four papers concurrently while serializing each paper's chunk calls, capping provider load at four simultaneous requests instead of multiplying document and chunk concurrency. Both settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
+The five-model pilot and three-model full run require `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Run each provider independently to use their separate capacity pools. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The offline commands raise individual requests to ten minutes and the complete-document deadline to 15 minutes. Concurrency and timeout settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
 
-Text is split only when it exceeds 50,000 characters. Short papers therefore need one chunk-summary call plus the final reduce call rather than an artificial four-way fan-out; every model still receives identical extracted text and chunk boundaries.
+The full run uses one-pass summarization: the complete extracted PDF text is sent in one request whenever it fits a conservative half-context character budget. This avoids an unnecessary chunk-summary plus reduce fan-out for long-context models. Oversized documents automatically retain the 50,000-character map/reduce fallback, so no source text is silently truncated. Extracted text is cached locally by PDF hash and reused across model runs.
 
 ## Existing cost baseline
 
@@ -120,7 +121,7 @@ See [RESULTS.md](./RESULTS.md) for the original per-PDF results, failures, parti
 
 ## What cost includes
 
-Included: every chunk-summary call and the final reduce call.
+Included: every successful full-text summary call, or every chunk-summary and final-reduce call for documents that require the oversized-input fallback.
 
 Excluded: PDF download, local text extraction, storage, observability, network transfer, judge inference, and developer time. The accurate wording is **“LLM inference cost to summarize extracted PDF text.”**
 
