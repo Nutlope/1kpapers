@@ -31,8 +31,8 @@ const lines = [
   "",
   "## Model totals",
   "",
-  "| Model | Completed | Cost | Cost / attempted paper | Input tokens | Output tokens | p50 latency | p95 latency | Retries | Trimmed finals | Failures |",
-  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+  "| Model | Completed | Cost | Cost / attempted paper | Cost / completed paper | Input tokens | Output tokens | p50 latency | p95 latency | Retries | Trimmed finals | Failures |",
+  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
 ];
 
 for (const model of models) {
@@ -40,7 +40,7 @@ for (const model of models) {
   const completed = attempted.filter((row) => row.status === "ok");
   const latencies = completed.map((row) => row.totalLatencyMs);
   lines.push(
-    `| ${model.label} | ${completed.length}/${attempted.length} (${percent(completed.length, attempted.length)}) | $${sum(attempted, "totalCostUsd").toFixed(6)} | $${(sum(attempted, "totalCostUsd") / Math.max(1, attempted.length)).toFixed(6)} | ${sum(attempted, "totalInputTokens").toLocaleString("en-US")} | ${sum(attempted, "totalOutputTokens").toLocaleString("en-US")} | ${seconds(percentile(latencies, 0.5))} | ${seconds(percentile(latencies, 0.95))} | ${retryCount(attempted)} | ${normalizationCount(attempted)} | ${attempted.length - completed.length} |`,
+    `| ${model.label} | ${completed.length}/${attempted.length} (${percent(completed.length, attempted.length)}) | $${sum(attempted, "totalCostUsd").toFixed(6)} | $${(sum(attempted, "totalCostUsd") / Math.max(1, attempted.length)).toFixed(6)} | ${completed.length ? `$${(sum(attempted, "totalCostUsd") / completed.length).toFixed(6)}` : "—"} | ${sum(attempted, "totalInputTokens").toLocaleString("en-US")} | ${sum(attempted, "totalOutputTokens").toLocaleString("en-US")} | ${seconds(percentile(latencies, 0.5))} | ${seconds(percentile(latencies, 0.95))} | ${retryCount(attempted)} | ${normalizationCount(attempted)} | ${attempted.length - completed.length} |`,
   );
 }
 
