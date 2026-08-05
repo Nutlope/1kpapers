@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { isCompleteHumanCalibration } from "./calibration-policy.js";
 import { prepareDocument } from "./pdf.js";
 import { isValidFinalSummaryMarkdown } from "./prompts.js";
 import type { BenchmarkRow } from "./types.js";
@@ -26,9 +27,9 @@ const judgments = (
   )
 ).flat();
 const calibration = args.calibration
-  ? (JSON.parse(await readFile(args.calibration, "utf8")) as {
-      reviewStatus: string;
-    }[])
+  ? (JSON.parse(await readFile(args.calibration, "utf8")) as Parameters<
+      typeof isCompleteHumanCalibration
+    >[0][])
   : [];
 const modelLabels = new Map(
   benchmark.rows.map((row) => [row.model.id, row.model.label]),
@@ -92,7 +93,7 @@ for (const judgeKey of new Set(judgments.map((judgment) => judgment.judge.key)))
   );
 }
 
-const reviewed = calibration.filter((item) => item.reviewStatus === "human-reviewed").length;
+const reviewed = calibration.filter(isCompleteHumanCalibration).length;
 lines.push(
   "",
   "## Human calibration gate",

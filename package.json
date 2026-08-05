@@ -6,6 +6,7 @@
   "scripts": {
     "benchmark": "tsx src/benchmark.ts",
     "calibration": "tsx src/calibration.ts",
+    "calibration:check": "tsx src/validate-calibration.ts",
     "corpus": "tsx src/discover.ts",
     "download": "tsx src/download.ts",
     "full": "tsx src/full.ts",

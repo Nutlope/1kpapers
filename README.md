@@ -98,6 +98,7 @@ pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-pr
 pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
 pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
 pnpm judge -- --input=results/runs/pilot/result.json --calibration=corpus/calibration-15.json --run-id=pilot-judges
+pnpm calibration:check
 pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judges/pilot-judges/result.json --calibration=corpus/calibration-15.json
 ```
 
