@@ -22,3 +22,12 @@ test("replaces unpaired surrogates without damaging valid Unicode pairs", () => 
   assert.equal(sanitizeExtractedText("before\udc00after"), "before�after");
   assert.equal(sanitizeExtractedText("emoji 😀 stays"), "emoji 😀 stays");
 });
+
+test("never splits a valid Unicode pair across chunk boundaries", () => {
+  const text = `${"a".repeat(MAX_CHUNK_CHARACTERS - 1)}😀tail`;
+  const chunks = chunkText(text);
+  assert.equal(chunks.join(""), text);
+  assert.equal(chunks.length, 2);
+  assert.equal(sanitizeExtractedText(chunks[0]!), chunks[0]);
+  assert.equal(sanitizeExtractedText(chunks[1]!), chunks[1]);
+});
