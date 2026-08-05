@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildAnthropicPayload,
+  ModelOutputError,
   ProviderError,
   isRetryableStatus,
   retryAfterMs,
@@ -35,6 +36,19 @@ test("does not retry permanent provider failures", async () => {
     /bad request/,
   );
   assert.equal(calls, 1);
+});
+
+test("retries malformed model output", async () => {
+  let calls = 0;
+  const result = await withRetry(
+    async () => {
+      calls += 1;
+      if (calls === 1) throw new ModelOutputError("truncated JSON");
+      return "ok";
+    },
+    { maxAttempts: 2, retryBaseMs: 0 },
+  );
+  assert.deepEqual(result, { value: "ok", attempts: 2 });
 });
 
 test("classifies retryable statuses and retry-after seconds", () => {

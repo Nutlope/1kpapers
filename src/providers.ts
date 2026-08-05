@@ -164,7 +164,7 @@ function parseInference(input: {
   try {
     parsed = JSON.parse(cleaned) as { title?: unknown; summary?: unknown };
   } catch {
-    throw new Error(
+    throw new ModelOutputError(
       `Model returned invalid JSON (finish=${typeof input.finishReason === "string" ? input.finishReason : "unknown"}, content_length=${cleaned.length})`,
     );
   }
@@ -175,16 +175,16 @@ function parseInference(input: {
     !parsed.summary ||
     parsed.summary.length > 5_000
   ) {
-    throw new Error("Model response did not match the summary schema");
+    throw new ModelOutputError("Model response did not match the summary schema");
   }
   const normalized = normalizeSummaryForStage(parsed.summary, input.stage);
   if (
     input.stage === "reduce" &&
     (!normalized || !isValidFinalSummaryMarkdown(normalized.summary))
   ) {
-    throw new Error("Model response did not match the final Markdown contract");
+    throw new ModelOutputError("Model response did not match the final Markdown contract");
   }
-  if (!normalized) throw new Error("Model returned an empty summary");
+  if (!normalized) throw new ModelOutputError("Model returned an empty summary");
   return {
     title: parsed.title,
     summary: normalized.summary,
@@ -208,6 +208,8 @@ export class ProviderError extends Error {
     super(message);
   }
 }
+
+export class ModelOutputError extends Error {}
 
 export async function withRetry<T>(
   operation: () => Promise<T>,
@@ -236,6 +238,7 @@ export async function withRetry<T>(
 
 function isRetryableError(error: unknown) {
   if (error instanceof ProviderError) return error.retryable;
+  if (error instanceof ModelOutputError) return true;
   if (error instanceof TypeError) return true;
   if (error instanceof DOMException)
     return error.name === "TimeoutError" || error.name === "AbortError";
