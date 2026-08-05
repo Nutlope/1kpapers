@@ -62,6 +62,7 @@ export type BenchmarkRow = {
   model: ModelConfig;
   status: "ok" | "failed" | "skipped";
   requests: RequestResult[];
+  failedRequestRetries?: number;
   totalInputTokens: number;
   totalOutputTokens: number;
   totalCostUsd: number;

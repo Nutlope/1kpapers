@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 import path from "node:path";
 import { MODELS, calculateCost } from "./models.js";
 import { prepareDocument } from "./pdf.js";
-import { summarize } from "./providers.js";
+import { ModelOutputError, summarize } from "./providers.js";
 import type {
   BenchmarkRow,
   ModelConfig,
@@ -165,23 +165,20 @@ async function runDocument(
           result.status === "fulfilled",
       )
       .map((result) => result.value);
-    const chunkErrors = settledChunks
+    const chunkFailures = settledChunks
       .filter(
         (result): result is PromiseRejectedResult =>
           result.status === "rejected",
       )
-      .map((result) =>
-        result.reason instanceof Error
-          ? result.reason.message
-          : String(result.reason),
-      );
-    if (chunkErrors.length) {
+      .map((result) => result.reason);
+    if (chunkFailures.length) {
       return failedRow(
         document,
         model,
         chunkOutputs,
         performance.now() - started,
-        `${chunkErrors.length}/${document.chunks.length} chunk requests failed: ${chunkErrors.join("; ")}`,
+        `${chunkFailures.length}/${document.chunks.length} chunk requests failed: ${chunkFailures.map(errorMessage).join("; ")}`,
+        chunkFailures,
       );
     }
     completedRequests = chunkOutputs;
@@ -196,7 +193,8 @@ async function runDocument(
       model,
       completedRequests,
       performance.now() - started,
-      error instanceof Error ? error.message : String(error),
+      errorMessage(error),
+      [error],
     );
   } finally {
     clearTimeout(documentTimer);
@@ -209,20 +207,55 @@ function failedRow(
   requests: RequestResult[],
   totalLatencyMs: number,
   error: string,
+  requestErrors: unknown[] = [],
 ): BenchmarkRow {
+  const failedUsage = requestErrors.reduce<{
+    inputTokens: number;
+    outputTokens: number;
+  }>(
+    (usage, requestError) =>
+      requestError instanceof ModelOutputError
+        ? {
+            inputTokens: usage.inputTokens + requestError.usage.inputTokens,
+            outputTokens: usage.outputTokens + requestError.usage.outputTokens,
+          }
+        : usage,
+    { inputTokens: 0, outputTokens: 0 },
+  );
   return {
     ...baseRow(document, model),
     status: "failed",
     requests,
-    totalInputTokens: sum(requests, (row) => row.usage.inputTokens),
-    totalOutputTokens: sum(requests, (row) => row.usage.outputTokens),
-    totalCostUsd: sum(requests, (row) => row.costUsd),
+    failedRequestRetries: requestErrors.reduce<number>(
+      (total, requestError) =>
+        total + Math.max(0, errorAttempts(requestError) - 1),
+      0,
+    ),
+    totalInputTokens:
+      sum(requests, (row) => row.usage.inputTokens) + failedUsage.inputTokens,
+    totalOutputTokens:
+      sum(requests, (row) => row.usage.outputTokens) + failedUsage.outputTokens,
+    totalCostUsd:
+      sum(requests, (row) => row.costUsd) +
+      calculateCost(model, failedUsage.inputTokens, failedUsage.outputTokens),
     totalLatencyMs: Math.round(totalLatencyMs),
     withinThirtySeconds: false,
     finalTitle: null,
     finalSummary: null,
     error,
   };
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function errorAttempts(error: unknown) {
+  return error instanceof Error &&
+    "attempts" in error &&
+    typeof error.attempts === "number"
+    ? error.attempts
+    : 1;
 }
 
 function toRequest(

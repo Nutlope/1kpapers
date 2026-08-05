@@ -5,7 +5,7 @@ import {
   normalizeSummaryForStage,
   summarySchema,
 } from "./prompts.js";
-import type { Inference, ModelConfig } from "./types.js";
+import type { Inference, ModelConfig, Usage } from "./types.js";
 
 const TIMEOUT_MS = Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000);
 const MAX_ATTEMPTS = Number(process.env.BENCHMARK_MAX_ATTEMPTS ?? 2);
@@ -17,12 +17,35 @@ export async function summarize(
   stage: "chunk" | "reduce",
   signal?: AbortSignal,
 ): Promise<Inference> {
-  const { value, attempts } = await withRetry(() =>
-    model.provider === "anthropic"
-      ? summarizeAnthropic(model, text, stage, signal)
-      : summarizeOpenAICompatible(model, text, stage, signal),
-  );
-  return { ...value, attempts };
+  let retryUsage: Usage = { inputTokens: 0, outputTokens: 0 };
+  let retryLatencyMs = 0;
+  try {
+    const { value, attempts } = await withRetry(
+      () =>
+        model.provider === "anthropic"
+          ? summarizeAnthropic(model, text, stage, signal)
+          : summarizeOpenAICompatible(model, text, stage, signal),
+      {
+        onRetry(error) {
+          if (!(error instanceof ModelOutputError)) return;
+          retryUsage = addUsage(retryUsage, error.usage);
+          retryLatencyMs += error.latencyMs;
+        },
+      },
+    );
+    return {
+      ...value,
+      usage: addUsage(retryUsage, value.usage),
+      latencyMs: retryLatencyMs + value.latencyMs,
+      attempts,
+    };
+  } catch (error) {
+    if (error instanceof ModelOutputError) {
+      error.usage = addUsage(retryUsage, error.usage);
+      error.latencyMs += retryLatencyMs;
+    }
+    throw error;
+  }
 }
 
 async function summarizeOpenAICompatible(
@@ -158,7 +181,13 @@ function parseInference(input: {
   finishReason: unknown;
   latencyMs: number;
 }): Omit<Inference, "attempts"> {
-  if (typeof input.content !== "string") throw new Error("Model returned no text");
+  const usage = {
+    inputTokens: Number(input.inputTokens ?? 0),
+    outputTokens: Number(input.outputTokens ?? 0),
+  };
+  const latencyMs = Math.round(input.latencyMs);
+  if (typeof input.content !== "string")
+    throw new ModelOutputError("Model returned no text", usage, latencyMs);
   const cleaned = input.content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   let parsed: { title?: unknown; summary?: unknown };
   try {
@@ -166,6 +195,8 @@ function parseInference(input: {
   } catch {
     throw new ModelOutputError(
       `Model returned invalid JSON (finish=${typeof input.finishReason === "string" ? input.finishReason : "unknown"}, content_length=${cleaned.length})`,
+      usage,
+      latencyMs,
     );
   }
   if (
@@ -174,25 +205,35 @@ function parseInference(input: {
     typeof parsed.summary !== "string" ||
     !parsed.summary.trim()
   ) {
-    throw new ModelOutputError("Model response did not match the summary schema");
+    throw new ModelOutputError(
+      "Model response did not match the summary schema",
+      usage,
+      latencyMs,
+    );
   }
   const normalized = normalizeSummaryForStage(parsed.summary, input.stage);
   if (
     input.stage === "reduce" &&
     (!normalized || !isValidFinalSummaryMarkdown(normalized.summary))
   ) {
-    throw new ModelOutputError("Model response did not match the final Markdown contract");
+    throw new ModelOutputError(
+      "Model response did not match the final Markdown contract",
+      usage,
+      latencyMs,
+    );
   }
-  if (!normalized) throw new ModelOutputError("Model returned an empty summary");
+  if (!normalized)
+    throw new ModelOutputError(
+      "Model returned an empty summary",
+      usage,
+      latencyMs,
+    );
   return {
     title: truncateTitle(parsed.title),
     summary: normalized.summary,
     normalized: normalized.normalized,
-    usage: {
-      inputTokens: Number(input.inputTokens ?? 0),
-      outputTokens: Number(input.outputTokens ?? 0),
-    },
-    latencyMs: Math.round(input.latencyMs),
+    usage,
+    latencyMs,
     finishReason:
       typeof input.finishReason === "string" ? input.finishReason : null,
   };
@@ -215,11 +256,23 @@ export class ProviderError extends Error {
   }
 }
 
-export class ModelOutputError extends Error {}
+export class ModelOutputError extends Error {
+  constructor(
+    message: string,
+    public usage: Usage = { inputTokens: 0, outputTokens: 0 },
+    public latencyMs = 0,
+  ) {
+    super(message);
+  }
+}
 
 export async function withRetry<T>(
   operation: () => Promise<T>,
-  options: { maxAttempts?: number; retryBaseMs?: number } = {},
+  options: {
+    maxAttempts?: number;
+    retryBaseMs?: number;
+    onRetry?: (error: unknown, attempt: number) => void;
+  } = {},
 ) {
   const maxAttempts = options.maxAttempts ?? MAX_ATTEMPTS;
   const retryBaseMs = options.retryBaseMs ?? RETRY_BASE_MS;
@@ -234,12 +287,20 @@ export async function withRetry<T>(
           Object.assign(error, { attempts: attempt });
         throw error;
       }
+      options.onRetry?.(error, attempt);
       const providerDelay = error instanceof ProviderError ? error.retryAfterMs : null;
       const delayMs = providerDelay ?? retryBaseMs * 2 ** (attempt - 1);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
   }
   throw lastError;
+}
+
+function addUsage(left: Usage, right: Usage): Usage {
+  return {
+    inputTokens: left.inputTokens + right.inputTokens,
+    outputTokens: left.outputTokens + right.outputTokens,
+  };
 }
 
 function isRetryableError(error: unknown) {

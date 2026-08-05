@@ -102,6 +102,7 @@ function retryCount(rows: BenchmarkRow[]) {
   return rows.reduce(
     (total, row) =>
       total +
+      (row.failedRequestRetries ?? 0) +
       row.requests.reduce(
         (requestTotal, request) =>
           requestTotal + Math.max(0, (request.attempts ?? 1) - 1),

@@ -40,15 +40,23 @@ test("does not retry permanent provider failures", async () => {
 
 test("retries malformed model output", async () => {
   let calls = 0;
+  const retried: string[] = [];
   const result = await withRetry(
     async () => {
       calls += 1;
       if (calls === 1) throw new ModelOutputError("truncated JSON");
       return "ok";
     },
-    { maxAttempts: 2, retryBaseMs: 0 },
+    {
+      maxAttempts: 2,
+      retryBaseMs: 0,
+      onRetry(error) {
+        retried.push(error instanceof Error ? error.message : String(error));
+      },
+    },
   );
   assert.deepEqual(result, { value: "ok", attempts: 2 });
+  assert.deepEqual(retried, ["truncated JSON"]);
 });
 
 test("classifies retryable statuses and retry-after seconds", () => {
