@@ -55,11 +55,32 @@ export function normalizeSummaryForStage(
   value: string,
   stage: "chunk" | "reduce",
 ) {
-  if (stage === "chunk") return { summary: value, normalized: false };
+  if (stage === "chunk") return normalizeChunkSummaryMarkdown(value);
   const result = normalizeFinalSummaryMarkdown(value);
   return result
     ? { summary: result.markdown, normalized: result.truncated }
     : null;
+}
+
+function normalizeChunkSummaryMarkdown(value: string) {
+  if (!value?.trim()) return null;
+  const original = value.trim();
+  const words = [...original.matchAll(/\S+/g)];
+  let summary = original;
+  let truncated = false;
+  if (words.length > 400) {
+    const last = words[399]!;
+    summary = `${original
+      .slice(0, last.index! + last[0].length)
+      .replace(/[.,;:!?…]+$/, "")}…`;
+    truncated = true;
+  }
+  if (summary.length > 5_000) {
+    const candidate = summary.slice(0, 4_999).replace(/\s+\S*$/, "").trimEnd();
+    summary = `${candidate || summary.slice(0, 4_999)}…`;
+    truncated = true;
+  }
+  return { summary, normalized: truncated };
 }
 
 export function normalizeFinalSummaryMarkdown(value: string, maxWords = 250) {

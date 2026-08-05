@@ -170,10 +170,9 @@ function parseInference(input: {
   }
   if (
     typeof parsed.title !== "string" ||
-    !parsed.title ||
+    !parsed.title.trim() ||
     typeof parsed.summary !== "string" ||
-    !parsed.summary ||
-    parsed.summary.length > 5_000
+    !parsed.summary.trim()
   ) {
     throw new ModelOutputError("Model response did not match the summary schema");
   }
@@ -186,7 +185,7 @@ function parseInference(input: {
   }
   if (!normalized) throw new ModelOutputError("Model returned an empty summary");
   return {
-    title: parsed.title,
+    title: truncateTitle(parsed.title),
     summary: normalized.summary,
     normalized: normalized.normalized,
     usage: {
@@ -197,6 +196,13 @@ function parseInference(input: {
     finishReason:
       typeof input.finishReason === "string" ? input.finishReason : null,
   };
+}
+
+function truncateTitle(value: string) {
+  const title = value.trim().replace(/\s+/g, " ");
+  if (title.length <= 300) return title;
+  const candidate = title.slice(0, 299).replace(/\s+\S*$/, "").trimEnd();
+  return `${candidate || title.slice(0, 299)}…`;
 }
 
 export class ProviderError extends Error {

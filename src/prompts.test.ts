@@ -52,7 +52,7 @@ test("normalizes safe Markdown and rejects unsafe output", () => {
   assert.equal(isValidFinalSummaryMarkdown(trimmed?.markdown ?? ""), true);
 });
 
-test("normalizes restricted Markdown only at the final reduce stage", () => {
+test("preserves short chunk Markdown and safely shortens oversized chunks", () => {
   const chunk = "# Overview\n\nSeveral chunk paragraphs are valid here.";
   assert.deepEqual(normalizeSummaryForStage(chunk, "chunk"), {
     summary: chunk,
@@ -62,4 +62,9 @@ test("normalizes restricted Markdown only at the final reduce stage", () => {
     summary: "Overview\n\nSeveral chunk paragraphs are valid here.",
     normalized: false,
   });
+  const oversized = Array.from({ length: 401 }, () => "word").join(" ");
+  const normalized = normalizeSummaryForStage(oversized, "chunk");
+  assert.equal(normalized?.normalized, true);
+  assert.equal(normalized?.summary.split(/\s+/).length, 400);
+  assert.match(normalized?.summary ?? "", /…$/);
 });
