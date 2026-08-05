@@ -44,6 +44,7 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     }
     fullText += `${pageText}\n\n`;
   }
+  fullText = sanitizeExtractedText(fullText);
 
   return {
     ...source,
@@ -54,6 +55,27 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     characters: fullText.length,
     chunks: chunkText(fullText),
   };
+}
+
+export function sanitizeExtractedText(text: string) {
+  let sanitized = "";
+  for (let index = 0; index < text.length; index += 1) {
+    const code = text.charCodeAt(index);
+    if (code >= 0xd800 && code <= 0xdbff) {
+      const next = text.charCodeAt(index + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        sanitized += text.charAt(index) + text.charAt(index + 1);
+        index += 1;
+      } else {
+        sanitized += "�";
+      }
+    } else if (code >= 0xdc00 && code <= 0xdfff) {
+      sanitized += "�";
+    } else {
+      sanitized += text.charAt(index);
+    }
+  }
+  return sanitized;
 }
 
 async function fetchPdf(url: string) {
