@@ -14,7 +14,7 @@ Kimi is the stronger primary choice for this particular task because the evidenc
 
 Recommended coverage:
 
-- On the **50-paper pilot**, run both judges on every successful candidate summary. This establishes inter-judge agreement while the human calibration checklists are available.
+- On the **50-paper pilot**, run both judges on every successful candidate summary. This establishes inter-judge agreement while keeping the human calibration checklists held out for the subsequent audit.
 - On the **1,000-paper run**, run Kimi on every successful candidate summary, then run GLM on a stratified 10% audit, every Moonshot/Kimi-authored paper, low-confidence or malformed-evidence judgments, and any near-tie that could change the model ranking.
 - Route score disagreements of 20 points or more to human review, as already specified in [`judge-spec.md`](./judge-spec.md).
 - If Kimi K3 or GLM 5.2 is later added as a candidate summarizer, it must not judge its own output; use the other judge for those rows.
@@ -75,7 +75,7 @@ That is enough second-judge coverage to measure agreement without paying another
 
 1. Randomize candidates and replace model names with opaque IDs before judging.
 2. Use the same strict JSON schema for both judges: five dimension scores, total score, confidence, and source evidence for every penalty.
-3. Preflight `reasoning_effort="high"` on both endpoints. If Together rejects or ignores it, use the documented default/max behavior and label it. Calibrate against the 15 human checklists, and do not compare a max-effort judge against a high-effort judge without labeling the difference.
+3. Preflight `reasoning_effort="high"` on both endpoints. If Together rejects or ignores it, use the documented default/max behavior and label it. Keep the 15 human checklists out of judge prompts and use them afterward to audit scores and evidence; do not compare a max-effort judge against a high-effort judge without labeling the difference.
 4. Set a completion ceiling high enough for reasoning plus evidence JSON, then count truncation as judge failure rather than silently retrying with a larger budget.
 5. Store reasoning-token, cached-token, input-token, and output-token usage separately when Together returns them.
 6. Use the lower 262,144 public GLM context limit. Any judgment exceeding it goes to Kimi and human review rather than truncating the paper invisibly.

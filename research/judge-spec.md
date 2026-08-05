@@ -22,7 +22,7 @@ This checklist is the calibration reference. The abstract alone is not a suffici
 
 ## Blind judge
 
-Randomize candidate order and remove model names and prices. Use two strong judge models from providers that are independent of the candidate when possible. Each judge sees the source text, the human checklist when available, and one candidate summary.
+Randomize candidate order and remove model names and prices. Use two strong judge models from providers that are independent of the candidate when possible. Each judge sees only the source text and one candidate summary. The human checklist remains held out and is used afterward to audit judge scores, evidence penalties, and disagreements; giving it to the judges would leak the calibration reference into the evaluation.
 
 Score each completed summary from 0–100:
 
@@ -38,10 +38,10 @@ Judges must quote or identify source evidence for every unsupported-claim penalt
 
 ## Deterministic checks
 
-- schema parses and required fields are present;
+- JSON schema parses and required fields are present;
 - title is not copied from an unrelated chunk;
 - all numbers in the summary can be located in the source text;
-- output length remains within the published limit;
+- restricted Markdown is safe and output length remains within the published limit;
 - empty, truncated, refusal, and timeout outputs are classified consistently; and
 - token counts and prices are provider-reported rather than estimated when available.
 
@@ -58,4 +58,3 @@ For every model report:
 - judge cost separately from summarization cost.
 
 The full 1,000-paper run begins only after the pilot identifies finalists with acceptable quality and completion rate.
-
