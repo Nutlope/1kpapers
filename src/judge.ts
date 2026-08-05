@@ -62,10 +62,6 @@ const candidateFilter = args.candidates
 const rows = candidateFilter
   ? sourceRows.filter((row) => candidateFilter.has(opaqueId(row)))
   : sourceRows;
-const calibration = args.calibration
-  ? (JSON.parse(await readFile(path.resolve(args.calibration), "utf8")) as Calibration[])
-  : [];
-const calibrationById = new Map(calibration.map((item) => [item.id, item]));
 const selectedJudgeIds = (args.judges ?? "kimi-k3,glm-5.2").split(",");
 const judges = JUDGES.filter((judge) => selectedJudgeIds.includes(judge.key));
 if (!rows.length || !judges.length) throw new Error("No benchmark rows or judges selected");
@@ -85,11 +81,6 @@ const runConfig = {
   candidates: rows.map((row) => ({
     sourceId: row.source.id,
     opaqueCandidateId: opaqueId(row),
-  })),
-  calibration: calibration.map((item) => ({
-    id: item.id,
-    reviewStatus: item.reviewStatus,
-    checklist: item.checklist,
   })),
   maxTokens: Number(process.env.JUDGE_MAX_TOKENS ?? 4_000),
   timeoutMs: Number(process.env.JUDGE_TIMEOUT_MS ?? 180_000),
@@ -130,9 +121,6 @@ for (const judge of judges) {
           row,
           documentText: document.chunks.join(""),
           opaqueCandidateId,
-          ...(calibrationById.get(row.source.id)
-            ? { calibration: calibrationById.get(row.source.id)! }
-            : {}),
         });
       }),
     );
@@ -160,7 +148,6 @@ async function judgeSummary(input: {
   row: BenchmarkRow;
   documentText: string;
   opaqueCandidateId: string;
-  calibration?: Calibration;
 }): Promise<Judgment> {
   const started = performance.now();
   const maxOutputTokens = Number(process.env.JUDGE_MAX_TOKENS ?? 4_000);
@@ -169,7 +156,6 @@ async function judgeSummary(input: {
     input.row.finalTitle!,
     input.row.finalSummary!,
     input.opaqueCandidateId,
-    input.calibration,
   );
   const context = judgeContextDecision({
     inputCharacters: judgePrompt().length + judgeInput.length,
@@ -252,7 +238,6 @@ async function requestJudgment(input: {
   row: BenchmarkRow;
   documentText: string;
   opaqueCandidateId: string;
-  calibration?: Calibration;
 }, judgeInput: string) {
   const response = await fetch("https://api.together.xyz/v1/chat/completions", {
     method: "POST",
@@ -332,13 +317,8 @@ function buildJudgeInput(
   title: string,
   summary: string,
   candidateId: string,
-  calibration?: Calibration,
 ) {
-  const checklist =
-    calibration?.reviewStatus === "human-reviewed"
-      ? `\n<HUMAN_CHECKLIST>${JSON.stringify(calibration.checklist)}</HUMAN_CHECKLIST>`
-      : "";
-  return `<SOURCE_DOCUMENT>\n${documentText}\n</SOURCE_DOCUMENT>${checklist}\n<CANDIDATE id="${candidateId}">\n<TITLE>${title}</TITLE>\n<SUMMARY>${summary}</SUMMARY>\n</CANDIDATE>`;
+  return `<SOURCE_DOCUMENT>\n${documentText}\n</SOURCE_DOCUMENT>\n<CANDIDATE id="${candidateId}">\n<TITLE>${title}</TITLE>\n<SUMMARY>${summary}</SUMMARY>\n</CANDIDATE>`;
 }
 
 function judgePrompt() {
@@ -351,7 +331,7 @@ Score each dimension from 0 to 100:
 - numericalFidelity: material values, comparisons, and directions are correct (10%)
 - clarity: concise and understandable without distortion (5%)
 
-Use only the supplied source document and optional human checklist. For every unsupported, misleading, or materially omitted claim that affects a score, add a penalty containing the candidate claim, a short source-grounded evidence locator or excerpt, and the reason. Do not reward verbosity. Return only the requested JSON.`;
+Use only the supplied source document. For every unsupported, misleading, or materially omitted claim that affects a score, add a penalty containing the candidate claim, a short source-grounded evidence locator or excerpt, and the reason. Do not reward verbosity. Return only the requested JSON.`;
 }
 
 function judgeSchema() {
@@ -503,11 +483,6 @@ type JudgeConfig = {
   outputUsdPerMillion: number;
   reasoningEffort: "high" | "max";
   contextWindowTokens: number;
-};
-type Calibration = {
-  id: string;
-  reviewStatus: string;
-  checklist: Record<string, unknown>;
 };
 type Judgment = {
   status: "ok" | "failed" | "skipped";

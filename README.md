@@ -85,7 +85,7 @@ The dated source snapshot is committed at [`research/model-pricing-snapshot-2026
 
 ### Blind quality judging
 
-Kimi K3 is the primary blind judge at high reasoning effort. GLM 5.2 independently scores the entire pilot to measure agreement; disagreements of 20 points or more require human review. Candidate identities, providers, prices, and latency are hidden from both judges. The full run uses a disclosed stratified GLM audit instead of needlessly paying to double-score every row.
+Kimi K3 is the primary blind judge at high reasoning effort. GLM 5.2 independently scores the entire pilot to measure agreement; disagreements of 20 points or more require human review. Candidate identities, providers, prices, latency, and the held-out human calibration checklists are hidden from both judges. The full run uses a disclosed stratified GLM audit instead of needlessly paying to double-score every row.
 
 Judge inputs use a conservative three-characters-per-token context estimate. A paper that would leave insufficient response space is recorded as a context skip rather than truncated; Kimi and human review cover any row that exceeds GLM's lower public context limit.
 
@@ -97,7 +97,7 @@ Judge inference is intentionally excluded from summarization cost. See [`researc
 pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-profile.json
 pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
 pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
-pnpm judge -- --input=results/runs/pilot/result.json --calibration=corpus/calibration-15.json --run-id=pilot-judges
+pnpm judge -- --input=results/runs/pilot/result.json --run-id=pilot-judges
 pnpm calibration:check
 pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judges/pilot-judges/result.json --calibration=corpus/calibration-15.json
 ```
