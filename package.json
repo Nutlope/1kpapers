@@ -13,6 +13,7 @@
     "judge": "tsx src/judge.ts",
     "pilot": "tsx src/pilot.ts",
     "quality": "tsx src/quality-report.ts",
+    "range": "tsx src/range.ts",
     "merge": "tsx src/merge-results.ts",
     "report": "tsx src/report.ts",
     "test": "node --import tsx --test src/*.test.ts",

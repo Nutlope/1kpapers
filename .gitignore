@@ -7,3 +7,4 @@ results/checkpoint.json
 results/runs/
 results/judges/
 corpus/*.checkpoint.json
+corpus/shards/
