@@ -19,6 +19,27 @@ const results = JSON.parse(await readFile(inputPath, "utf8")) as {
 const models = [
   ...new Map(results.rows.map((row) => [row.model.id, row.model])).values(),
 ];
+const rowsBySource = Object.groupBy(results.rows, (row) => row.source.id);
+const matchedSourceIds = new Set(
+  Object.entries(rowsBySource)
+    .filter(([, rows]) => {
+      if (!rows || rows.length !== models.length) return false;
+      return (
+        new Set(rows.map((row) => row.model.id)).size === models.length &&
+        rows.every((row) => row.status === "ok")
+      );
+    })
+    .map(([sourceId]) => sourceId),
+);
+const matchedTotals = models
+  .map((model) => {
+    const rows = results.rows.filter(
+      (row) => row.model.id === model.id && matchedSourceIds.has(row.source.id),
+    );
+    return { model, rows, cost: sum(rows, "totalCostUsd") };
+  })
+  .sort((a, b) => a.cost - b.cost);
+const cheapestMatchedCost = matchedTotals.at(0)?.cost ?? 0;
 
 const lines = [
   `# ${title}`,
@@ -30,11 +51,27 @@ const lines = [
   "Costs are standard synchronous language-model inference only. PDFs are downloaded and text is extracted locally; judge inference, storage, networking, and observability are excluded.",
   "A timed-out request that returns no provider usage is recorded as a failure with unknown billing and contributes no unverifiable token cost to the table.",
   "",
+  "## Matched completed-paper cost",
+  "",
+  `This like-for-like view includes only the ${matchedSourceIds.size} papers completed by every model. A model's incomplete papers are excluded from every model in this table; completion remains reported separately below.`,
+  "",
+  "| Model | Papers | Cost | Cost / paper | Relative cost |",
+  "| --- | ---: | ---: | ---: | ---: |",
+];
+
+for (const { model, rows, cost } of matchedTotals) {
+  lines.push(
+    `| ${model.label} | ${rows.length} | $${cost.toFixed(6)} | $${(cost / Math.max(1, rows.length)).toFixed(6)} | ${cheapestMatchedCost ? `${(cost / cheapestMatchedCost).toFixed(2)}x` : "—"} |`,
+  );
+}
+
+lines.push(
+  "",
   "## Model totals",
   "",
   "| Model | Completed | Cost | Cost / attempted paper | Cost / completed paper | Input tokens | Output tokens | p50 latency | p95 latency | Retries | Trimmed finals | Failures |",
   "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
-];
+);
 
 for (const model of models) {
   const attempted = results.rows.filter((row) => row.model.id === model.id);
@@ -119,7 +156,7 @@ function normalizationCount(rows: BenchmarkRow[]) {
 
 function categorize(error: string | null) {
   const value = error?.toLowerCase() ?? "";
-  if (value.includes("timeout") || value.includes("timed out")) return "timeout";
+  if (value.includes("timeout") || value.includes("timed out") || value.includes("deadline")) return "timeout";
   if (value.includes("429") || value.includes("rate limit")) return "rate limit";
   if (value.includes("schema") || value.includes("json")) return "malformed output";
   if (/\(5\d\d\)/.test(value)) return "provider server error";
