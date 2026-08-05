@@ -91,6 +91,10 @@ Judge inputs use a conservative three-characters-per-token context estimate. A p
 
 Judge inference is intentionally excluded from summarization cost. See [`research/judge-model-selection-2026-08-05.md`](./research/judge-model-selection-2026-08-05.md) for the measured high-versus-max Kimi preflight and projected judge spend.
 
+### Human calibration gate
+
+Before inspecting any candidate summaries or judge scores, a human reviewer reads each of the 15 linked papers in [`corpus/calibration-15.json`](./corpus/calibration-15.json), records the central question, main contribution, strongest results, limitations, and qualification risks, then changes `reviewStatus` to `human-reviewed`. `pnpm calibration:check` must report 15/15 before the benchmark is described as human-calibrated. Machine-generated checklists do not satisfy this gate; Kimi K3 and GLM 5.2 never receive these held-out answers in their prompts.
+
 ### Run it
 
 ```bash
