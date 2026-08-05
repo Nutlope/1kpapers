@@ -85,13 +85,9 @@ class PermanentDownloadError extends Error {}
 
 export function chunkText(text: string) {
   if (!text.length) return [];
-  const chunkSize = Math.min(
-    MAX_CHUNK_CHARACTERS,
-    Math.ceil(text.length / 4),
-  );
   const chunks: string[] = [];
-  for (let offset = 0; offset < text.length; offset += chunkSize) {
-    chunks.push(text.slice(offset, offset + chunkSize));
+  for (let offset = 0; offset < text.length; offset += MAX_CHUNK_CHARACTERS) {
+    chunks.push(text.slice(offset, offset + MAX_CHUNK_CHARACTERS));
   }
   return chunks;
 }

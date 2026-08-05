@@ -28,7 +28,7 @@ const allSources = JSON.parse(await readFile(sourceFile, "utf8")) as Source[];
 const sources = selectedSourceIds
   ? allSources.filter((source) => selectedSourceIds.includes(source.id))
   : allSources;
-const methodologyVersion = 10;
+const methodologyVersion = 11;
 const documentTimeoutMs = positiveInteger(
   process.env.BENCHMARK_DOCUMENT_TIMEOUT_MS ?? "180000",
   "BENCHMARK_DOCUMENT_TIMEOUT_MS",

@@ -2,7 +2,7 @@
 
 What does it cost to summarize the research that defined a year of AI—and which model does it most accurately?
 
-This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, factual coverage, reliability, and latency. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs) and mirrors the summarization pipeline in [SmartPDFs PR #8](https://github.com/Nutlope/smartpdfs/pull/8).
+This open benchmark freezes 1,000 public AI papers from August 4, 2025 through August 4, 2026, summarizes them with current language models, and measures inference cost, factual coverage, reliability, and latency. It was inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs), but it is a standalone benchmark rather than a production-app replica.
 
 ## Frozen 1,000-paper corpus
 
@@ -103,6 +103,8 @@ pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judge
 ```
 
 The benchmark requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request, enforces a 90-second request timeout, and aborts the complete paper after 180 seconds. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report. These values and contracts are fingerprinted into the run metadata.
+
+Text is split only when it exceeds 50,000 characters. Short papers therefore need one chunk-summary call plus the final reduce call rather than an artificial four-way fan-out; every model still receives identical extracted text and chunk boundaries.
 
 ## Existing cost baseline
 
