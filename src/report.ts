@@ -28,6 +28,7 @@ const lines = [
   `Run: \`${results.runId ?? "legacy"}\`; methodology version: ${results.methodologyVersion}.`,
   "",
   "Costs are standard synchronous language-model inference only. PDFs are downloaded and text is extracted locally; judge inference, storage, networking, and observability are excluded.",
+  "A timed-out request that returns no provider usage is recorded as a failure with unknown billing and contributes no unverifiable token cost to the table.",
   "",
   "## Model totals",
   "",

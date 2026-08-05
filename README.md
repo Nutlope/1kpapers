@@ -128,3 +128,5 @@ See [RESULTS.md](./RESULTS.md) for the original per-PDF results, failures, parti
 Included: every chunk-summary call and the final reduce call.
 
 Excluded: PDF download, local text extraction, storage, observability, network transfer, judge inference, and developer time. The accurate wording is **“LLM inference cost to summarize extracted PDF text.”**
+
+If a timed-out provider request returns no usage metadata, the benchmark records its billing as unknown and does not invent a zero-token charge. Reported totals therefore remain provider-usage-accounted costs, with unknown timeout billing disclosed alongside completion failures.
