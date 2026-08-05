@@ -93,14 +93,14 @@ pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-pr
 pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
 pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
 
-BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark -- \
+BENCHMARK_TIMEOUT_MS=300000 BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark -- \
   --source-file=corpus/sources-1000.json \
   --models=deepseek-ai/DeepSeek-V4-Flash-0731 \
   --document-concurrency=4 \
-  --run-id=full-1000-deepseek-v11
+  --run-id=full-1000-deepseek-offline-v11
 ```
 
-The five-model pilot requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`; the DeepSeek-only full run requires `TOGETHER_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The strict pilot aborts the complete paper after 180 seconds; the offline full run raises that document deadline to 15 minutes and processes four papers concurrently. Both settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
+The five-model pilot requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`; the DeepSeek-only full run requires `TOGETHER_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The strict pilot aborts the complete paper after 180 seconds; the offline full run raises individual requests to five minutes, the complete-document deadline to 15 minutes, and processes four papers concurrently. Both settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
 
 Text is split only when it exceeds 50,000 characters. Short papers therefore need one chunk-summary call plus the final reduce call rather than an artificial four-way fan-out; every model still receives identical extracted text and chunk boundaries.
 
