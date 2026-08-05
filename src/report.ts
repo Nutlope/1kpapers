@@ -1,99 +1,131 @@
 import { readFile, writeFile } from "node:fs/promises";
 import type { BenchmarkRow } from "./types.js";
 
-const results = JSON.parse(
-  await readFile("results/latest.json", "utf8"),
-) as { generatedAt: string; rows: BenchmarkRow[] };
-const ok = results.rows.filter((row) => row.status === "ok");
+const args = Object.fromEntries(
+  process.argv.slice(2).map((arg) => {
+    const [key, value = "true"] = arg.replace(/^--/, "").split("=");
+    return [key, value];
+  }),
+);
+const inputPath = args.input ?? "results/latest.json";
+const outputPath = args.output ?? "RESULTS.md";
+const title = args.title ?? "Paper summarization benchmark";
+const results = JSON.parse(await readFile(inputPath, "utf8")) as {
+  generatedAt: string;
+  methodologyVersion: number;
+  runId?: string;
+  rows: BenchmarkRow[];
+};
 const models = [
   ...new Map(results.rows.map((row) => [row.model.id, row.model])).values(),
 ];
-const factFixtures = JSON.parse(
-  await readFile(new URL("../facts.json", import.meta.url), "utf8"),
-) as Record<string, string[][]>;
 
 const lines = [
-  "# SmartPDFs summarization benchmark",
+  `# ${title}`,
   "",
   `Generated: ${results.generatedAt}`,
   "",
-  "Costs are language-model inference only. PDFs are downloaded and text is extracted locally; storage, networking, and observability are excluded.",
+  `Run: \`${results.runId ?? "legacy"}\`; methodology version: ${results.methodologyVersion}.`,
   "",
-  "## Results by PDF",
+  "Costs are standard synchronous language-model inference only. PDFs are downloaded and text is extracted locally; judge inference, storage, networking, and observability are excluded.",
   "",
-  `| PDF | Pages | ${models.map((model) => `${model.label} cost / time / facts`).join(" | ")} |`,
-  `| --- | ---: | ${models.map(() => "---:").join(" | ")} |`,
+  "## Model totals",
+  "",
+  "| Model | Completed | Cost | Cost / attempted paper | Input tokens | Output tokens | p50 latency | p95 latency | Retries | Failures |",
+  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
 ];
 
-for (const source of [...new Set(results.rows.map((row) => row.source.id))]) {
-  const sourceRows = results.rows.filter((row) => row.source.id === source);
-  const first = sourceRows[0]!;
-  lines.push(
-    `| [${first.source.title}](${first.source.landingPage}) | ${first.source.pages} | ${models
-      .map((model) => {
-        const row = sourceRows.find((candidate) => candidate.model.id === model.id);
-        if (!row) return "—";
-        if (row.status !== "ok") {
-          return `failed / ${(row.totalLatencyMs / 1000).toFixed(1)}s / —`;
-        }
-        return `$${row.totalCostUsd.toFixed(6)} / ${(row.totalLatencyMs / 1000).toFixed(1)}s / ${Math.round(factualCoverage(row) * 100)}%`;
-      })
-      .join(" | ")} |`,
-  );
-}
-
-lines.push("", "## Model totals", "", "| Model | Completed | Input tokens | Output tokens | Successful-run cost | Median PDF cost | Median time | Median facts | Under 30s |", "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
 for (const model of models) {
-  const rows = ok.filter((row) => row.model.id === model.id);
   const attempted = results.rows.filter((row) => row.model.id === model.id);
+  const completed = attempted.filter((row) => row.status === "ok");
+  const latencies = completed.map((row) => row.totalLatencyMs);
   lines.push(
-    `| ${model.label} | ${rows.length}/${attempted.length} | ${sum(rows, "totalInputTokens").toLocaleString("en-US")} | ${sum(rows, "totalOutputTokens").toLocaleString("en-US")} | $${sum(rows, "totalCostUsd").toFixed(6)} | $${median(rows.map((row) => row.totalCostUsd)).toFixed(6)} | ${(median(rows.map((row) => row.totalLatencyMs)) / 1000).toFixed(1)}s | ${Math.round(median(rows.map(factualCoverage)) * 100)}% | ${rows.filter((row) => row.withinThirtySeconds).length}/${rows.length} |`,
+    `| ${model.label} | ${completed.length}/${attempted.length} (${percent(completed.length, attempted.length)}) | $${sum(attempted, "totalCostUsd").toFixed(6)} | $${(sum(attempted, "totalCostUsd") / Math.max(1, attempted.length)).toFixed(6)} | ${sum(attempted, "totalInputTokens").toLocaleString("en-US")} | ${sum(attempted, "totalOutputTokens").toLocaleString("en-US")} | ${seconds(percentile(latencies, 0.5))} | ${seconds(percentile(latencies, 0.95))} | ${retryCount(attempted)} | ${attempted.length - completed.length} |`,
   );
 }
 
-const failed = results.rows.filter((row) => row.status === "failed");
-lines.push("", "## Failures", "", "| Model | PDF | Elapsed | Measured partial cost | Error |", "| --- | --- | ---: | ---: | --- |");
-for (const row of failed) {
+const failures = results.rows.filter((row) => row.status === "failed");
+lines.push(
+  "",
+  "## Failure categories",
+  "",
+  "| Category | Count |",
+  "| --- | ---: |",
+);
+const categories = Object.entries(Object.groupBy(failures, (row) => categorize(row.error)));
+if (!categories.length) lines.push("| None | 0 |");
+for (const [category, rows] of categories) lines.push(`| ${category} | ${rows?.length ?? 0} |`);
+
+if (args.details === "true") {
   lines.push(
-    `| ${row.model.label} | ${row.source.title} | ${(row.totalLatencyMs / 1000).toFixed(1)}s | $${row.totalCostUsd.toFixed(6)} | ${escapeCell(row.error ?? "unknown error")} |`,
+    "",
+    "## Per-paper results",
+    "",
+    "| Model | Paper | Status | Cost | Latency | Requests | Retries | Error |",
+    "| --- | --- | --- | ---: | ---: | ---: | ---: | --- |",
   );
+  for (const row of results.rows) {
+    lines.push(
+      `| ${row.model.label} | [${escapeCell(row.source.title)}](${row.source.landingPage}) | ${row.status} | $${row.totalCostUsd.toFixed(6)} | ${seconds(row.totalLatencyMs)} | ${row.requests.length} | ${retryCount([row])} | ${escapeCell(row.error ?? "—")} |`,
+    );
+  }
 }
 
 lines.push(
   "",
   "## Method",
   "",
-  "- Uses the same PDF.js extraction, four-or-more chunks (50,000-character maximum), prompt, chunk fan-out, and final reduce pass as Nutlope/SmartPDFs PR #8. Chunk calls allow 1,600 output tokens; the stricter final reduce allows 1,000.",
-  "- Extended reasoning is disabled. Each model sees the same extracted text and English prompt.",
-  "- Token counts come from each provider response. Prices are the configured standard API prices per one million tokens; cached-input discounts are not assumed.",
-  "- The main matrix used a 60-second per-call harness timeout; the Kimi representative run used 120 seconds. `Under 30s` is end-to-end wall time, while SmartPDFs enforces its 30-second limit on each individual route call.",
-  "- PDFs and full model outputs are gitignored. This report, source URLs, hashes, document sizes, aggregate usage, cost, and latency are publishable.",
+  "- Every model receives the same locally extracted text, chunk boundaries, prompt, and final reduce pass.",
+  "- Extended reasoning is disabled. Provider-reported token usage and the frozen standard synchronous price produce each cost.",
+  "- Transient timeouts, rate limits, and server errors are retried with bounded exponential backoff; retry counts remain visible.",
+  "- Completion rate, quality, cost, and latency are separate axes. Judge scores and judge cost are reported separately.",
   "",
 );
 
-await writeFile("RESULTS.md", `${lines.join("\n")}\n`);
-console.log("Wrote RESULTS.md");
+await writeFile(outputPath, `${lines.join("\n")}\n`);
+console.log(`Wrote ${outputPath}`);
 
-function sum(rows: BenchmarkRow[], key: "totalInputTokens" | "totalOutputTokens" | "totalCostUsd") {
+function sum(
+  rows: BenchmarkRow[],
+  key: "totalInputTokens" | "totalOutputTokens" | "totalCostUsd",
+) {
   return rows.reduce((total, row) => total + row[key], 0);
 }
 
-function median(values: number[]) {
+function percentile(values: number[], quantile: number) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle]! : (sorted[middle - 1]! + sorted[middle]!) / 2;
+  return sorted[Math.ceil(quantile * sorted.length) - 1] ?? 0;
 }
 
-function factualCoverage(row: BenchmarkRow) {
-  const groups = factFixtures[row.source.id] ?? [];
-  if (!groups.length || !row.finalSummary) return 0;
-  const summary = `${row.finalTitle ?? ""} ${row.finalSummary}`.toLocaleLowerCase();
-  return (
-    groups.filter((alternatives) =>
-      alternatives.some((fact) => summary.includes(fact.toLocaleLowerCase())),
-    ).length / groups.length
+function retryCount(rows: BenchmarkRow[]) {
+  return rows.reduce(
+    (total, row) =>
+      total +
+      row.requests.reduce(
+        (requestTotal, request) =>
+          requestTotal + Math.max(0, (request.attempts ?? 1) - 1),
+        0,
+      ),
+    0,
   );
+}
+
+function categorize(error: string | null) {
+  const value = error?.toLowerCase() ?? "";
+  if (value.includes("timeout") || value.includes("timed out")) return "timeout";
+  if (value.includes("429") || value.includes("rate limit")) return "rate limit";
+  if (value.includes("schema") || value.includes("json")) return "malformed output";
+  if (/\(5\d\d\)/.test(value)) return "provider server error";
+  return "other";
+}
+
+function percent(numerator: number, denominator: number) {
+  return denominator ? `${((numerator / denominator) * 100).toFixed(1)}%` : "0.0%";
+}
+
+function seconds(milliseconds: number) {
+  return `${(milliseconds / 1_000).toFixed(1)}s`;
 }
 
 function escapeCell(value: string) {

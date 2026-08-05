@@ -1,0 +1,57 @@
+{
+  "retrievedAt": "2026-08-05",
+  "pricingMode": "standard-synchronous",
+  "models": [
+    {
+      "id": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "provider": "Together AI",
+      "contextWindowTokens": 1048576,
+      "inputUsdPerMillion": 0.14,
+      "cachedInputUsdPerMillion": 0.03,
+      "outputUsdPerMillion": 0.28,
+      "source": "https://api.together.xyz/v1/models"
+    },
+    {
+      "id": "Qwen/Qwen3.5-9B",
+      "provider": "Together AI",
+      "contextWindowTokens": 262144,
+      "inputUsdPerMillion": 0.17,
+      "cachedInputUsdPerMillion": null,
+      "outputUsdPerMillion": 0.25,
+      "source": "https://api.together.xyz/v1/models"
+    },
+    {
+      "id": "MiniMaxAI/MiniMax-M3",
+      "provider": "Together AI",
+      "contextWindowTokens": 524288,
+      "inputUsdPerMillion": 0.3,
+      "cachedInputUsdPerMillion": 0.06,
+      "outputUsdPerMillion": 1.2,
+      "source": "https://api.together.xyz/v1/models"
+    },
+    {
+      "id": "claude-haiku-4-5-20251001",
+      "provider": "Anthropic",
+      "contextWindowTokens": 200000,
+      "inputUsdPerMillion": 1,
+      "cachedInputUsdPerMillion": 0.1,
+      "outputUsdPerMillion": 5,
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "provider": "OpenAI",
+      "contextWindowTokens": 1050000,
+      "inputUsdPerMillion": 0.2,
+      "cachedInputUsdPerMillion": 0.02,
+      "outputUsdPerMillion": 1.2,
+      "source": "https://developers.openai.com/api/docs/pricing"
+    }
+  ],
+  "notes": [
+    "Standard synchronous uncached rates are used for the benchmark cost calculation.",
+    "The OpenAI live pricing table supersedes the stale individual GPT-5.6 Luna model-card price.",
+    "Together model availability, context, and prices were verified against its authenticated models API on this date.",
+    "None of the three Together summarizer IDs appeared in the deprecation history retrieved on this date."
+  ]
+}

@@ -2,23 +2,30 @@ import { performance } from "node:perf_hooks";
 import { buildSummaryPrompt, summarySchema } from "./prompts.js";
 import type { Inference, ModelConfig } from "./types.js";
 
-const TIMEOUT_MS = Number(process.env.BENCHMARK_TIMEOUT_MS ?? 120_000);
+const TIMEOUT_MS = Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000);
+const MAX_ATTEMPTS = Number(process.env.BENCHMARK_MAX_ATTEMPTS ?? 2);
+const RETRY_BASE_MS = Number(process.env.BENCHMARK_RETRY_BASE_MS ?? 1_000);
 
 export async function summarize(
   model: ModelConfig,
   text: string,
   stage: "chunk" | "reduce",
+  signal?: AbortSignal,
 ): Promise<Inference> {
-  if (model.provider === "anthropic")
-    return summarizeAnthropic(model, text, stage);
-  return summarizeOpenAICompatible(model, text, stage);
+  const { value, attempts } = await withRetry(() =>
+    model.provider === "anthropic"
+      ? summarizeAnthropic(model, text, stage, signal)
+      : summarizeOpenAICompatible(model, text, stage, signal),
+  );
+  return { ...value, attempts };
 }
 
 async function summarizeOpenAICompatible(
   model: ModelConfig,
   text: string,
   stage: "chunk" | "reduce",
-): Promise<Inference> {
+  signal?: AbortSignal,
+): Promise<Omit<Inference, "attempts">> {
   const isTogether = model.provider === "together";
   const key = process.env[isTogether ? "TOGETHER_API_KEY" : "OPENAI_API_KEY"];
   if (!key) throw new Error(`Missing ${isTogether ? "TOGETHER" : "OPENAI"}_API_KEY`);
@@ -33,12 +40,15 @@ async function summarizeOpenAICompatible(
     ],
   };
   if (isTogether) {
-    payload.max_tokens = stage === "reduce" ? 1_000 : 1_600;
-    payload.response_format = { type: "json_object" };
+    payload.max_tokens = stage === "reduce" ? 1_600 : 2_400;
+    payload.response_format = {
+      type: "json_schema",
+      json_schema: { name: "summary", schema: summarySchema },
+    };
     payload.reasoning = { enabled: false };
     payload.temperature = 0;
   } else {
-    payload.max_completion_tokens = stage === "reduce" ? 1_000 : 1_600;
+    payload.max_completion_tokens = stage === "reduce" ? 1_600 : 2_400;
     payload.response_format = {
       type: "json_schema",
       json_schema: { name: "summary", strict: true, schema: summarySchema },
@@ -54,12 +64,14 @@ async function summarizeOpenAICompatible(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: requestSignal(signal),
   });
-  const body = (await response.json()) as Record<string, any>;
+  const body = await responseBody(response, model.id);
   if (!response.ok) {
-    throw new Error(
+    throw new ProviderError(
       `${model.id} failed (${response.status}): ${body.error?.message ?? "unknown error"}`,
+      isRetryableStatus(response.status),
+      retryAfterMs(response.headers.get("retry-after")),
     );
   }
   return parseInference({
@@ -75,6 +87,7 @@ async function summarizeAnthropic(
   model: ModelConfig,
   text: string,
   stage: "chunk" | "reduce",
+  signal?: AbortSignal,
 ) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error("Missing ANTHROPIC_API_KEY");
@@ -90,15 +103,17 @@ async function summarizeAnthropic(
       model: model.id,
       system: buildSummaryPrompt("english", stage),
       messages: [{ role: "user", content: text }],
-      max_tokens: stage === "reduce" ? 1_000 : 1_600,
+      max_tokens: stage === "reduce" ? 1_600 : 2_400,
       temperature: 0,
     }),
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: requestSignal(signal),
   });
-  const body = (await response.json()) as Record<string, any>;
+  const body = await responseBody(response, model.id);
   if (!response.ok) {
-    throw new Error(
+    throw new ProviderError(
       `${model.id} failed (${response.status}): ${body.error?.message ?? "unknown error"}`,
+      isRetryableStatus(response.status),
+      retryAfterMs(response.headers.get("retry-after")),
     );
   }
   const content = body.content
@@ -120,10 +135,17 @@ function parseInference(input: {
   outputTokens: unknown;
   finishReason: unknown;
   latencyMs: number;
-}): Inference {
+}): Omit<Inference, "attempts"> {
   if (typeof input.content !== "string") throw new Error("Model returned no text");
   const cleaned = input.content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  const parsed = JSON.parse(cleaned) as { title?: unknown; summary?: unknown };
+  let parsed: { title?: unknown; summary?: unknown };
+  try {
+    parsed = JSON.parse(cleaned) as { title?: unknown; summary?: unknown };
+  } catch {
+    throw new Error(
+      `Model returned invalid JSON (finish=${typeof input.finishReason === "string" ? input.finishReason : "unknown"}, content_length=${cleaned.length})`,
+    );
+  }
   if (
     typeof parsed.title !== "string" ||
     !parsed.title ||
@@ -144,4 +166,77 @@ function parseInference(input: {
     finishReason:
       typeof input.finishReason === "string" ? input.finishReason : null,
   };
+}
+
+export class ProviderError extends Error {
+  constructor(
+    message: string,
+    readonly retryable: boolean,
+    readonly retryAfterMs: number | null,
+  ) {
+    super(message);
+  }
+}
+
+export async function withRetry<T>(
+  operation: () => Promise<T>,
+  options: { maxAttempts?: number; retryBaseMs?: number } = {},
+) {
+  const maxAttempts = options.maxAttempts ?? MAX_ATTEMPTS;
+  const retryBaseMs = options.retryBaseMs ?? RETRY_BASE_MS;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return { value: await operation(), attempts: attempt };
+    } catch (error) {
+      lastError = error;
+      if (attempt === maxAttempts || !isRetryableError(error)) {
+        if (error instanceof Error)
+          Object.assign(error, { attempts: attempt });
+        throw error;
+      }
+      const providerDelay = error instanceof ProviderError ? error.retryAfterMs : null;
+      const delayMs = providerDelay ?? retryBaseMs * 2 ** (attempt - 1);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+  throw lastError;
+}
+
+function isRetryableError(error: unknown) {
+  if (error instanceof ProviderError) return error.retryable;
+  if (error instanceof TypeError) return true;
+  if (error instanceof DOMException)
+    return error.name === "TimeoutError" || error.name === "AbortError";
+  return false;
+}
+
+export function isRetryableStatus(status: number) {
+  return status === 408 || status === 409 || status === 429 || status >= 500;
+}
+
+export function retryAfterMs(value: string | null) {
+  if (!value) return null;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1_000);
+  const date = Date.parse(value);
+  return Number.isFinite(date) ? Math.max(0, date - Date.now()) : null;
+}
+
+async function responseBody(response: Response, modelId: string) {
+  const text = await response.text();
+  try {
+    return JSON.parse(text) as Record<string, any>;
+  } catch {
+    throw new ProviderError(
+      `${modelId} returned non-JSON HTTP ${response.status}`,
+      isRetryableStatus(response.status),
+      retryAfterMs(response.headers.get("retry-after")),
+    );
+  }
+}
+
+function requestSignal(external?: AbortSignal) {
+  const timeout = AbortSignal.timeout(TIMEOUT_MS);
+  return external ? AbortSignal.any([external, timeout]) : timeout;
 }

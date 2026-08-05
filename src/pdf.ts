@@ -14,13 +14,7 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
   try {
     bytes = await readFile(pdfPath);
   } catch {
-    const response = await fetch(source.pdfUrl, {
-      headers: { "User-Agent": "smartpdfs-bench/0.1 (reproducible research)" },
-      redirect: "follow",
-    });
-    if (!response.ok) {
-      throw new Error(`Download failed (${response.status}) for ${source.pdfUrl}`);
-    }
+    const response = await fetchPdf(source.pdfUrl);
     bytes = new Uint8Array(await response.arrayBuffer());
     if (new TextDecoder().decode(bytes.slice(0, 5)) !== "%PDF-") {
       throw new Error(`Downloaded file is not a PDF: ${source.pdfUrl}`);
@@ -61,6 +55,33 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     chunks: chunkText(fullText),
   };
 }
+
+async function fetchPdf(url: string) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: { "User-Agent": "year-in-ai-papers/0.1 (reproducible research)" },
+        redirect: "follow",
+        signal: AbortSignal.timeout(60_000),
+      });
+      if (response.ok) return response;
+      if (response.status !== 429 && response.status < 500)
+        throw new PermanentDownloadError(
+          `Download failed (${response.status}) for ${url}`,
+        );
+      lastError = new Error(`Transient download failure (${response.status}) for ${url}`);
+    } catch (error) {
+      if (error instanceof PermanentDownloadError) throw error;
+      lastError = error;
+    }
+    if (attempt < 3)
+      await new Promise((resolve) => setTimeout(resolve, 1_000 * 2 ** (attempt - 1)));
+  }
+  throw lastError;
+}
+
+class PermanentDownloadError extends Error {}
 
 export function chunkText(text: string) {
   if (!text.length) return [];

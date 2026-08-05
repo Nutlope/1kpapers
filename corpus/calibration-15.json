@@ -1,0 +1,311 @@
+[
+  {
+    "id": "arxiv-2509.08721",
+    "title": "Sharing is Caring: Efficient LM Post-Training with Collective RL Experience Sharing",
+    "landingPage": "https://arxiv.org/abs/2509.08721v1",
+    "officialLab": null,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ],
+    "pages": 14,
+    "characters": 45602,
+    "sha256": "5e29343ca7bde77d0e9e56b36ab7aa6c36b709eaae83c02f7c4a90ab3c5e6194",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2509.26507",
+    "title": "The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain",
+    "landingPage": "https://arxiv.org/abs/2509.26507v1",
+    "officialLab": null,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ],
+    "pages": 62,
+    "characters": 259496,
+    "sha256": "ce51de9927a9350b58d97d76a51c1be3b511c7b36d743abacdb8cb31aa6cddd8",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2606.09967",
+    "title": "ABot-Earth 0.5: Generative 3D Earth Model",
+    "landingPage": "https://arxiv.org/abs/2606.09967v1",
+    "officialLab": null,
+    "topicTags": [
+      "vision-multimodal-generation",
+      "robotics-embodied-ai",
+      "systems-efficiency"
+    ],
+    "pages": 17,
+    "characters": 54830,
+    "sha256": "b84d9f5ad231e381893d327a334536ad7637f41a53d84e0a0757783ef602c60e",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2606.30534",
+    "title": "Orca: The World is in Your Mind",
+    "landingPage": "https://arxiv.org/abs/2606.30534v3",
+    "officialLab": null,
+    "topicTags": [
+      "vision-multimodal-generation",
+      "robotics-embodied-ai"
+    ],
+    "pages": 40,
+    "characters": 131906,
+    "sha256": "05ced595d887da4984a367876384953359a7a02d124473c3e8aa7b15a154f05b",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2607.24653",
+    "title": "Kimi K3: Open Frontier Intelligence",
+    "landingPage": "https://arxiv.org/abs/2607.24653v1",
+    "officialLab": "Moonshot AI / Kimi",
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation",
+      "systems-efficiency"
+    ],
+    "pages": 47,
+    "characters": 191089,
+    "sha256": "936a7a3b655947b014ba96b8a790c3cdb6ea8b37eea514e4b7b52655e20af0f8",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2603.14473",
+    "title": "AI Can Learn Scientific Taste",
+    "landingPage": "https://arxiv.org/abs/2603.14473v2",
+    "officialLab": null,
+    "topicTags": [
+      "llms-agents-reasoning",
+      "science-medicine"
+    ],
+    "pages": 46,
+    "characters": 163402,
+    "sha256": "eae6a25ab1874ea471863fbfc32c1bee87a9cd51eca11384044ba38a593e7dd3",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2512.13687",
+    "title": "Towards Scalable Pre-training of Visual Tokenizers for Generation",
+    "landingPage": "https://arxiv.org/abs/2512.13687v2",
+    "officialLab": "MiniMax",
+    "topicTags": [
+      "vision-multimodal-generation"
+    ],
+    "pages": 16,
+    "characters": 51026,
+    "sha256": "14cd6b664ab4cd9c72238522b82fa294de9f4c6cd729bebc5a5bbb776ee2b611",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2606.13473",
+    "title": "MaxProof: Scaling Mathematical Proof with Generative-Verifier RL and Population-Level Test-Time Scaling",
+    "landingPage": "https://arxiv.org/abs/2606.13473v1",
+    "officialLab": "MiniMax",
+    "topicTags": [],
+    "pages": 71,
+    "characters": 179968,
+    "sha256": "0f852fefdb079af8faf1d8281bd1f7970f5cf5af5bf6a360114538c9209760b7",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2601.20552",
+    "title": "DeepSeek-OCR 2: Visual Causal Flow",
+    "landingPage": "https://arxiv.org/abs/2601.20552v1",
+    "officialLab": "DeepSeek",
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ],
+    "pages": 15,
+    "characters": 42065,
+    "sha256": "7c8aceb1dbe0845b9e1a0c5afd761925913662e2e2c4c79b482198f3e5e1a96b",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2607.05147",
+    "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+    "landingPage": "https://arxiv.org/abs/2607.05147v1",
+    "officialLab": "DeepSeek",
+    "topicTags": [
+      "llms-agents-reasoning",
+      "systems-efficiency"
+    ],
+    "pages": 33,
+    "characters": 105328,
+    "sha256": "522036b0cc16ad4678bd7c278dd0a0ab4da31170af7b97c2041067cc09a8289a",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2603.05706",
+    "title": "Reasoning Models Struggle to Control their Chains of Thought",
+    "landingPage": "https://arxiv.org/abs/2603.05706v1",
+    "officialLab": "OpenAI",
+    "topicTags": [
+      "llms-agents-reasoning"
+    ],
+    "pages": 40,
+    "characters": 141950,
+    "sha256": "0739b5d4b8da2d1b9956216e7111ceaa1625d232ec137cc6cd3cf8658eaafb0f",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2602.02537",
+    "title": "WorldVQA: Measuring Atomic World Knowledge in Multimodal Large Language Models",
+    "landingPage": "https://arxiv.org/abs/2602.02537v1",
+    "officialLab": "Moonshot AI / Kimi",
+    "topicTags": [
+      "llms-agents-reasoning",
+      "vision-multimodal-generation"
+    ],
+    "pages": 17,
+    "characters": 44145,
+    "sha256": "7e835de2fbe3073a82d8d9e20b710e2526f08dfffc3d3d8b7350c777f476ab2e",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2601.04603",
+    "title": "Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks",
+    "landingPage": "https://arxiv.org/abs/2601.04603v1",
+    "officialLab": "Anthropic",
+    "topicTags": [
+      "systems-efficiency"
+    ],
+    "pages": 17,
+    "characters": 68243,
+    "sha256": "ba8ec6570a41c42554ac89b9869020a2356cead5bdcf2618fc9c6208a89afdb5",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2601.19062",
+    "title": "Who's in Charge? Disempowerment Patterns in Real-World LLM Usage",
+    "landingPage": "https://arxiv.org/abs/2601.19062v1",
+    "officialLab": "Anthropic",
+    "topicTags": [
+      "llms-agents-reasoning"
+    ],
+    "pages": 73,
+    "characters": 372547,
+    "sha256": "0604f081461c8ce8370b5aeb6848204ff084ec075aebc239b8906e0e39f6607b",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  },
+  {
+    "id": "arxiv-2603.10521",
+    "title": "IH-Challenge: A Training Dataset to Improve Instruction Hierarchy on Frontier LLMs",
+    "landingPage": "https://arxiv.org/abs/2603.10521v1",
+    "officialLab": "OpenAI",
+    "topicTags": [
+      "llms-agents-reasoning"
+    ],
+    "pages": 25,
+    "characters": 65568,
+    "sha256": "ab0c010dd842ba0ae15919f23291a7fd76609629fdc4597ffe6321f21d64a57a",
+    "reviewStatus": "pending-human",
+    "checklist": {
+      "centralQuestion": "",
+      "mainContribution": "",
+      "strongestResults": [],
+      "limitations": [],
+      "qualificationRisks": []
+    }
+  }
+]

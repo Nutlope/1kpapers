@@ -3,8 +3,8 @@ export const summarySchema = {
   additionalProperties: false,
   required: ["title", "summary"],
   properties: {
-    title: { type: "string", minLength: 1 },
-    summary: { type: "string", minLength: 1 },
+    title: { type: "string", minLength: 1, maxLength: 300 },
+    summary: { type: "string", minLength: 1, maxLength: 5_000 },
   },
 } as const;
 

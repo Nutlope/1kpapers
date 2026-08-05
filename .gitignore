@@ -4,3 +4,6 @@ node_modules/
 results/raw/
 results/latest.json
 results/checkpoint.json
+results/runs/
+results/judges/
+corpus/*.checkpoint.json

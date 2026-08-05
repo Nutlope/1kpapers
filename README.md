@@ -69,6 +69,40 @@ No 1,000-paper model run has been published yet. The sequence is deliberately ga
 
 Quality and operational reliability are reported separately. A model does not receive a good quality score for malformed or missing output, and a fast response does not imply a faithful summary. Judge inference cost is reported separately from summary inference cost.
 
+### Frozen summarizer matrix
+
+The pilot uses standard synchronous, uncached pricing retrieved on August 5, 2026:
+
+| Model | Provider | Input / output per 1M tokens |
+| --- | --- | ---: |
+| DeepSeek V4 Flash | Together AI | $0.14 / $0.28 |
+| Qwen3.5 9B | Together AI | $0.17 / $0.25 |
+| MiniMax M3 | Together AI | $0.30 / $1.20 |
+| GPT-5.6 Luna | OpenAI | $0.20 / $1.20 |
+| Claude Haiku 4.5 | Anthropic | $1.00 / $5.00 |
+
+The dated source snapshot is committed at [`research/model-pricing-snapshot-2026-08-05.json`](./research/model-pricing-snapshot-2026-08-05.json). Together requests disable reasoning and use strict JSON Schema. Claude Haiku uses the standard synchronous Messages API, not Batch.
+
+### Blind quality judging
+
+Kimi K3 is the primary blind judge at high reasoning effort. GLM 5.2 independently scores the entire pilot to measure agreement; disagreements of 20 points or more require human review. Candidate identities, providers, prices, and latency are hidden from both judges. The full run uses a disclosed stratified GLM audit instead of needlessly paying to double-score every row.
+
+Judge inputs use a conservative three-characters-per-token context estimate. A paper that would leave insufficient response space is recorded as a context skip rather than truncated; Kimi and human review cover any row that exceeds GLM's lower public context limit.
+
+Judge inference is intentionally excluded from summarization cost. See [`research/judge-model-selection-2026-08-05.md`](./research/judge-model-selection-2026-08-05.md) for the measured high-versus-max Kimi preflight and projected judge spend.
+
+### Run it
+
+```bash
+pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-profile.json
+pnpm benchmark -- --source-file=corpus/pilot-50.json --run-id=pilot
+pnpm report -- --input=results/runs/pilot/result.json --output=PILOT.md --details=true
+pnpm judge -- --input=results/runs/pilot/result.json --calibration=corpus/calibration-15.json --run-id=pilot-judges
+pnpm quality -- --input=results/runs/pilot/result.json --judgments=results/judges/pilot-judges/result.json --calibration=corpus/calibration-15.json
+```
+
+The benchmark requires `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request, enforces a 90-second request timeout, and aborts the complete paper after 180 seconds. These values are fingerprinted into the run metadata.
+
 ## Existing cost baseline
 
 The earlier six-document SmartPDFs benchmark remains a useful pipeline baseline, but it is not the 1,000-paper result. Across the four PDFs that all compared models completed—333 pages spanning a paper, presentation, and public-domain book:

@@ -30,6 +30,9 @@ export type ModelConfig = {
   provider: ProviderName;
   inputUsdPerMillion: number;
   outputUsdPerMillion: number;
+  contextWindowTokens: number;
+  pricingRetrievedAt: string;
+  pricingMode: "standard-synchronous";
   pricingSource: string;
 };
 
@@ -44,6 +47,7 @@ export type Inference = {
   usage: Usage;
   latencyMs: number;
   finishReason: string | null;
+  attempts: number;
 };
 
 export type RequestResult = Inference & {

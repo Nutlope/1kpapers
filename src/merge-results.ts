@@ -7,10 +7,13 @@ if (files.length < 2) {
 }
 
 const merged = new Map<string, BenchmarkRow>();
+const methodologyVersions: number[] = [];
 for (const file of files) {
   const result = JSON.parse(await readFile(file, "utf8")) as {
+    methodologyVersion?: number;
     rows: BenchmarkRow[];
   };
+  methodologyVersions.push(result.methodologyVersion ?? 1);
   for (const row of result.rows) {
     merged.set(`${row.model.id}\0${row.source.id}`, row);
   }
@@ -19,7 +22,8 @@ for (const file of files) {
 const generatedAt = new Date().toISOString();
 const result = {
   generatedAt,
-  methodologyVersion: 1,
+  methodologyVersion: Math.max(...methodologyVersions),
+  runId: `merged-${generatedAt.replaceAll(":", "-")}`,
   mergedFrom: files,
   rows: [...merged.values()],
 };
