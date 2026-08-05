@@ -80,7 +80,9 @@ const modelStats = models.map((model) => {
   );
   const completed = modelCanonical.filter((row) => row.status === "ok");
   const unresolved = modelCanonical.filter((row) => row.status !== "ok");
-  const latencies = completed.map((row) => row.totalLatencyMs);
+  const latencies = completed
+    .map((row) => row.totalLatencyMs)
+    .filter((latencyMs) => latencyMs > 0);
   const summaryWords = completed.map((row) => wordCount(row.finalSummary ?? ""));
   const totalCostUsd = sum(modelAttempts, "totalCostUsd");
   return {
@@ -100,6 +102,7 @@ const modelStats = models.map((model) => {
     normalizedFinals: completed.filter(
       (row) => row.requests.at(-1)?.normalized === true,
     ).length,
+    latencySamples: latencies.length,
     p50LatencyMs: percentile(latencies, 0.5),
     p95LatencyMs: percentile(latencies, 0.95),
     p50SummaryWords: percentile(summaryWords, 0.5),
@@ -185,18 +188,18 @@ const lines = [
   "",
   "Accounted cost includes provider-reported usage from failed attempts and targeted retries. Unknown billing for requests that returned no usage is not invented.",
   "",
-  "| Model | Completed | Accounted cost | Cost / completed paper | Relative cost | Input tokens | Output tokens | p50 latency | p95 latency | Requests | Retries |",
-  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+  "| Model | Completed | Accounted cost | Cost / completed paper | Relative cost | Input tokens | Output tokens | p50 latency | p95 latency | Latency samples | Requests | Retries |",
+  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
 ];
 for (const stats of modelStats) {
   lines.push(
-    `| ${stats.model.label} | ${stats.completed}/${stats.covered} | $${stats.totalCostUsd.toFixed(6)} | $${stats.costPerCompletedUsd.toFixed(6)} | ${(stats.totalCostUsd / cheapestCost).toFixed(2)}x | ${formatInteger(stats.inputTokens)} | ${formatInteger(stats.outputTokens)} | ${seconds(stats.p50LatencyMs)} | ${seconds(stats.p95LatencyMs)} | ${formatInteger(stats.requests)} | ${formatInteger(stats.retries)} |`,
+    `| ${stats.model.label} | ${stats.completed}/${stats.covered} | $${stats.totalCostUsd.toFixed(6)} | $${stats.costPerCompletedUsd.toFixed(6)} | ${(stats.totalCostUsd / cheapestCost).toFixed(2)}x | ${formatInteger(stats.inputTokens)} | ${formatInteger(stats.outputTokens)} | ${seconds(stats.p50LatencyMs)} | ${seconds(stats.p95LatencyMs)} | ${formatInteger(stats.latencySamples)} | ${formatInteger(stats.requests)} | ${formatInteger(stats.retries)} |`,
   );
 }
 
 lines.push(
   "",
-  "Per-paper latency is measured inside concurrent synchronous runs; it is not the time a sequential 1,000-paper job would take.",
+  "Per-paper latency is measured only for synchronous requests inside concurrent runs; batch rows have no fabricated latency and are excluded from these percentiles. This is not the time a sequential 1,000-paper job would take.",
   "",
   "## Corpus summarized",
   "",
@@ -348,6 +351,7 @@ function formatInteger(value: number) {
 }
 
 function seconds(milliseconds: number) {
+  if (!milliseconds) return "—";
   return `${(milliseconds / 1_000).toFixed(1)}s`;
 }
 

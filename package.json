@@ -18,6 +18,7 @@
     "merge": "tsx src/merge-results.ts",
     "report": "tsx src/report.ts",
     "test": "node --import tsx --test src/*.test.ts",
+    "together-batch": "tsx src/together-batch.ts",
     "typecheck": "tsc --noEmit"
   },
   "engines": {

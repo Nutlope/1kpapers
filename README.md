@@ -100,11 +100,20 @@ BENCHMARK_TIMEOUT_MS=600000 BENCHMARK_DOCUMENT_TIMEOUT_MS=900000 pnpm benchmark 
   --document-concurrency=8 \
   --single-pass=true \
   --run-id=full-1000-deepseek-single-pass-v11
+
+# Optional offline acceleration for DeepSeek: submit only rows not already
+# completed by the resumable synchronous checkpoint.
+pnpm together-batch -- \
+  --source-file=corpus/sources-1000.json \
+  --exclude-checkpoint=results/runs/full-1000-deepseek-single-pass-v11/checkpoint.json \
+  --run-id=full-1000-deepseek-batch-remaining-v11
 ```
 
 The five-model pilot and three-model full run require `TOGETHER_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`. Run each provider independently to use their separate capacity pools. Checkpoints are local and gitignored; rerunning the same command resumes completed model/paper rows. The default reliability policy allows two attempts per request and enforces a 90-second request timeout. The offline commands raise individual requests to ten minutes and the complete-document deadline to 15 minutes. Concurrency and timeout settings are fingerprinted in run metadata. This repository is a standalone benchmark, so final summaries use restricted Markdown rather than SmartPDFs' production HTML. Headings and alternate bullet markers are normalized; raw HTML and code fences are rejected. Output beyond 250 words or 3,000 characters is deterministically shortened at word boundaries and counted in the report.
 
 The full run uses one-pass summarization: the complete extracted PDF text is sent in one request whenever it fits a conservative half-context character budget. This avoids an unnecessary chunk-summary plus reduce fan-out for long-context models. Oversized documents automatically retain the 50,000-character map/reduce fallback, so no source text is silently truncated. Extracted text is cached locally by PDF hash and reused across model runs.
+
+The Together Batch runner uses the identical one-pass prompt and output contract, splits inputs below the API's file-size limit, records resumable job IDs, validates every downloaded response, and emits normal benchmark rows. Batch responses do not expose per-request latency, so the final report excludes them from latency percentiles rather than inventing timings; the synchronous DeepSeek sample remains the latency measurement.
 
 ## Existing cost baseline
 
