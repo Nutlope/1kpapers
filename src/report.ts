@@ -109,6 +109,21 @@ if (args.details === "true") {
   }
 }
 
+if (args.summaries === "true") {
+  lines.push("", "## Summaries", "");
+  for (const row of results.rows) {
+    if (row.status !== "ok" || !row.finalSummary?.trim()) continue;
+    lines.push(
+      `### [${row.source.title}](${row.source.landingPage})`,
+      "",
+      `${row.source.officialLab ?? "Independent research"} | ${row.source.publisher} | ${row.source.pages} pages`,
+      "",
+      row.finalSummary.trim(),
+      "",
+    );
+  }
+}
+
 lines.push(
   "",
   "## Method",

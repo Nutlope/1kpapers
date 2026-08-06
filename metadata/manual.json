@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-06T10:47:08Z",
+  "records": [
+    {
+      "collectionId": "openreview-parallel-kernel-bench",
+      "authors": [
+        "Willy Chan",
+        "Nathan Paek",
+        "Simon Guo",
+        "Simran Arora",
+        "Daniel Y. Fu"
+      ],
+      "publishedAt": "2026-06-23T00:00:00Z",
+      "venue": "ICML 2026",
+      "metadataEvidenceUrl": "https://www.together.ai/blog/parallelkernelbench",
+      "venueEvidenceUrl": "https://www.together.ai/blog/icml-2026",
+      "github": {
+        "repositoryUrl": "https://github.com/togethercomputer/ParallelKernelBench",
+        "githubStars": 47,
+        "githubStarsSnapshotAt": "2026-08-06T10:47:08Z",
+        "githubRepositoryEvidenceUrl": "https://github.com/togethercomputer/ParallelKernelBench#readme",
+        "repositoryConfidence": "verified"
+      }
+    }
+  ]
+}

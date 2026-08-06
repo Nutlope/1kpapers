@@ -1,0 +1,246 @@
+{
+  "generatedAt": "2026-08-06T10:48:22.690Z",
+  "paperCount": 1018,
+  "arxivPaperCount": 1017,
+  "nonArxivPaperCount": 1,
+  "coverage": {
+    "title": 1018,
+    "authors": 1018,
+    "abstract": 1017,
+    "publishedAt": 1018,
+    "topicTags": 986,
+    "summary": 1018,
+    "officialLab": 127,
+    "citationCount": 1017,
+    "githubRepository": 730,
+    "githubStars": 730,
+    "doi": 1017,
+    "venue": 808,
+    "license": 1017
+  },
+  "officialLabs": {
+    "Alibaba / Qwen": 21,
+    "Anthropic": 5,
+    "DeepSeek": 8,
+    "Google DeepMind / Google": 11,
+    "Meta AI / FAIR": 12,
+    "MiniMax": 4,
+    "Mistral AI": 2,
+    "Moonshot AI / Kimi": 6,
+    "NVIDIA": 27,
+    "OpenAI": 7,
+    "Together AI": 19,
+    "Z.ai / Zhipu / GLM": 5
+  },
+  "officialLabSources": {
+    "curated-seed": 30,
+    "huggingface-organization": 55,
+    "official-repository": 24,
+    "together-research": 18
+  },
+  "citationSources": {
+    "openalex": 3,
+    "semantic-scholar": 1014
+  },
+  "repositoryConfidence": {
+    "strong": 692,
+    "unknown": 288,
+    "verified": 38
+  },
+  "unresolved": {
+    "citations": [
+      "openreview-parallel-kernel-bench"
+    ],
+    "repositories": 288,
+    "officialLabs": 891,
+    "bibliographicIdentity": [
+      "openreview-parallel-kernel-bench"
+    ]
+  },
+  "reviewQueue": [
+    {
+      "collectionId": "arxiv-2508.07050",
+      "repositoryUrl": "https://github.com/8421BCD/ReasonRank"
+    },
+    {
+      "collectionId": "arxiv-2509.07980",
+      "repositoryUrl": "https://github.com/zhengkid/Parallel-R1"
+    },
+    {
+      "collectionId": "arxiv-2509.08721",
+      "repositoryUrl": "https://github.com/gensyn-ai/rl-swarm"
+    },
+    {
+      "collectionId": "arxiv-2509.15207",
+      "repositoryUrl": "https://github.com/Xuekai-Zhu/FlowRL"
+    },
+    {
+      "collectionId": "arxiv-2510.04849",
+      "repositoryUrl": "https://github.com/s-nlp/PsiloQA"
+    },
+    {
+      "collectionId": "arxiv-2510.18855",
+      "repositoryUrl": "https://github.com/inclusionAI/Ring-V2"
+    },
+    {
+      "collectionId": "arxiv-2510.19338",
+      "repositoryUrl": "https://github.com/inclusionAI/linghe"
+    },
+    {
+      "collectionId": "arxiv-2511.04962",
+      "repositoryUrl": "https://github.com/Tencent/digitalhuman"
+    },
+    {
+      "collectionId": "arxiv-2511.08217",
+      "repositoryUrl": "https://github.com/sb-ai-lab/MADD"
+    },
+    {
+      "collectionId": "arxiv-2511.15552",
+      "repositoryUrl": "https://github.com/MERA-Evaluation/MERA_MULTIMODAL"
+    },
+    {
+      "collectionId": "arxiv-2512.04987",
+      "repositoryUrl": "https://github.com/nex-agi/Nex-N1"
+    },
+    {
+      "collectionId": "arxiv-2512.14691",
+      "repositoryUrl": "https://github.com/Zefan-Cai/MMGR"
+    },
+    {
+      "collectionId": "arxiv-2512.15431",
+      "repositoryUrl": "https://github.com/stepfun-ai/gelab-zero"
+    },
+    {
+      "collectionId": "arxiv-2601.06789",
+      "repositoryUrl": "https://github.com/QuantaAlpha/MemGovern"
+    },
+    {
+      "collectionId": "arxiv-2601.08763",
+      "repositoryUrl": "https://github.com/zhiyuanhubj/Uniqueness-Aware-RL"
+    },
+    {
+      "collectionId": "arxiv-2601.09259",
+      "repositoryUrl": "https://github.com/exoskeletonzj/MAXS"
+    },
+    {
+      "collectionId": "arxiv-2601.09274",
+      "repositoryUrl": "https://github.com/exoskeletonzj/A3-Bench"
+    },
+    {
+      "collectionId": "arxiv-2601.09667",
+      "repositoryUrl": "https://github.com/zhiyuanhubj/MATTRL"
+    },
+    {
+      "collectionId": "arxiv-2602.03392",
+      "repositoryUrl": "https://github.com/agentscope-ai/Trinity-RFT"
+    },
+    {
+      "collectionId": "arxiv-2602.08099",
+      "repositoryUrl": "https://github.com/iyttor/VidVec"
+    },
+    {
+      "collectionId": "arxiv-2602.12099",
+      "repositoryUrl": "https://github.com/open-gigaai/giga-brain-0"
+    },
+    {
+      "collectionId": "arxiv-2602.12670",
+      "repositoryUrl": "https://github.com/benchflow-ai/skillsbench"
+    },
+    {
+      "collectionId": "arxiv-2602.22661",
+      "repositoryUrl": "https://github.com/ZHZisZZ/dllm"
+    },
+    {
+      "collectionId": "arxiv-2602.23152",
+      "repositoryUrl": "https://github.com/OpenRaiser/awesome-world-model-evolution"
+    },
+    {
+      "collectionId": "arxiv-2603.03241",
+      "repositoryUrl": "https://github.com/nssmd/UniG2U"
+    },
+    {
+      "collectionId": "arxiv-2603.16790",
+      "repositoryUrl": "https://github.com/CSJianYang/Industrial-Coder"
+    },
+    {
+      "collectionId": "arxiv-2603.16856",
+      "repositoryUrl": "https://github.com/microsoft/LMOps"
+    },
+    {
+      "collectionId": "arxiv-2603.19199",
+      "repositoryUrl": "https://github.com/innovator-zero/FASTER"
+    },
+    {
+      "collectionId": "arxiv-2603.25502",
+      "repositoryUrl": "https://github.com/yfyang007/RealRestorer"
+    },
+    {
+      "collectionId": "arxiv-2603.25728",
+      "repositoryUrl": "https://github.com/Ammmob/PixelSmile"
+    },
+    {
+      "collectionId": "arxiv-2604.02176",
+      "repositoryUrl": "https://github.com/HongyuanLuke/frequencylaw"
+    },
+    {
+      "collectionId": "arxiv-2604.02721",
+      "repositoryUrl": "https://github.com/ornith-ai/codeforces"
+    },
+    {
+      "collectionId": "arxiv-2604.11784",
+      "repositoryUrl": "https://github.com/ZJU-REAL/ClawGUI"
+    },
+    {
+      "collectionId": "arxiv-2604.26752",
+      "repositoryUrl": "https://github.com/zai-org/GLM-V"
+    },
+    {
+      "collectionId": "arxiv-2605.13779",
+      "repositoryUrl": "https://github.com/MindLab-Research/mindlab-toolkit"
+    },
+    {
+      "collectionId": "arxiv-2605.18401",
+      "repositoryUrl": "https://github.com/MemTensor/skills-vote"
+    },
+    {
+      "collectionId": "arxiv-2606.02800",
+      "repositoryUrl": "https://github.com/NVIDIA/cosmos"
+    },
+    {
+      "collectionId": "arxiv-2606.09076",
+      "repositoryUrl": "https://github.com/Tongyi-MAI/Z-Image"
+    },
+    {
+      "collectionId": "arxiv-2606.12397",
+      "repositoryUrl": "https://github.com/ericshwu/Router-with-Manifold-Power-Iteration"
+    },
+    {
+      "collectionId": "arxiv-2606.31315",
+      "repositoryUrl": "https://github.com/AMAP-ML/BlockPilot"
+    },
+    {
+      "collectionId": "arxiv-2607.02512",
+      "repositoryUrl": "https://github.com/programasweights/programasweights-python"
+    },
+    {
+      "collectionId": "arxiv-2607.13125",
+      "repositoryUrl": "https://github.com/boogu-project/Boogu-Image"
+    },
+    {
+      "collectionId": "arxiv-2607.20465",
+      "repositoryUrl": "https://github.com/OpenDCAI/Data-Preparation-Bench"
+    },
+    {
+      "collectionId": "arxiv-2607.21461",
+      "repositoryUrl": "https://github.com/VectorSpaceLab/arex-model"
+    },
+    {
+      "collectionId": "arxiv-2607.27380",
+      "repositoryUrl": "https://github.com/micky-li-hd/VideoCoCo"
+    },
+    {
+      "collectionId": "arxiv-2607.28618",
+      "repositoryUrl": "https://github.com/bingyan4science/askchem"
+    }
+  ]
+}

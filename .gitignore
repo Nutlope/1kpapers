@@ -8,3 +8,8 @@ results/runs/
 results/judges/
 corpus/*.checkpoint.json
 corpus/shards/
+.next/
+tsconfig.tsbuildinfo
+public/data/*.json
+!public/data/.gitkeep
+/supplemental
