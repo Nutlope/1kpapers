@@ -575,10 +575,30 @@ button:active,
 }
 
 .featured-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
   gap: 24px;
   align-items: start;
+  padding: 2px 2px 28px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.featured-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-cards:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.featured-cards .paper-card {
+  flex: 0 0 calc((100% - 48px) / 3);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .paper-card {
@@ -613,11 +633,11 @@ button:active,
 .paper-card.accent-yellow { --accent: var(--yellow); --card-tint: #fff9df; }
 .paper-card.accent-cyan { --accent: var(--cyan); --card-tint: #eaf9fa; }
 
-.featured-cards .paper-card:nth-child(2) {
+.featured-cards .paper-card:nth-child(3n + 2) {
   transform: rotate(0.45deg);
 }
 
-.featured-cards .paper-card:nth-child(3) {
+.featured-cards .paper-card:nth-child(3n + 3) {
   transform: rotate(1.1deg);
 }
 
@@ -643,14 +663,14 @@ button:active,
 
 .carousel-nav {
   position: absolute;
-  right: 25%;
-  bottom: 10px;
+  right: 26px;
+  bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 11px;
 }
 
-.carousel-nav button {
+.carousel-arrow {
   width: 30px;
   height: 30px;
   display: grid;
@@ -662,20 +682,61 @@ button:active,
   transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
 }
 
-.carousel-nav button:hover {
+.carousel-arrow:hover:not(:disabled) {
   color: var(--signal);
   border-color: var(--signal);
   background: #fff7f3;
 }
 
-.carousel-nav i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #c8c7c3;
+.carousel-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
-.carousel-nav i.active {
+.carousel-position {
+  min-width: 142px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carousel-position > span {
+  min-width: 42px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.carousel-ticks {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.carousel-ticks button {
+  position: relative;
+  width: 8px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.carousel-ticks button::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 3px;
+  width: 1px;
+  background: #b9b8b4;
+  transition: top 160ms ease, bottom 160ms ease, background 160ms ease;
+}
+
+.carousel-ticks button:hover::after,
+.carousel-ticks button.active::after {
+  top: 3px;
+  bottom: 3px;
   background: var(--signal);
 }
 
@@ -1446,14 +1507,22 @@ button:active,
   }
 
   .featured-cards .paper-card {
+    flex-basis: min(68vw, 265px);
     min-width: min(68vw, 265px);
     min-height: 205px;
     scroll-snap-align: start;
   }
 
   .carousel-nav {
-    right: 0;
-    bottom: 12px;
+    position: relative;
+    right: auto;
+    bottom: auto;
+    justify-content: flex-end;
+    margin-top: -8px;
+  }
+
+  .carousel-position {
+    min-width: 124px;
   }
 
   .year-explorer {
