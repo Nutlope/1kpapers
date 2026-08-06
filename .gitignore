@@ -14,3 +14,6 @@ site/tsconfig.tsbuildinfo
 site/public/data/*.json
 !site/public/data/.gitkeep
 /supplemental
+
+.DS_Store
+/output

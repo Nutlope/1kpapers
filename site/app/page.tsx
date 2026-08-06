@@ -13,7 +13,7 @@ import { formatMonthYear, getPaperData, type Paper } from "../lib/papers";
 const featuredLabs = [
   { name: "OpenAI", slug: "openai" },
   { name: "Anthropic", slug: "anthropic" },
-  { name: "Moonshot / Kimi", slug: "moonshot-kimi" },
+  { name: "Moonshot AI", slug: "moonshot-kimi" },
   { name: "DeepSeek", slug: "deepseek" },
   { name: "MiniMax", slug: "minimax" },
   { name: "Z.ai / GLM", slug: "zai-glm" },

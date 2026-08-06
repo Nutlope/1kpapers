@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { LabLogo } from "../../../components/lab-mark";
 import { SiteHeader } from "../../../components/site-header";
-import { getLabBySlug } from "../../../lib/labs";
+import { getLabBySlug, labIncludesPaper } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaperData } from "../../../lib/papers";
 
 type LabPageProps = { params: Promise<{ lab: string }>; searchParams: Promise<{ sort?: string }> };
@@ -21,7 +21,7 @@ export default async function LabPage({ params, searchParams }: LabPageProps) {
   const lab = getLabBySlug(slug);
   if (!lab) notFound();
   const { papers } = await getPaperData();
-  const labPapers = papers.filter((paper) => paper.lab === lab.name);
+  const labPapers = papers.filter((paper) => labIncludesPaper(lab, paper.lab));
   const sorted = [...labPapers].sort((a, b) => {
     if (sort === "cited") return (b.citations ?? 0) - (a.citations ?? 0);
     if (sort === "upvoted") return (b.upvotes ?? 0) - (a.upvotes ?? 0);

@@ -2297,6 +2297,8 @@ button:active,
 
 .lab-title-lockup h1 {
   margin-top: 8px;
+  font-size: clamp(48px, 5.7vw, 88px);
+  white-space: nowrap;
 }
 
 .topic-title-row > dl {
@@ -2574,6 +2576,10 @@ button:active,
 
   .topic-title-row h1 {
     font-size: 58px;
+  }
+
+  .lab-title-lockup h1 {
+    font-size: clamp(36px, 11.5vw, 52px);
   }
 
   .topic-title-row > dl {
