@@ -9,6 +9,7 @@ import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
 import { formatMonthYear, getPaperData, type Paper } from "../lib/papers";
+import { selectTrendingPapers } from "../lib/trending";
 
 const featuredLabs = [
   { name: "OpenAI", slug: "openai" },
@@ -23,8 +24,8 @@ export default async function HomePage() {
   const popular = [...papers]
     .filter((paper) => paper.upvotes !== null)
     .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
-  const featured = popular.slice(0, 9);
-  const lead = featured[0] ?? papers[0];
+  const trending = selectTrendingPapers(papers);
+  const lead = trending[0] ?? papers[0];
   const topicCounts = countTopics(papers);
   const monthEntries: MonthEntry[] = monthDefinitions.map((month) => ({
     key: month.key,
@@ -107,15 +108,15 @@ export default async function HomePage() {
         <section className="featured-story">
           <div className="story-copy">
             <p className="mono-label"><span>01</span> Trending this year</p>
-            <h2 className="display-serif text-balance">The papers everyone kept coming back to</h2>
+            <h2 className="display-serif text-balance">The papers that moved AI forward</h2>
             <p className="story-description text-pretty">
-              The most upvoted research across the full year, ranked by the open AI community.
+              Selected for citation impact, official-code adoption, recency, and field-wide significance.
             </p>
             <a className="signal-link row-link focus-ring" href="#featured-paper">
               Explore the top paper <ArrowIcon />
             </a>
           </div>
-          <FeaturedCarousel papers={featured} />
+          <FeaturedCarousel papers={trending} />
         </section>
 
         <aside className="popular-column">
