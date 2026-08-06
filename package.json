@@ -4,13 +4,13 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "pnpm site:build",
     "benchmark": "tsx src/benchmark.ts",
     "calibration": "tsx src/calibration.ts",
     "calibration:check": "tsx src/validate-calibration.ts",
     "corpus": "tsx src/discover.ts",
     "download": "tsx src/download.ts",
-    "dev": "next dev",
+    "dev": "pnpm site:dev",
     "export:site-data": "tsx src/export-site-data.ts",
     "full": "tsx src/full.ts",
     "full-report": "tsx src/full-report.ts",
@@ -20,27 +20,22 @@
     "range": "tsx src/range.ts",
     "merge": "tsx src/merge-results.ts",
     "report": "tsx src/report.ts",
+    "site:build": "pnpm --dir site build",
+    "site:dev": "pnpm --dir site dev",
+    "site:typecheck": "pnpm --dir site typecheck",
     "test": "node --import tsx --test src/*.test.ts",
     "together-batch": "tsx src/together-batch.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && pnpm site:typecheck"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
     "fast-xml-parser": "^5.10.1",
-    "next": "16.3.0",
-    "pdfjs-dist": "6.2.108",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "pdfjs-dist": "6.2.108"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.3.3",
     "@types/node": "latest",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "postcss": "^8.5.25",
-    "tailwindcss": "4.3.3",
     "tsx": "4.23.5",
     "typescript": "7.0.2"
   }

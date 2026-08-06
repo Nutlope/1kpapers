@@ -33,7 +33,7 @@ type MetadataFile = {
 
 const projectRoot = process.cwd();
 const sourcePath = path.join(projectRoot, "metadata", "papers.json");
-const outputDirectory = path.join(projectRoot, "public", "data");
+const outputDirectory = path.join(projectRoot, "site", "public", "data");
 
 const source = JSON.parse(await readFile(sourcePath, "utf8")) as MetadataFile;
 const papers = source.papers.map((paper) => ({
@@ -81,4 +81,4 @@ await Promise.all([
   ),
 ]);
 
-console.log(`Exported ${papers.length} papers to public/data.`);
+console.log(`Exported ${papers.length} papers to site/public/data.`);

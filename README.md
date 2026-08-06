@@ -73,4 +73,15 @@ pnpm download -- --source-file=corpus/pilot-50.json --profile=corpus/pilot-50-pr
 pnpm benchmark -- --source-file=corpus/pilot-50.json --models=deepseek-ai/DeepSeek-V4-Flash-0731 --single-pass=true --run-id=my-run
 ```
 
+## Explore the site
+
+The benchmark and research pipeline live at the repository root. The Next.js research atlas, including its future API and MCP routes, lives in [`site/`](./site).
+
+```bash
+pnpm export:site-data
+pnpm site:dev
+```
+
+Generated website data is written to `site/public/data/` and remains gitignored. For Vercel, configure `site` as the project root directory.
+
 Inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs). Built using Together AI.

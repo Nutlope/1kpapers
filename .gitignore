@@ -10,6 +10,7 @@ corpus/*.checkpoint.json
 corpus/shards/
 .next/
 tsconfig.tsbuildinfo
-public/data/*.json
-!public/data/.gitkeep
+site/tsconfig.tsbuildinfo
+site/public/data/*.json
+!site/public/data/.gitkeep
 /supplemental
