@@ -84,8 +84,15 @@ function normalizeChunkSummaryMarkdown(value: string) {
 }
 
 export function normalizeFinalSummaryMarkdown(value: string, maxWords = 250) {
-  if (!value?.trim() || /<[^>]+>|```/.test(value)) return null;
+  if (!value?.trim() || /<!--|<!doctype|```/i.test(value))
+    return null;
   const safe = value
+    // Research summaries often name literal control tokens such as <think> or
+    // <Path>. Escape tag-shaped text so it remains visible without rendering
+    // as HTML in the generated Markdown report.
+    .replace(/<\/?[a-z][^>]*>/gi, (tag) =>
+      tag.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    )
     .replaceAll("\r\n", "\n")
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")

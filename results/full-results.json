@@ -1,0 +1,193 @@
+{
+  "generatedAt": "2026-08-06T03:54:54.011Z",
+  "scope": "completed-summary-cost-corpus-and-operational-statistics-without-judges",
+  "selectionPolicy": "One completed result per model and paper; failed and superseded runs excluded.",
+  "corpus": {
+    "papers": 1000,
+    "pages": 30681,
+    "characters": 102740868,
+    "medianPages": 25,
+    "p95Pages": 66,
+    "maxPages": 488,
+    "medianCharacters": 83485,
+    "p95Characters": 213471,
+    "maxCharacters": 1018185,
+    "officialLabs": {
+      "DeepSeek": 8,
+      "OpenAI": 7,
+      "Moonshot AI / Kimi": 6,
+      "Anthropic": 5,
+      "MiniMax": 4
+    },
+    "topics": {
+      "llms-agents-reasoning": 766,
+      "vision-multimodal-generation": 521,
+      "systems-efficiency": 378,
+      "robotics-embodied-ai": 104,
+      "science-medicine": 92
+    }
+  },
+  "models": [
+    {
+      "id": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "label": "DeepSeek V4 Flash",
+      "covered": 1000,
+      "completed": 1000,
+      "unresolved": 0,
+      "completedSummaryCostUsd": 3.994620139999999,
+      "costPerCompletedUsd": 0.003994620139999999,
+      "inputTokens": 27956295,
+      "outputTokens": 288353,
+      "normalizedFinals": 54,
+      "latencySamples": 300,
+      "p50LatencyMs": 231352,
+      "p95LatencyMs": 415252,
+      "p50SummaryWords": 155,
+      "p95SummaryWords": 250,
+      "unresolvedSourceIds": []
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "label": "GPT-5.6 Luna",
+      "covered": 1000,
+      "completed": 1000,
+      "unresolved": 0,
+      "completedSummaryCostUsd": 6.003683599999995,
+      "costPerCompletedUsd": 0.006003683599999995,
+      "inputTokens": 28149370,
+      "outputTokens": 311508,
+      "normalizedFinals": 1,
+      "latencySamples": 1000,
+      "p50LatencyMs": 62322,
+      "p95LatencyMs": 110238,
+      "p50SummaryWords": 174,
+      "p95SummaryWords": 216,
+      "unresolvedSourceIds": []
+    },
+    {
+      "id": "claude-haiku-4-5-20251001",
+      "label": "Claude Haiku 4.5",
+      "covered": 1000,
+      "completed": 1000,
+      "unresolved": 0,
+      "completedSummaryCostUsd": 35.75520000000007,
+      "costPerCompletedUsd": 0.03575520000000007,
+      "inputTokens": 33192455,
+      "outputTokens": 512549,
+      "normalizedFinals": 29,
+      "latencySamples": 1000,
+      "p50LatencyMs": 63933,
+      "p95LatencyMs": 129518,
+      "p50SummaryWords": 203,
+      "p95SummaryWords": 245,
+      "unresolvedSourceIds": []
+    }
+  ],
+  "mostExpensive": [
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "The Principles of Diffusion Models",
+      "pages": 488,
+      "costUsd": 0.465661,
+      "latencyMs": 536236
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "From Code Foundation Models to Agents and Applications: A Comprehensive Survey and Practical Guide to Code Intelligence",
+      "pages": 303,
+      "costUsd": 0.4225429999999999,
+      "latencyMs": 661564
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "A Survey of Scientific Large Language Models: From Data Foundations to Agent Frontiers",
+      "pages": 95,
+      "costUsd": 0.313517,
+      "latencyMs": 599612
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Project Imaging-X: A Survey of 1000+ Open-Access Medical Imaging Datasets for Foundation Model Development",
+      "pages": 157,
+      "costUsd": 0.28781100000000004,
+      "latencyMs": 113973
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "From Chatbot to Digital Colleague: The Paradigm Shift Toward Persistent Autonomous AI",
+      "pages": 150,
+      "costUsd": 0.218535,
+      "latencyMs": 340112
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Cosmos 3: Omnimodal World Models for Physical AI",
+      "pages": 139,
+      "costUsd": 0.21566000000000005,
+      "latencyMs": 495262
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Visual Generation in the New Era: An Evolution from Atomic Mapping to Agentic World Modeling",
+      "pages": 129,
+      "costUsd": 0.206516,
+      "latencyMs": 386443
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "EVA-Bench: A New End-to-end Framework for Evaluating Voice Agents",
+      "pages": 157,
+      "costUsd": 0.18815500000000002,
+      "latencyMs": 335288
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Memory in the Age of AI Agents",
+      "pages": 107,
+      "costUsd": 0.18313100000000002,
+      "latencyMs": 383392
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Agentic Reasoning for Large Language Models",
+      "pages": 135,
+      "costUsd": 0.18259399999999998,
+      "latencyMs": 359493
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "A Survey of Reinforcement Learning for Large Reasoning Models",
+      "pages": 120,
+      "costUsd": 0.180458,
+      "latencyMs": 309516
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Probing Scientific General Intelligence of LLMs with Scientist-Aligned Workflows",
+      "pages": 156,
+      "costUsd": 0.17713900000000002,
+      "latencyMs": 339576
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "Agentic Environment Engineering for Large Language Models: A Survey of Environment Modeling, Synthesis, Evaluation, and Application",
+      "pages": 63,
+      "costUsd": 0.176061,
+      "latencyMs": 359611
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "The Landscape of Agentic Reinforcement Learning for LLMs: A Survey",
+      "pages": 95,
+      "costUsd": 0.131288,
+      "latencyMs": 104805
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "paper": "SpatialBench: Is Your Spatial Foundation Model an All-Round Player?",
+      "pages": 81,
+      "costUsd": 0.124682,
+      "latencyMs": 107937
+    }
+  ]
+}

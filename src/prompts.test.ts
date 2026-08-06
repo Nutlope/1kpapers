@@ -34,8 +34,19 @@ test("normalizes safe Markdown and rejects unsafe output", () => {
     true,
   );
   assert.equal(
-    isValidFinalSummaryMarkdown("<p>HTML overview.</p>\n\n- Result."),
-    false,
+    normalizeFinalSummaryMarkdown("Uses <think> tokens.\n\n- Result.")?.markdown,
+    "Uses &lt;think&gt; tokens.\n\n- Result.",
+  );
+  assert.equal(
+    normalizeFinalSummaryMarkdown("<p>HTML overview.</p>\n\n- Result.")?.markdown,
+    "&lt;p&gt;HTML overview.&lt;/p&gt;\n\n- Result.",
+  );
+  assert.equal(isValidFinalSummaryMarkdown("<!-- hidden -->"), false);
+  assert.equal(
+    isValidFinalSummaryMarkdown(
+      "The estimator is biased when p_t < 0.5 and p_t > 0.5.\n\n- The boundary is p_t = 0.5.",
+    ),
+    true,
   );
   assert.equal(
     isValidFinalSummaryMarkdown(

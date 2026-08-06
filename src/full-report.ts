@@ -26,6 +26,7 @@ const allowIncomplete = args["allow-incomplete"] === "true";
 type ResultFile = {
   runId?: string;
   methodologyVersion?: number;
+  runConfig?: { mainBodyOnly?: boolean };
   rows: BenchmarkRow[];
 };
 type CorpusPaper = {
@@ -50,6 +51,11 @@ const resultFiles = await Promise.all(
 const attempts = resultFiles.flatMap(({ inputPath, result }) =>
   result.rows.map((row) => ({ inputPath, row })),
 );
+const mainBodyFallbacks = resultFiles.flatMap(({ result }) =>
+  result.runConfig?.mainBodyOnly
+    ? result.rows.filter((row) => row.status === "ok")
+    : [],
+);
 const profile = JSON.parse(
   await readFile(profilePath, "utf8"),
 ) as ProfilePaper[];
@@ -72,9 +78,6 @@ const models = [
 const profileById = new Map(profile.map((paper) => [paper.id, paper]));
 
 const modelStats = models.map((model) => {
-  const modelAttempts = attempts
-    .map(({ row }) => row)
-    .filter((row) => row.model.id === model.id);
   const modelCanonical = canonicalRows.filter(
     (row) => row.model.id === model.id,
   );
@@ -84,21 +87,17 @@ const modelStats = models.map((model) => {
     .map((row) => row.totalLatencyMs)
     .filter((latencyMs) => latencyMs > 0);
   const summaryWords = completed.map((row) => wordCount(row.finalSummary ?? ""));
-  const totalCostUsd = sum(modelAttempts, "totalCostUsd");
+  const completedSummaryCostUsd = sum(completed, "totalCostUsd");
   return {
     model,
     covered: modelCanonical.length,
     completed: completed.length,
     unresolved: unresolved.length,
-    totalCostUsd,
-    costPerCompletedUsd: totalCostUsd / Math.max(1, completed.length),
-    inputTokens: sum(modelAttempts, "totalInputTokens"),
-    outputTokens: sum(modelAttempts, "totalOutputTokens"),
-    requests: modelAttempts.reduce(
-      (total, row) => total + row.requests.length,
-      0,
-    ),
-    retries: retryCount(modelAttempts),
+    completedSummaryCostUsd,
+    costPerCompletedUsd:
+      completedSummaryCostUsd / Math.max(1, completed.length),
+    inputTokens: sum(completed, "totalInputTokens"),
+    outputTokens: sum(completed, "totalOutputTokens"),
     normalizedFinals: completed.filter(
       (row) => row.requests.at(-1)?.normalized === true,
     ).length,
@@ -124,7 +123,7 @@ if (incompleteModels.length && !allowIncomplete) {
   );
 }
 const cheapestCost = Math.min(
-  ...modelStats.map((stats) => stats.totalCostUsd),
+  ...modelStats.map((stats) => stats.completedSummaryCostUsd),
 );
 
 const pages = profile.map((paper) => paper.pages);
@@ -150,11 +149,9 @@ const mostExpensive = canonicalRows
 const generatedAt = new Date().toISOString();
 const aggregate = {
   generatedAt,
-  scope: "cost-corpus-and-operational-statistics-without-judges",
-  inputs: resultFiles.map(({ inputPath, result }) => ({
-    path: inputPath,
-    runId: result.runId ?? null,
-  })),
+  scope: "completed-summary-cost-corpus-and-operational-statistics-without-judges",
+  selectionPolicy:
+    "One completed result per model and paper; failed and superseded runs excluded.",
   corpus: {
     papers: profile.length,
     pages: pages.reduce((total, value) => total + value, 0),
@@ -186,14 +183,14 @@ const lines = [
   "",
   "## Model totals",
   "",
-  "Accounted cost includes provider-reported usage from failed attempts and targeted retries. Unknown billing for requests that returned no usage is not invented.",
+  "Cost counts exactly one completed result per model and paper. Failed and superseded runs are excluded for every model.",
   "",
-  "| Model | Completed | Accounted cost | Cost / completed paper | Relative cost | Input tokens | Output tokens | p50 latency | p95 latency | Latency samples | Requests | Retries |",
-  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+  "| Model | Completed | Completed-summary inference cost | Cost / completed paper | Relative cost | Input tokens | Output tokens | p50 latency | p95 latency | Latency samples |",
+  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
 ];
 for (const stats of modelStats) {
   lines.push(
-    `| ${stats.model.label} | ${stats.completed}/${stats.covered} | $${stats.totalCostUsd.toFixed(6)} | $${stats.costPerCompletedUsd.toFixed(6)} | ${(stats.totalCostUsd / cheapestCost).toFixed(2)}x | ${formatInteger(stats.inputTokens)} | ${formatInteger(stats.outputTokens)} | ${seconds(stats.p50LatencyMs)} | ${seconds(stats.p95LatencyMs)} | ${formatInteger(stats.latencySamples)} | ${formatInteger(stats.requests)} | ${formatInteger(stats.retries)} |`,
+    `| ${stats.model.label} | ${stats.completed}/${stats.covered} | $${stats.completedSummaryCostUsd.toFixed(6)} | $${stats.costPerCompletedUsd.toFixed(6)} | ${(stats.completedSummaryCostUsd / cheapestCost).toFixed(2)}x | ${formatInteger(stats.inputTokens)} | ${formatInteger(stats.outputTokens)} | ${seconds(stats.p50LatencyMs)} | ${seconds(stats.p95LatencyMs)} | ${formatInteger(stats.latencySamples)} |`,
   );
 }
 
@@ -262,13 +259,13 @@ lines.push(
   "",
   "## Unresolved failures",
   "",
-  "| Model | Paper | Accounted cost | Error |",
-  "| --- | --- | ---: | --- |",
+  "| Model | Paper | Error |",
+  "| --- | --- | --- |",
 );
-if (!unresolved.length) lines.push("| None | — | $0.000000 | — |");
+if (!unresolved.length) lines.push("| None | n/a | n/a |");
 for (const { model, row } of unresolved) {
   lines.push(
-    `| ${model} | ${escapeCell(row.source.title)} | $${row.totalCostUsd.toFixed(6)} | ${escapeCell(row.error ?? "unknown")} |`,
+    `| ${model} | ${escapeCell(row.source.title)} | ${escapeCell(row.error ?? "unknown")} |`,
   );
 }
 
@@ -278,7 +275,13 @@ lines.push(
   "",
   "- The complete locally extracted PDF text is sent in one request when it fits a conservative half-context character budget.",
   "- Oversized inputs use the same 50,000-character map/reduce fallback instead of truncating source text.",
+  ...(mainBodyFallbacks.length
+    ? [
+        `- ${mainBodyFallbacks.length} provider-filtered paper used an explicit main-body-only fallback ending before the References section; its appendices and references were excluded.`,
+      ]
+    : []),
   "- Models receive the same final-summary prompt and restricted Markdown contract; extended reasoning is disabled.",
+  "- Costs count one completed result per model and paper. Failed and superseded runs are excluded.",
   "- Costs use provider-reported token usage and the frozen standard synchronous prices in the repository.",
   "- PDF download, local extraction, storage, networking, judge inference, and developer time are excluded.",
   "- This report supports cost, scale, and operational comparisons only; it does not establish factual accuracy.",
@@ -300,20 +303,6 @@ function percentile(values: number[], quantile: number) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   return sorted[Math.ceil(quantile * sorted.length) - 1] ?? 0;
-}
-
-function retryCount(rows: BenchmarkRow[]) {
-  return rows.reduce(
-    (total, row) =>
-      total +
-      (row.failedRequestRetries ?? 0) +
-      row.requests.reduce(
-        (requestTotal, request) =>
-          requestTotal + Math.max(0, (request.attempts ?? 1) - 1),
-        0,
-      ),
-    0,
-  );
 }
 
 function wordCount(value: string) {
@@ -351,7 +340,7 @@ function formatInteger(value: number) {
 }
 
 function seconds(milliseconds: number) {
-  if (!milliseconds) return "—";
+  if (!milliseconds) return "n/a";
   return `${(milliseconds / 1_000).toFixed(1)}s`;
 }
 

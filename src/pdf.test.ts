@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   chunkText,
+  mainBodyBeforeReferences,
   MAX_CHUNK_CHARACTERS,
   sanitizeExtractedText,
 } from "./pdf.js";
@@ -30,4 +31,35 @@ test("never splits a valid Unicode pair across chunk boundaries", () => {
   assert.equal(chunks.length, 2);
   assert.equal(sanitizeExtractedText(chunks[0]!), chunks[0]);
   assert.equal(sanitizeExtractedText(chunks[1]!), chunks[1]);
+});
+
+test("supports smaller reproducible chunk boundaries", () => {
+  assert.deepEqual(chunkText("a".repeat(25), 10).map((chunk) => chunk.length), [
+    10,
+    10,
+    5,
+  ]);
+  assert.throws(() => chunkText("text", 0), /positive integer/);
+});
+
+test("can reproducibly limit a paper to its main body", () => {
+  const document = {
+    id: "paper",
+    title: "Paper",
+    kind: "research-paper",
+    landingPage: "https://example.com",
+    pdfUrl: "https://example.com/paper.pdf",
+    publisher: "Example",
+    availability: "Public",
+    path: "/tmp/paper.pdf",
+    sha256: "abc",
+    bytes: 1,
+    pages: 2,
+    characters: 35,
+    chunks: ["Main result.\n\nReferences\nCitation."],
+  };
+  const mainBody = mainBodyBeforeReferences(document, 10);
+  assert.equal(mainBody.characters, 12);
+  assert.equal(mainBody.chunks.join(""), "Main result.");
+  assert.equal(mainBody.pages, 2);
 });

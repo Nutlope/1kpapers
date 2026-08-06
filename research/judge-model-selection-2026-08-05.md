@@ -43,7 +43,7 @@ There is no first-party benchmark that directly measures paper-summary judging a
 - AA-LCR: Kimi 74.7 vs GLM 71.3.
 - OfficeQA Pro: Kimi 63.3 vs GLM 41.4. This is the most document-adjacent comparison: the card says each task supplies an entire PDF corpus rendered as images.
 
-These are provider-reported results from a Kimi source, not an independent judge benchmark, so they are directional rather than conclusive. Z.ai's [GLM 5.2 model card](https://huggingface.co/zai-org/GLM-5.2) supports GLM's strong reasoning credentials—91.2 GPQA Diamond and 40.5 HLE—but does not establish an advantage over Kimi for document evaluation. The human-calibrated two-judge pilot is therefore the actual selection test.
+These are provider-reported results from a Kimi source, not an independent judge benchmark, so they are directional rather than conclusive. Z.ai's [GLM 5.2 model card](https://huggingface.co/zai-org/GLM-5.2) supports GLM's strong reasoning credentials, including 91.2 GPQA Diamond and 40.5 HLE, but does not establish an advantage over Kimi for document evaluation. The human-calibrated two-judge pilot is therefore the actual selection test.
 
 ## Projected judge cost
 

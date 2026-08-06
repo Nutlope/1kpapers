@@ -7,7 +7,10 @@ import type { DocumentInfo, Source } from "./types.js";
 export const CACHE_DIR = path.resolve(".cache/pdfs");
 export const MAX_CHUNK_CHARACTERS = 50_000;
 
-export async function prepareDocument(source: Source): Promise<DocumentInfo> {
+export async function prepareDocument(
+  source: Source,
+  maxChunkCharacters = MAX_CHUNK_CHARACTERS,
+): Promise<DocumentInfo> {
   await mkdir(CACHE_DIR, { recursive: true });
   const pdfPath = path.join(CACHE_DIR, `${source.id}.pdf`);
   let bytes: Uint8Array;
@@ -45,6 +48,7 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
         bytes.byteLength,
         cached.pages,
         cached.fullText,
+        maxChunkCharacters,
       );
     }
   } catch {
@@ -89,7 +93,23 @@ export async function prepareDocument(source: Source): Promise<DocumentInfo> {
     bytes.byteLength,
     pdf.numPages,
     fullText,
+    maxChunkCharacters,
   );
+}
+
+export function mainBodyBeforeReferences(
+  document: DocumentInfo,
+  maxChunkCharacters = MAX_CHUNK_CHARACTERS,
+): DocumentInfo {
+  const fullText = document.chunks.join("");
+  const references = /\nReferences(?:\n|$)/i.exec(fullText);
+  if (!references) return document;
+  const mainBody = fullText.slice(0, references.index).trimEnd();
+  return {
+    ...document,
+    characters: mainBody.length,
+    chunks: chunkText(mainBody, maxChunkCharacters),
+  };
 }
 
 function documentInfo(
@@ -99,6 +119,7 @@ function documentInfo(
   bytes: number,
   pages: number,
   fullText: string,
+  maxChunkCharacters: number,
 ): DocumentInfo {
   return {
     ...source,
@@ -107,7 +128,7 @@ function documentInfo(
     bytes,
     pages,
     characters: fullText.length,
-    chunks: chunkText(fullText),
+    chunks: chunkText(fullText, maxChunkCharacters),
   };
 }
 
@@ -159,11 +180,14 @@ async function fetchPdf(url: string) {
 
 class PermanentDownloadError extends Error {}
 
-export function chunkText(text: string) {
+export function chunkText(text: string, maxChunkCharacters = MAX_CHUNK_CHARACTERS) {
+  if (!Number.isInteger(maxChunkCharacters) || maxChunkCharacters < 1) {
+    throw new Error("maxChunkCharacters must be a positive integer");
+  }
   if (!text.length) return [];
   const chunks: string[] = [];
   for (let offset = 0; offset < text.length; ) {
-    let end = Math.min(text.length, offset + MAX_CHUNK_CHARACTERS);
+    let end = Math.min(text.length, offset + maxChunkCharacters);
     const lastCode = text.charCodeAt(end - 1);
     const nextCode = text.charCodeAt(end);
     if (

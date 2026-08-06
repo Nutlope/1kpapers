@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="820" viewBox="0 0 1800 820" role="img" aria-labelledby="title desc">
+  <title id="title">Cost to summarize 1,000 AI papers</title>
+  <desc id="desc">Completed-summary inference cost for 1,000 papers. DeepSeek V4 Flash cost 3 dollars and 99 cents, GPT-5.6 Luna cost 6 dollars, and Claude Haiku 4.5 cost 35 dollars and 76 cents.</desc>
+  <rect width="1800" height="820" fill="#ffffff"/>
+  <text x="90" y="92" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="3">RESULTS</text>
+  <text x="90" y="168" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700">What 1,000 summaries cost.</text>
+  <text x="1710" y="145" fill="#5E86AE" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700" text-anchor="end">3,000 / 3,000 COMPLETED</text>
+  <line x1="90" y1="205" x2="1710" y2="205" stroke="#000000" stroke-width="2"/>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g transform="translate(90 275)">
+      <rect width="500" height="365" rx="20" fill="#F7F2FD" stroke="#CAAEF5" stroke-width="3"/>
+      <rect width="500" height="18" rx="9" fill="#EF2CC1"/>
+      <circle cx="56" cy="74" r="18" fill="#EF2CC1"/>
+      <circle cx="82" cy="74" r="18" fill="#FC4C02" fill-opacity=".88"/>
+      <circle cx="69" cy="52" r="18" fill="#CAAEF5" fill-opacity=".9"/>
+      <text x="35" y="137" fill="#000000" font-size="31" font-weight="800">DeepSeek V4 Flash</text>
+      <text x="35" y="214" fill="#000000" font-size="58" font-weight="800">$3.99</text>
+      <text x="35" y="263" fill="#000000" font-size="27">$0.003995 per paper</text>
+      <text x="35" y="326" fill="#EF2CC1" font-size="24" font-weight="800">1.00×  LOWEST COST</text>
+    </g>
+
+    <g transform="translate(650 275)">
+      <rect width="500" height="365" rx="20" fill="#F1F8FF" stroke="#3D99F5" stroke-width="3"/>
+      <rect width="500" height="18" rx="9" fill="#3D99F5"/>
+      <circle cx="56" cy="72" r="18" fill="#3D99F5"/>
+      <circle cx="82" cy="72" r="18" fill="#00C7D1" fill-opacity=".88"/>
+      <circle cx="69" cy="50" r="18" fill="#5E86AE" fill-opacity=".9"/>
+      <text x="35" y="137" fill="#000000" font-size="31" font-weight="800">GPT-5.6 Luna</text>
+      <text x="35" y="214" fill="#000000" font-size="58" font-weight="800">$6.00</text>
+      <text x="35" y="263" fill="#000000" font-size="27">$0.006004 per paper</text>
+      <text x="35" y="326" fill="#3D99F5" font-size="24" font-weight="800">1.50× DEEPSEEK</text>
+    </g>
+
+    <g transform="translate(1210 275)">
+      <rect width="500" height="365" rx="20" fill="#FFF5F0" stroke="#FC4C02" stroke-width="3"/>
+      <rect width="500" height="18" rx="9" fill="#FC4C02"/>
+      <circle cx="56" cy="72" r="18" fill="#FC4C02"/>
+      <circle cx="82" cy="72" r="18" fill="#0DCE74" fill-opacity=".88"/>
+      <circle cx="69" cy="50" r="18" fill="#EF2CC1" fill-opacity=".9"/>
+      <text x="35" y="137" fill="#000000" font-size="31" font-weight="800">Claude Haiku 4.5</text>
+      <text x="35" y="214" fill="#000000" font-size="58" font-weight="800">$35.76</text>
+      <text x="35" y="263" fill="#000000" font-size="27">$0.035755 per paper</text>
+      <text x="35" y="326" fill="#FC4C02" font-size="24" font-weight="800">8.95× DEEPSEEK</text>
+    </g>
+  </g>
+
+  <rect x="90" y="694" width="1620" height="70" rx="35" fill="#000000"/>
+  <text x="900" y="740" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" text-anchor="middle">One completed result per paper · failed and superseded runs excluded · frozen standard pricing</text>
+</svg>

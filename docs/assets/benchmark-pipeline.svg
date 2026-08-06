@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="760" viewBox="0 0 1800 760" role="img" aria-labelledby="title desc">
+  <title id="title">Benchmark approach</title>
+  <desc id="desc">One thousand public AI PDFs were locally extracted, summarized with the same prompt by three models, and measured using provider token usage and frozen prices.</desc>
+  <rect width="1800" height="760" fill="#ffffff"/>
+  <text x="90" y="88" fill="#EF2CC1" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" letter-spacing="4">BENCHMARK APPROACH</text>
+  <text x="90" y="160" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700">From public PDFs to measured cost.</text>
+  <line x1="90" y1="198" x2="1710" y2="198" stroke="#000000" stroke-width="2"/>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g transform="translate(90 265)">
+      <rect width="350" height="300" rx="20" fill="#F7F2FD" stroke="#CAAEF5" stroke-width="3"/>
+      <rect width="350" height="15" rx="7" fill="#EF2CC1"/>
+      <text x="30" y="70" fill="#EF2CC1" font-size="24" font-weight="800">01 / CORPUS</text>
+      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">1,000</text>
+      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">public AI papers</text>
+      <text x="30" y="255" fill="#000000" font-size="23">30,681 PDF pages</text>
+    </g>
+
+    <path d="M465 415h55" stroke="#FC4C02" stroke-width="9"/>
+    <path d="m505 396 22 19-22 19" fill="none" stroke="#FC4C02" stroke-width="9"/>
+
+    <g transform="translate(555 265)">
+      <rect width="350" height="300" rx="20" fill="#F1F8FF" stroke="#3D99F5" stroke-width="3"/>
+      <rect width="350" height="15" rx="7" fill="#3D99F5"/>
+      <text x="30" y="70" fill="#3D99F5" font-size="24" font-weight="800">02 / EXTRACT</text>
+      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">102.7M</text>
+      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">text characters</text>
+      <text x="30" y="255" fill="#000000" font-size="23">processed locally</text>
+    </g>
+
+    <path d="M930 415h55" stroke="#00C7D1" stroke-width="9"/>
+    <path d="m970 396 22 19-22 19" fill="none" stroke="#00C7D1" stroke-width="9"/>
+
+    <g transform="translate(1020 265)">
+      <rect width="350" height="300" rx="20" fill="#F1FCFA" stroke="#00C7D1" stroke-width="3"/>
+      <rect width="350" height="15" rx="7" fill="#00C7D1"/>
+      <text x="30" y="70" fill="#008E96" font-size="24" font-weight="800">03 / SUMMARIZE</text>
+      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">3</text>
+      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">models, same prompt</text>
+      <text x="30" y="255" fill="#000000" font-size="22">DeepSeek · Luna · Haiku</text>
+    </g>
+
+    <path d="M1395 415h55" stroke="#0DCE74" stroke-width="9"/>
+    <path d="m1435 396 22 19-22 19" fill="none" stroke="#0DCE74" stroke-width="9"/>
+
+    <g transform="translate(1485 265)">
+      <rect width="225" height="300" rx="20" fill="#F2FFF8" stroke="#0DCE74" stroke-width="3"/>
+      <rect width="225" height="15" rx="7" fill="#0DCE74"/>
+      <text x="25" y="70" fill="#008F4A" font-size="24" font-weight="800">04 / PRICE</text>
+      <text x="25" y="152" fill="#000000" font-size="42" font-weight="800">TOKENS</text>
+      <text x="25" y="198" fill="#000000" font-size="24" font-weight="700">× frozen rate</text>
+      <text x="25" y="250" fill="#000000" font-size="22">per model</text>
+    </g>
+  </g>
+
+  <text x="90" y="660" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="26">Full-text single pass when it fits · 50k-character map/reduce for oversized papers · reasoning disabled</text>
+  <circle cx="1640" cy="660" r="16" fill="#EF2CC1"/><circle cx="1675" cy="660" r="16" fill="#FC4C02"/><circle cx="1710" cy="660" r="16" fill="#3D99F5"/>
+</svg>

@@ -61,7 +61,7 @@ const lines = [
 
 for (const { model, rows, cost } of matchedTotals) {
   lines.push(
-    `| ${model.label} | ${rows.length} | $${cost.toFixed(6)} | $${(cost / Math.max(1, rows.length)).toFixed(6)} | ${cheapestMatchedCost ? `${(cost / cheapestMatchedCost).toFixed(2)}x` : "—"} |`,
+    `| ${model.label} | ${rows.length} | $${cost.toFixed(6)} | $${(cost / Math.max(1, rows.length)).toFixed(6)} | ${cheapestMatchedCost ? `${(cost / cheapestMatchedCost).toFixed(2)}x` : "n/a"} |`,
   );
 }
 
@@ -78,7 +78,7 @@ for (const model of models) {
   const completed = attempted.filter((row) => row.status === "ok");
   const latencies = completed.map((row) => row.totalLatencyMs);
   lines.push(
-    `| ${model.label} | ${completed.length}/${attempted.length} (${percent(completed.length, attempted.length)}) | $${sum(attempted, "totalCostUsd").toFixed(6)} | $${(sum(attempted, "totalCostUsd") / Math.max(1, attempted.length)).toFixed(6)} | ${completed.length ? `$${(sum(attempted, "totalCostUsd") / completed.length).toFixed(6)}` : "—"} | ${sum(attempted, "totalInputTokens").toLocaleString("en-US")} | ${sum(attempted, "totalOutputTokens").toLocaleString("en-US")} | ${seconds(percentile(latencies, 0.5))} | ${seconds(percentile(latencies, 0.95))} | ${retryCount(attempted)} | ${normalizationCount(attempted)} | ${attempted.length - completed.length} |`,
+    `| ${model.label} | ${completed.length}/${attempted.length} (${percent(completed.length, attempted.length)}) | $${sum(attempted, "totalCostUsd").toFixed(6)} | $${(sum(attempted, "totalCostUsd") / Math.max(1, attempted.length)).toFixed(6)} | ${completed.length ? `$${(sum(attempted, "totalCostUsd") / completed.length).toFixed(6)}` : "n/a"} | ${sum(attempted, "totalInputTokens").toLocaleString("en-US")} | ${sum(attempted, "totalOutputTokens").toLocaleString("en-US")} | ${seconds(percentile(latencies, 0.5))} | ${seconds(percentile(latencies, 0.95))} | ${retryCount(attempted)} | ${normalizationCount(attempted)} | ${attempted.length - completed.length} |`,
   );
 }
 
@@ -104,7 +104,7 @@ if (args.details === "true") {
   );
   for (const row of results.rows) {
     lines.push(
-      `| ${row.model.label} | [${escapeCell(row.source.title)}](${row.source.landingPage}) | ${row.status} | $${row.totalCostUsd.toFixed(6)} | ${seconds(row.totalLatencyMs)} | ${row.requests.length} | ${retryCount([row])} | ${escapeCell(row.error ?? "—")} |`,
+      `| ${row.model.label} | [${escapeCell(row.source.title)}](${row.source.landingPage}) | ${row.status} | $${row.totalCostUsd.toFixed(6)} | ${seconds(row.totalLatencyMs)} | ${row.requests.length} | ${retryCount([row])} | ${escapeCell(row.error ?? "n/a")} |`,
     );
   }
 }

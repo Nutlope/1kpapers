@@ -151,7 +151,7 @@ function pairedJudgments(rows: Judgment[]) {
 }
 
 function meanScore(rows: Judgment[]) {
-  return rows.length ? mean(rows.map((row) => row.totalScore!)).toFixed(2) : "—";
+  return rows.length ? mean(rows.map((row) => row.totalScore!)).toFixed(2) : "n/a";
 }
 
 function mean(values: number[]) {
@@ -159,7 +159,7 @@ function mean(values: number[]) {
 }
 
 function ratio(numerator: number, denominator: number) {
-  return denominator ? `${numerator}/${denominator} (${((numerator / denominator) * 100).toFixed(1)}%)` : "—";
+  return denominator ? `${numerator}/${denominator} (${((numerator / denominator) * 100).toFixed(1)}%)` : "n/a";
 }
 
 function sum<T>(rows: T[], select: (row: T) => number) {

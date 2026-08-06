@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import path from "node:path";
 import { MODELS, calculateCost } from "./models.js";
-import { prepareDocument } from "./pdf.js";
+import { mainBodyBeforeReferences, prepareDocument } from "./pdf.js";
 import { ModelOutputError, summarize } from "./providers.js";
 import type {
   BenchmarkRow,
@@ -43,9 +43,14 @@ const documentConcurrency = positiveInteger(
     "1",
   "document-concurrency",
 );
+const chunkCharacters = positiveInteger(
+  args["chunk-characters"] ?? "50000",
+  "chunk-characters",
+);
 const singlePass =
   args["single-pass"] === "true" ||
   process.env.BENCHMARK_SINGLE_PASS === "true";
+const mainBodyOnly = args["main-body-only"] === "true";
 const runConfig = {
   methodologyVersion,
   sourceFile,
@@ -60,6 +65,8 @@ const runConfig = {
   concurrency,
   ...(documentConcurrency === 1 ? {} : { documentConcurrency }),
   ...(singlePass ? { singlePass: true } : {}),
+  ...(mainBodyOnly ? { mainBodyOnly: true } : {}),
+  ...(chunkCharacters === 50_000 ? {} : { chunkCharacters }),
   requestPolicy: {
     timeoutMs: Number(process.env.BENCHMARK_TIMEOUT_MS ?? 90_000),
     maxAttempts: Number(process.env.BENCHMARK_MAX_ATTEMPTS ?? 2),
@@ -86,7 +93,14 @@ for (const provider of new Set(models.map((model) => model.provider))) {
 }
 
 const documents = [];
-for (const source of sources) documents.push(await prepareDocument(source));
+for (const source of sources) {
+  const document = await prepareDocument(source, chunkCharacters);
+  documents.push(
+    mainBodyOnly
+      ? mainBodyBeforeReferences(document, chunkCharacters)
+      : document,
+  );
+}
 
 const prior = args.resume === "false" ? null : await readCheckpoint(checkpointPath);
 if (prior && prior.fingerprint !== fingerprint) {
