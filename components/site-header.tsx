@@ -5,7 +5,7 @@ export function SiteHeader() {
   return (
     <header className="site-header page-shell">
       <Link href="/" className="brand focus-ring" aria-label="Together AI research home">
-        <span>together.ai</span>
+        <img src="/brands/together-ai.svg" alt="Together AI" />
         <i />
         <small>Research</small>
       </Link>

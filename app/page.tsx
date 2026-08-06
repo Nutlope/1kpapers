@@ -1,34 +1,51 @@
 import Link from "next/link";
 import { ArrowIcon } from "../components/icons";
+import { FeaturedCarousel } from "../components/featured-carousel";
 import { GreekCyberArt } from "../components/greek-cyber-art";
 import { LabMark } from "../components/lab-mark";
 import { PaperCard } from "../components/paper-card";
 import { PaperSearch } from "../components/paper-search";
 import { SiteHeader } from "../components/site-header";
-import { formatMonthYear, getPaperData, topicLabel, type Paper } from "../lib/papers";
+import { YearExplorer, type MonthEntry } from "../components/year-explorer";
+import { monthDefinitions } from "../lib/months";
+import { formatMonthYear, getPaperData, type Paper } from "../lib/papers";
 
-const labs = ["OpenAI", "Anthropic", "Moonshot / Kimi", "DeepSeek", "MiniMax", "Z.ai / GLM"] as const;
-const topicOrder = [
-  "llms-agents-reasoning",
-  "vision-multimodal-generation",
-  "systems-efficiency",
-  "robotics-embodied-ai",
-  "science-medicine",
-];
-
-const months = ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
-
+const featuredLabs = [
+  { name: "OpenAI", slug: "openai" },
+  { name: "Anthropic", slug: "anthropic" },
+  { name: "Moonshot / Kimi", slug: "moonshot-kimi" },
+  { name: "DeepSeek", slug: "deepseek" },
+  { name: "MiniMax", slug: "minimax" },
+  { name: "Z.ai / GLM", slug: "zai-glm" },
+] as const;
 export default async function HomePage() {
   const { papers } = await getPaperData();
   const popular = [...papers]
     .filter((paper) => paper.upvotes !== null)
     .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
-  const featured = popular.slice(0, 3);
+  const featured = popular.slice(0, 9);
   const lead = featured[0] ?? papers[0];
   const topicCounts = countTopics(papers);
+  const monthEntries: MonthEntry[] = monthDefinitions.map((month) => ({
+    key: month.key,
+    month: month.month,
+    year: month.year,
+    count: papers.filter((paper) => paper.publishedAt.startsWith(month.key)).length,
+  }));
   const agentCount = papers.filter((paper) =>
     /\bagents?\b|\bagentic\b|tool use|computer use/i.test(`${paper.title} ${paper.summary}`),
   ).length;
+  const reasoningCount = papers.filter((paper) =>
+    /\breasoning\b|chain.of.thought|reinforcement learning|test.time|inference.time/i.test(`${paper.title} ${paper.summary}`),
+  ).length;
+  const editorialTopics = [
+    { key: "reasoning", label: "Reasoning", count: reasoningCount },
+    { key: "agents", label: "Agents", count: agentCount },
+    { key: "vision-multimodal-generation", label: "Multimodal", count: topicCounts.get("vision-multimodal-generation") ?? 0 },
+    { key: "systems-efficiency", label: "Systems", count: topicCounts.get("systems-efficiency") ?? 0 },
+    { key: "robotics-embodied-ai", label: "Robotics", count: topicCounts.get("robotics-embodied-ai") ?? 0 },
+    { key: "science-medicine", label: "Science", count: topicCounts.get("science-medicine") ?? 0 },
+  ];
 
   if (!lead) return null;
 
@@ -49,10 +66,6 @@ export default async function HomePage() {
         </div>
         <div className="hero-tools">
           <PaperSearch />
-          <div className="date-window mono-label">
-            <span>Aug 2025 to Aug 2026</span>
-            <span className="date-chip">Last 12 months</span>
-          </div>
         </div>
       </section>
 
@@ -61,59 +74,48 @@ export default async function HomePage() {
           Explore by research lab
         </h2>
         <div className="lab-list">
-          {labs.map((lab) => (
-            <a key={lab} href={`#lab-${lab.split(" ")[0]?.toLowerCase()}`} className="focus-ring">
-              <LabMark lab={lab} />
-            </a>
+          {featuredLabs.map((lab) => (
+            <Link key={lab.slug} href={`/labs/${lab.slug}`} className="focus-ring">
+              <LabMark lab={lab.name} />
+            </Link>
           ))}
         </div>
-        <a href="#collections" className="signal-link index-link focus-ring">
+        <Link href="/labs" className="signal-link index-link focus-ring">
           View all labs <ArrowIcon />
-        </a>
+        </Link>
       </section>
 
       <section className="atlas-grid page-shell rule-top" id="collections">
         <aside className="topic-column">
           <h2 className="mono-label">Browse by topic</h2>
           <ol>
-            {topicOrder.map((topic, index) => (
-              <li key={topic}>
-                <a href={`#${topic}`} className="focus-ring">
+            {editorialTopics.map((topic, index) => (
+              <li key={topic.key}>
+                <Link href={`/topics/${topic.key}`} className="focus-ring">
                   <span className="topic-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="display-serif">{topicLabel(topic)}</span>
-                  <small className="tabular-nums">{topicCounts.get(topic) ?? 0}</small>
-                </a>
+                  <span className="display-serif">{topic.label}</span>
+                  <small className="tabular-nums">{topic.count}</small>
+                </Link>
               </li>
             ))}
           </ol>
-          <a className="signal-link row-link focus-ring" href="#shelves">
+          <Link className="signal-link row-link focus-ring" href="/topics">
             View all topics <ArrowIcon />
-          </a>
+          </Link>
         </aside>
 
         <section className="featured-story">
           <div className="story-copy">
-            <p className="mono-label"><span>01</span> Featured story</p>
-            <h2 className="display-serif text-balance">The year reasoning became infrastructure</h2>
+            <p className="mono-label"><span>01</span> Trending this year</p>
+            <h2 className="display-serif text-balance">The papers everyone kept coming back to</h2>
             <p className="story-description text-pretty">
-              From stronger benchmarks to agentic workflows, reasoning moved from research frontier to system backbone.
+              The most upvoted research across the full year, ranked by the open AI community.
             </p>
             <a className="signal-link row-link focus-ring" href="#featured-paper">
-              Explore the story <ArrowIcon />
+              Explore the top paper <ArrowIcon />
             </a>
           </div>
-          <div className="featured-cards">
-            {featured.map((paper, index) => (
-              <PaperCard key={paper.id} paper={paper} accent={(["magenta", "yellow", "cyan"] as const)[index] ?? "magenta"} />
-            ))}
-          </div>
-          <div className="carousel-nav" aria-hidden="true">
-            <span>←</span>
-            <i className="active" />
-            <i />
-            <i />
-            <span>→</span>
-          </div>
+          <FeaturedCarousel papers={featured} />
         </section>
 
         <aside className="popular-column">
@@ -139,36 +141,17 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      <section className="year-explorer page-shell rule-top" aria-labelledby="year-title">
-        <h2 id="year-title" className="mono-label">Explore the year</h2>
-        <div className="month-track">
-          {months.map((month, index) => (
-            <div key={`${month}-${index}`} className={index === 0 ? "current" : ""}>
-              <span>{month}</span>
-              <small>{index < 5 ? "2025" : "2026"}</small>
-              <i />
-            </div>
-          ))}
-        </div>
-        <div className="curated-count">
-          <strong className="display-serif tabular-nums">1,000</strong>
-          <span>papers<br /><small>curated and indexed</small></span>
-        </div>
-        <div className="filter-pills">
-          <button className="focus-ring">All types <span>⌄</span></button>
-          <button className="focus-ring">All venues <span>⌄</span></button>
-        </div>
-      </section>
+      <YearExplorer months={monthEntries} />
 
       <section className="shelves page-shell rule-top" id="shelves" aria-labelledby="shelves-title">
         <div className="section-line">
           <h2 id="shelves-title" className="mono-label">Editorial shelves</h2>
-          <a href="#collections" className="focus-ring">View all shelves →</a>
+          <Link href="/topics" className="focus-ring">View all shelves →</Link>
         </div>
         <div className="shelf-grid">
-          <ShelfCard title="Reasoning" count={topicCounts.get("llms-agents-reasoning") ?? 0} art="labyrinth" />
-          <ShelfCard title="Agents" count={agentCount} art="owl" />
-          <ShelfCard title="Multimodal" count={topicCounts.get("vision-multimodal-generation") ?? 0} art="oracle" />
+          <ShelfCard title="Reasoning" count={reasoningCount} art="labyrinth" slug="reasoning" />
+          <ShelfCard title="Agents" count={agentCount} art="owl" slug="agents" />
+          <ShelfCard title="Multimodal" count={topicCounts.get("vision-multimodal-generation") ?? 0} art="oracle" slug="multimodal" />
         </div>
       </section>
 
@@ -191,7 +174,7 @@ export default async function HomePage() {
 
       <footer className="site-footer page-shell" id="notes">
         <span>together.ai / research</span>
-        <span>1,000 papers. One year in motion.</span>
+        <span className="footer-window"><b>Aug 2025 to Aug 2026</b><small>Last 12 months</small></span>
         <a href="#hero-title">Back to top ↑</a>
       </footer>
     </main>
@@ -206,16 +189,16 @@ function countTopics(papers: Paper[]) {
   return counts;
 }
 
-function ShelfCard({ title, count, art }: { title: string; count: number; art: "labyrinth" | "owl" | "oracle" }) {
+function ShelfCard({ title, count, art, slug }: { title: string; count: number; art: "labyrinth" | "owl" | "oracle"; slug: string }) {
   return (
-    <a className={`shelf-card shelf-${art} focus-ring`} href="#featured-paper">
+    <Link className={`shelf-card shelf-${art} focus-ring`} href={`/topics/${slug}`}>
       <div>
         <strong className="mono-label">{title}</strong>
         <small>{count} papers</small>
         <span>◉ &nbsp; Explore &nbsp; →</span>
       </div>
       <GreekCyberArt compact />
-    </a>
+    </Link>
   );
 }
 

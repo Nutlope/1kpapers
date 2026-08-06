@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { GreekCyberArt } from "../../../components/greek-cyber-art";
 import { SiteHeader } from "../../../components/site-header";
+import { getLabByName } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaper, topicLabel } from "../../../lib/papers";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
@@ -24,6 +25,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
   if (!paper) notFound();
 
   const summaryPoints = paper.summary.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const lab = getLabByName(paper.lab);
 
   return (
     <main>
@@ -31,7 +33,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
       <article className="paper-page page-shell">
         <header className="paper-page-header">
           <div className="paper-breadcrumb mono-label">
-            <Link href="/">The year</Link><span>/</span><span>{paper.lab ?? "Independent research"}</span>
+            <Link href="/">The year</Link><span>/</span>{lab ? <Link href={`/labs/${lab.slug}`}>{paper.lab}</Link> : <span>{paper.lab ?? "Independent research"}</span>}
           </div>
           <div className="paper-title-block">
             <p className="mono-label">Paper {paper.arxivId ?? paper.id}</p>
@@ -44,9 +46,9 @@ export default async function PaperPage({ params }: PaperPageProps) {
           <div className="paper-page-art"><GreekCyberArt /></div>
           <dl className="paper-stat-row">
             <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
-            <div><dt>Research lab</dt><dd>{paper.lab ?? "Independent"}</dd></div>
+            <div><dt>Research lab</dt><dd>{lab ? <Link href={`/labs/${lab.slug}`}>{lab.shortName} <ArrowIcon /></Link> : paper.lab ?? "Independent"}</dd></div>
             <div><dt>Citations</dt><dd>{formatCompactNumber(paper.citations)}</dd></div>
-            <div><dt>GitHub</dt><dd>{paper.githubStars !== null ? `${formatCompactNumber(paper.githubStars)} stars` : "Not linked"}</dd></div>
+            <div><dt>GitHub</dt><dd>{paper.githubRepository && paper.githubStars !== null ? <a href={paper.githubRepository} target="_blank" rel="noreferrer">{formatCompactNumber(paper.githubStars)} stars <ExternalIcon /></a> : "Not linked"}</dd></div>
           </dl>
         </header>
 

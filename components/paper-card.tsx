@@ -1,6 +1,5 @@
 import Link from "next/link";
-import type { Paper } from "../lib/papers";
-import { formatMonthYear } from "../lib/papers";
+import { formatMonthYear, type Paper } from "../lib/paper-shared";
 
 export function PaperCard({ paper, accent = "magenta" }: { paper: Paper; accent?: "magenta" | "yellow" | "cyan" }) {
   return (
