@@ -12,7 +12,7 @@ const navigationItems = [
   { href: "/most-cited-papers", label: "Most cited", active: (pathname: string) => pathname === "/most-cited-papers" },
   { href: "/most-starred-papers", label: "Most starred", active: (pathname: string) => pathname === "/most-starred-papers" },
   { href: "/topics", label: "Topics", active: (pathname: string) => pathname.startsWith("/topics") },
-  { href: "/#about", label: "How we built it", active: () => false },
+  { href: "/#about", label: "Process", active: () => false },
 ] as const;
 
 export function SiteHeader() {
