@@ -245,21 +245,6 @@ button:active,
   width: 17px;
 }
 
-.bookmark-button {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.bookmark-button svg {
-  width: 17px;
-  height: 21px;
-}
-
 .hero {
   min-height: 132px;
   display: block;
@@ -1396,8 +1381,9 @@ button:active,
 
 .about-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12%;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: start;
+  gap: 9%;
   margin-top: 78px;
   padding: 70px 4px 90px;
   border-top: 1px solid var(--ink);
@@ -1411,14 +1397,53 @@ button:active,
   letter-spacing: -0.04em;
 }
 
-.about-copy {
-  max-width: 610px;
-  padding-top: 22px;
+.about-deck {
+  max-width: 580px;
+  margin: 28px 0 0;
+  color: #3d3b37;
+  font: 19px/1.5 "Iowan Old Style", Baskerville, serif;
 }
 
-.about-copy p {
-  margin: 0 0 26px;
-  font: 20px/1.45 "Iowan Old Style", Baskerville, serif;
+.method-list {
+  border-top: 1px solid var(--ink);
+}
+
+.method-step {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 18px;
+  padding: 24px 0 26px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.method-step > span {
+  padding-top: 7px;
+  color: var(--signal);
+}
+
+.method-step h3 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.method-step p {
+  max-width: 680px;
+  margin: 0;
+  color: #45433e;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.method-note {
+  margin: 28px 0 0 60px;
+  padding-left: 18px;
+  border-left: 2px solid var(--blue);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .site-footer {
@@ -1883,12 +1908,13 @@ button:active,
     font-size: 48px;
   }
 
-  .about-copy {
-    padding-top: 0;
+  .about-deck {
+    margin-top: 22px;
+    font-size: 18px;
   }
 
-  .about-copy p {
-    font-size: 18px;
+  .method-list {
+    margin-top: 4px;
   }
 
   .site-footer {
@@ -1909,8 +1935,22 @@ button:active,
     max-width: 360px;
   }
 
-  .bookmark-button {
-    display: none;
+  .method-step {
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+    padding: 20px 0 22px;
+  }
+
+  .method-step h3 {
+    font-size: 24px;
+  }
+
+  .method-step p {
+    font-size: 13px;
+  }
+
+  .method-note {
+    margin-left: 42px;
   }
 
   .search-modal-backdrop {

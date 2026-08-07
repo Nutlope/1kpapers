@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowIcon, BookmarkIcon, SearchIcon } from "./icons";
+import { ArrowIcon, SearchIcon } from "./icons";
 import { PaperSearch } from "./paper-search";
 
 export function SiteHeader() {
@@ -48,10 +48,7 @@ export function SiteHeader() {
           Topics
         </Link>
         <Link className="focus-ring" href="/#about">
-          About
-        </Link>
-        <Link className="focus-ring" href="/#methodology">
-          Methodology
+          How we built it
         </Link>
       </nav>
       <div className="header-actions">
@@ -71,9 +68,6 @@ export function SiteHeader() {
         <a className="about-link focus-ring" href="https://www.together.ai" target="_blank" rel="noreferrer">
           About Together AI <ArrowIcon />
         </a>
-        <button className="bookmark-button focus-ring" aria-label="Saved papers">
-          <BookmarkIcon />
-        </button>
       </div>
       <PaperSearch open={isSearchOpen} onClose={closeSearch} />
     </header>

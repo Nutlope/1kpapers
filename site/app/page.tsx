@@ -152,17 +152,60 @@ export default async function HomePage() {
 
       <FeaturedPaper paper={lead} />
 
-      <section className="about-section page-shell" id="about">
-        <div>
-          <p className="mono-label">About the collection</p>
-          <h2 className="display-serif text-balance">A field guide to one fast-moving year.</h2>
-        </div>
-        <div className="about-copy">
-          <p className="text-pretty">
-            The Year in AI Papers is an editorial map of the research that shaped models, agents, multimodal systems, robotics, and science from August 2025 through August 2026.
+      <section className="about-section page-shell" id="about" aria-labelledby="about-title">
+        <div className="about-intro">
+          <p className="mono-label">About &amp; methodology</p>
+          <h2 id="about-title" className="display-serif text-balance">
+            How we turned one year of AI research into a navigable atlas.
+          </h2>
+          <p className="about-deck text-pretty">
+            The project began with a simple cost experiment: what would it take to summarize 1,000 real AI papers? We froze the inputs, ran a controlled model comparison, and shaped the results into this field guide.
           </p>
-          <p className="text-pretty" id="methodology">
-            Papers are collected from public research sources, enriched with citation and repository metadata, and summarized to make the year easier to navigate.
+        </div>
+
+        <div className="method-list">
+          <article className="method-step">
+            <span className="mono-label">01</span>
+            <div>
+              <h3 className="display-serif">Freeze a reproducible corpus</h3>
+              <p className="text-pretty">
+                We started with 8,262 discovery candidates from Hugging Face Daily Papers, guaranteed verified official research from five frontier labs, deduplicated by canonical arXiv ID, checked every version-pinned PDF, and froze exactly 1,000 papers published from August 4, 2025 through August 4, 2026.
+              </p>
+            </div>
+          </article>
+
+          <article className="method-step">
+            <span className="mono-label">02</span>
+            <div>
+              <h3 className="display-serif">Read every PDF</h3>
+              <p className="text-pretty">
+                The final corpus contains 30,681 pages and 102.7 million extracted characters. Papers that fit the conservative context budget were summarized in one pass; oversized papers used a deterministic 50,000-character map-reduce flow instead of silent truncation.
+              </p>
+            </div>
+          </article>
+
+          <article className="method-step">
+            <span className="mono-label">03</span>
+            <div>
+              <h3 className="display-serif">Hold the comparison constant</h3>
+              <p className="text-pretty">
+                DeepSeek V4 Flash, GPT-5.6 Luna, and Claude Haiku 4.5 received the same extracted text, chunk boundaries, prompt, and final-summary contract with reasoning disabled. Costs use provider-reported token counts and prices frozen on August 5, 2026.
+              </p>
+            </div>
+          </article>
+
+          <article className="method-step">
+            <span className="mono-label">04</span>
+            <div>
+              <h3 className="display-serif">Build the research atlas</h3>
+              <p className="text-pretty">
+                We combined the generated summaries with publication details, citations, official repositories, research labs, and topics, then organized the collection by month, field, lab, citation impact, and editorial shelves.
+              </p>
+            </div>
+          </article>
+
+          <p className="method-note text-pretty">
+            This is a reproducible, popularity-weighted field guide and cost benchmark—not an exhaustive history of AI research or a factual-quality ranking. Reported costs cover model inference only; downloading, PDF extraction, storage, networking, and development time are excluded. Thank you to arXiv for use of its open access interoperability.
           </p>
         </div>
       </section>
