@@ -65,7 +65,7 @@ export function FeaturedCarousel({ papers }: { papers: Paper[] }) {
         onKeyDown={handleKeyDown}
       >
         {papers.map((paper, index) => (
-          <PaperCard key={paper.id} paper={paper} accent={accents[index % accents.length] ?? "magenta"} />
+          <PaperCard key={paper.id} paper={paper} accent={accents[index % accents.length] ?? "magenta"} eager={index === 0} />
         ))}
       </div>
       <div className="carousel-nav">

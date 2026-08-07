@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "../components/icons";
 import { FeaturedCarousel } from "../components/featured-carousel";
@@ -9,6 +10,7 @@ import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
 import { formatMonthYear, getPaperData, type Paper } from "../lib/papers";
+import { topicArtUrl } from "../lib/public-storage";
 import { selectTrendingPapers } from "../lib/trending";
 
 const featuredLabs = [
@@ -21,9 +23,9 @@ const featuredLabs = [
 ] as const;
 export default async function HomePage() {
   const { papers } = await getPaperData();
-  const popular = [...papers]
-    .filter((paper) => paper.upvotes !== null)
-    .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
+  const mostCited = [...papers]
+    .filter((paper) => paper.citations !== null)
+    .sort((a, b) => (b.citations ?? 0) - (a.citations ?? 0));
   const trending = selectTrendingPapers(papers);
   const lead = trending[0] ?? papers[0];
   const topicCounts = countTopics(papers);
@@ -112,33 +114,33 @@ export default async function HomePage() {
             <p className="story-description text-pretty">
               Selected for citation impact, official-code adoption, recency, and field-wide significance.
             </p>
-            <a className="signal-link row-link focus-ring" href="#featured-paper">
-              Explore the top paper <ArrowIcon />
-            </a>
+            <Link className="signal-link row-link focus-ring" href="/most-trending-papers">
+              Explore the top papers <ArrowIcon />
+            </Link>
           </div>
           <FeaturedCarousel papers={trending} />
         </section>
 
         <aside className="popular-column">
           <div className="column-heading">
-            <h2 className="mono-label">Most upvoted</h2>
-            <span className="mono-label">HF upvotes</span>
+            <h2 className="mono-label">Most cited</h2>
+            <span className="mono-label">Citations</span>
           </div>
           <ol>
-            {popular.slice(0, 3).map((paper, index) => (
+            {mostCited.slice(0, 3).map((paper, index) => (
               <li key={paper.id}>
                 <span className="topic-index">{String(index + 1).padStart(2, "0")}</span>
                 <Link href={`/papers/${paper.id}`} className="focus-ring">
                   <strong>{paper.title}</strong>
                   <small>{formatMonthYear(paper.publishedAt)}</small>
                 </Link>
-                <span className="upvote tabular-nums">{paper.upvotes}</span>
+                <span className="upvote tabular-nums">{paper.citations}</span>
               </li>
             ))}
           </ol>
-          <a className="signal-link row-link focus-ring" href="#featured-paper">
-            View full list <ArrowIcon />
-          </a>
+          <Link className="signal-link row-link focus-ring" href="/most-cited-papers">
+            View top 100 <ArrowIcon />
+          </Link>
         </aside>
       </section>
 
@@ -150,9 +152,9 @@ export default async function HomePage() {
           <Link href="/topics" className="focus-ring">View all shelves →</Link>
         </div>
         <div className="shelf-grid">
-          <ShelfCard title="Reasoning" count={reasoningCount} art="labyrinth" slug="reasoning" />
-          <ShelfCard title="Agents" count={agentCount} art="owl" slug="agents" />
-          <ShelfCard title="Multimodal" count={topicCounts.get("vision-multimodal-generation") ?? 0} art="oracle" slug="multimodal" />
+          <ShelfCard title="Reasoning" count={reasoningCount} artwork={topicArtUrl("reasoning")} slug="reasoning" />
+          <ShelfCard title="Agents" count={agentCount} artwork={topicArtUrl("agents")} slug="agents" />
+          <ShelfCard title="Multimodal" count={topicCounts.get("vision-multimodal-generation") ?? 0} artwork={topicArtUrl("multimodal")} slug="multimodal" />
         </div>
       </section>
 
@@ -173,7 +175,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <footer className="site-footer page-shell" id="notes">
+      <footer className="site-footer page-shell">
         <span>together.ai / research</span>
         <span className="footer-window"><b>Aug 2025 to Aug 2026</b><small>Last 12 months</small></span>
         <a href="#hero-title">Back to top ↑</a>
@@ -190,15 +192,15 @@ function countTopics(papers: Paper[]) {
   return counts;
 }
 
-function ShelfCard({ title, count, art, slug }: { title: string; count: number; art: "labyrinth" | "owl" | "oracle"; slug: string }) {
+function ShelfCard({ title, count, artwork, slug }: { title: string; count: number; artwork: string; slug: string }) {
   return (
-    <Link className={`shelf-card shelf-${art} focus-ring`} href={`/topics/${slug}`}>
+    <Link className="shelf-card focus-ring" href={`/topics/${slug}`}>
       <div>
         <strong className="mono-label">{title}</strong>
         <small>{count} papers</small>
         <span>◉ &nbsp; Explore &nbsp; →</span>
       </div>
-      <GreekCyberArt compact />
+      <Image className="shelf-art" src={artwork} alt="" fill sizes="(max-width: 900px) 100vw, 33vw" />
     </Link>
   );
 }

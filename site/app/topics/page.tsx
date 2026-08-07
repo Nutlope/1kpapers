@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "../../components/icons";
 import { GreekCyberArt } from "../../components/greek-cyber-art";
@@ -34,10 +35,13 @@ export default async function TopicsPage() {
           return (
             <Link key={topic.slug} href={`/topics/${topic.slug}`} className={`topic-index-card topic-${topic.accent} focus-ring`}>
               <div className="topic-card-number">{String(index + 1).padStart(2, "0")}</div>
-              <div>
+              <div className="topic-index-copy">
                 <p className="mono-label">Editorial collection</p>
                 <h2 className="display-serif">{topic.label}</h2>
                 <p>{topic.description}</p>
+              </div>
+              <div className="topic-index-art" aria-hidden="true">
+                <Image src={topic.artwork} alt="" fill sizes="(max-width: 900px) 90vw, 45vw" />
               </div>
               <dl>
                 <div><dt>Papers</dt><dd>{topicPapers.length}</dd></div>

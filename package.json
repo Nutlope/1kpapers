@@ -11,7 +11,6 @@
     "corpus": "tsx src/discover.ts",
     "download": "tsx src/download.ts",
     "dev": "pnpm site:dev",
-    "export:site-data": "tsx src/export-site-data.ts",
     "full": "tsx src/full.ts",
     "full-report": "tsx src/full-report.ts",
     "judge": "tsx src/judge.ts",
@@ -20,6 +19,7 @@
     "range": "tsx src/range.ts",
     "merge": "tsx src/merge-results.ts",
     "report": "tsx src/report.ts",
+    "storage:sync": "node --env-file=.env --import tsx src/sync-site-storage.ts",
     "site:build": "pnpm --dir site build",
     "site:dev": "pnpm --dir site dev",
     "site:typecheck": "pnpm --dir site typecheck",
@@ -31,6 +31,7 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1104.0",
     "fast-xml-parser": "^5.10.1",
     "pdfjs-dist": "6.2.108"
   },

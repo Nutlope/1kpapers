@@ -11,8 +11,7 @@ corpus/shards/
 .next/
 tsconfig.tsbuildinfo
 site/tsconfig.tsbuildinfo
-site/public/data/*.json
-!site/public/data/.gitkeep
+/site/public/generated/
 /supplemental
 
 .DS_Store

@@ -1,7 +1,26 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatMonthYear, type Paper } from "../lib/paper-shared";
+import { getPaperArtwork } from "../lib/paper-artwork";
 
-export function PaperCard({ paper, accent = "magenta" }: { paper: Paper; accent?: "magenta" | "yellow" | "cyan" }) {
+export function PaperCard({ paper, accent = "magenta", eager = false }: { paper: Paper; accent?: "magenta" | "yellow" | "cyan"; eager?: boolean }) {
+  const artwork = getPaperArtwork(paper.id);
+
+  if (artwork) {
+    return (
+      <Link href={`/papers/${paper.id}`} className="paper-card paper-card-with-art paper-shadow focus-ring">
+        <Image
+          className="paper-card-art"
+          src={artwork.cover}
+          alt={`Editorial cover for ${paper.title}`}
+          fill
+          loading={eager ? "eager" : "lazy"}
+          sizes="(max-width: 700px) 68vw, 220px"
+        />
+      </Link>
+    );
+  }
+
   return (
     <Link href={`/papers/${paper.id}`} className={`paper-card paper-shadow focus-ring accent-${accent}`}>
       <span className="corner-fold" />

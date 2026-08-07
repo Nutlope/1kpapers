@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
@@ -37,19 +38,22 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
     <main>
       <SiteHeader />
       <section className={`topic-detail-hero topic-${topic.accent} page-shell`}>
-        <div className="topic-breadcrumb mono-label"><Link href="/">The year</Link><span>/</span><Link href="/topics">Topics</Link><span>/</span><span>{topic.shortLabel}</span></div>
-        <div className="topic-title-row">
-          <div>
-            <p className="mono-label">Research collection</p>
-            <h1 className="display-serif text-balance">{topic.label}</h1>
-            <p>{topic.description}</p>
-          </div>
-          <dl>
-            <div><dt>Papers</dt><dd>{topicPapers.length}</dd></div>
-            <div><dt>Research labs</dt><dd>{labs}</dd></div>
-            <div><dt>Official code</dt><dd>{repositories}</dd></div>
-          </dl>
+        <div className="paper-breadcrumb topic-breadcrumb mono-label"><Link href="/">The year</Link><span>/</span><Link href="/topics">Topics</Link><span>/</span><span>{topic.shortLabel}</span></div>
+        <div className="paper-title-block topic-page-title">
+          <p className="mono-label">Research collection</p>
+          <h1 className="display-serif text-balance">{topic.label}</h1>
+          <p>{topic.description}</p>
         </div>
+        <div className="paper-page-art topic-page-art" aria-hidden="true">
+          <div className="topic-art-frame">
+            <Image src={topic.artwork} alt="" fill priority sizes="(max-width: 720px) 100vw, 30vw" />
+          </div>
+        </div>
+        <dl className="paper-stat-row topic-stat-row">
+          <div><dt>Papers</dt><dd>{topicPapers.length}</dd></div>
+          <div><dt>Research labs</dt><dd>{labs}</dd></div>
+          <div><dt>Official code</dt><dd>{repositories}</dd></div>
+        </dl>
       </section>
 
       <section className="topic-results page-shell">

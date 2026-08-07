@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { SEARCH_INDEX_URL } from "../lib/public-storage";
 import { SearchIcon } from "./icons";
 
 type SearchPaper = {
@@ -23,7 +24,7 @@ export function PaperSearch() {
 
   useEffect(() => {
     let active = true;
-    fetch("/data/search-index.json")
+    fetch(SEARCH_INDEX_URL)
       .then((response) => response.json() as Promise<SearchData>)
       .then((data) => {
         if (active) setPapers(data.papers);

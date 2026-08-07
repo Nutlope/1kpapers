@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { GreekCyberArt } from "../../../components/greek-cyber-art";
 import { SiteHeader } from "../../../components/site-header";
 import { getLabByName } from "../../../lib/labs";
+import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { formatCompactNumber, formatMonthYear, getPaper, topicLabel } from "../../../lib/papers";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
@@ -13,9 +15,16 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
   const { id } = await params;
   const paper = await getPaper(id);
   if (!paper) return {};
+  const artwork = getPaperArtwork(id);
   return {
     title: paper.title,
     description: paper.summary.slice(0, 155),
+    openGraph: artwork?.social
+      ? { images: [{ url: artwork.social, width: 1672, height: 941, alt: `Cover for ${paper.title}` }] }
+      : undefined,
+    twitter: artwork?.social
+      ? { card: "summary_large_image", images: [artwork.social] }
+      : undefined,
   };
 }
 
@@ -26,6 +35,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
 
   const summaryPoints = paper.summary.split(/(?<=[.!?])\s+/).filter(Boolean);
   const lab = getLabByName(paper.lab);
+  const artwork = getPaperArtwork(id);
 
   return (
     <main>
@@ -43,7 +53,22 @@ export default async function PaperPage({ params }: PaperPageProps) {
               {paper.authors.length > 12 ? ", et al." : ""}
             </p>
           </div>
-          <div className="paper-page-art"><GreekCyberArt /></div>
+          <div className="paper-page-art">
+            {artwork ? (
+              <div className="paper-cover-book">
+                <Image
+                  className="paper-page-cover"
+                  src={artwork.cover}
+                  alt={`Editorial cover for ${paper.title}`}
+                  fill
+                  priority
+                  sizes="(max-width: 720px) 190px, (max-width: 1050px) 210px, 245px"
+                />
+              </div>
+            ) : (
+              <GreekCyberArt />
+            )}
+          </div>
           <dl className="paper-stat-row">
             <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
             <div><dt>Research lab</dt><dd>{lab ? <Link href={`/labs/${lab.slug}`}>{lab.shortName} <ArrowIcon /></Link> : paper.lab ?? "Independent"}</dd></div>

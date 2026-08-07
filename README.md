@@ -78,10 +78,9 @@ pnpm benchmark -- --source-file=corpus/pilot-50.json --models=deepseek-ai/DeepSe
 The benchmark and research pipeline live at the repository root. The Next.js research atlas, including its future API and MCP routes, lives in [`site/`](./site).
 
 ```bash
-pnpm export:site-data
 pnpm site:dev
 ```
 
-Generated website data is written to `site/public/data/` and remains gitignored. For Vercel, configure `site` as the project root directory.
+The site reads its generated artwork, paper summaries, and search index from the public Tigris bucket. After updating summary metadata, run `pnpm storage:sync`; replacement-image commands are documented in [`docs/tigris-storage.md`](./docs/tigris-storage.md). For Vercel, configure `site` as the project root directory.
 
 Inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs). Built using Together AI.
