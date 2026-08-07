@@ -230,9 +230,14 @@ button:active,
 }
 
 .header-search-button kbd {
+  min-width: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--ink);
-  font: 600 12px/1 "SFMono-Regular", Consolas, monospace;
-  letter-spacing: -0.02em;
+  font: 500 15px/1 "SFMono-Regular", Consolas, monospace;
+  letter-spacing: -0.04em;
+  transform: translateY(-0.5px);
 }
 
 .about-link {
