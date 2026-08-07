@@ -18,14 +18,14 @@ export function SiteHeader() {
         <Link className={`${pathname === "/" ? "active " : ""}focus-ring`} href="/">
           The year
         </Link>
-        <Link className={`${pathname.startsWith("/topics") ? "active " : ""}focus-ring`} href="/topics">
-          Topics
-        </Link>
         <Link className={`${pathname === "/most-trending-papers" ? "active " : ""}focus-ring`} href="/most-trending-papers">
           Most trending
         </Link>
         <Link className={`${pathname === "/most-cited-papers" ? "active " : ""}focus-ring`} href="/most-cited-papers">
           Most cited
+        </Link>
+        <Link className={`${pathname.startsWith("/topics") ? "active " : ""}focus-ring`} href="/topics">
+          Topics
         </Link>
         <Link className="focus-ring" href="/#about">
           About
