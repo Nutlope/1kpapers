@@ -8,7 +8,10 @@ import { SiteHeader } from "../../../components/site-header";
 import { getLabByName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
-import { formatCompactNumber, formatMonthYear, getPaperDetails, topicLabel } from "../../../lib/papers";
+import { buildScholarlyArticleJsonLd, serializeJsonLd } from "../../../lib/paper-structured-data";
+import { formatCompactNumber, formatMonthYear, getPaperDetails } from "../../../lib/papers";
+import { absoluteSiteUrl } from "../../../lib/site-url";
+import { getPaperEditorialTopics } from "../../../lib/topics";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
 
@@ -18,15 +21,26 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
   if (!details) return {};
   const { paper } = details;
   const artwork = getPaperArtwork(id);
+  const description = paper.summary.slice(0, 155);
+  const canonicalUrl = absoluteSiteUrl(`/papers/${id}`);
   return {
     title: paper.title,
-    description: paper.summary.slice(0, 155),
-    openGraph: artwork?.social
-      ? { images: [{ url: artwork.social, width: 1672, height: 941, alt: `Cover for ${paper.title}` }] }
-      : undefined,
-    twitter: artwork?.social
-      ? { card: "summary_large_image", images: [artwork.social] }
-      : undefined,
+    description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      type: "article",
+      title: paper.title,
+      description,
+      url: canonicalUrl,
+      publishedTime: paper.publishedAt,
+      ...(artwork?.social ? { images: [{ url: artwork.social, width: 1672, height: 941, alt: `Cover for ${paper.title}` }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: paper.title,
+      description,
+      ...(artwork?.social ? { images: [artwork.social] } : {}),
+    },
   };
 }
 
@@ -39,9 +53,15 @@ export default async function PaperPage({ params }: PaperPageProps) {
   const summary = parsePaperSummaryMarkdown(paper.summary);
   const lab = getLabByName(paper.lab);
   const artwork = getPaperArtwork(id);
+  const editorialTopics = getPaperEditorialTopics(paper);
+  const scholarlyArticle = buildScholarlyArticleJsonLd(paper, editorialTopics, artwork?.social);
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(scholarlyArticle) }}
+      />
       <SiteHeader />
       <article className="paper-page page-shell">
         <header className="paper-page-header">
@@ -84,7 +104,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
           <aside className="paper-page-aside">
             <div>
               <p className="mono-label">Topics</p>
-              <ul>{paper.topics.map((topic) => <li key={topic}>{topicLabel(topic)}</li>)}</ul>
+              <ul>{editorialTopics.map((topic) => <li key={topic.slug}>{topic.label}</li>)}</ul>
             </div>
             <div>
               <p className="mono-label">Publication</p>
@@ -125,13 +145,6 @@ export default async function PaperPage({ params }: PaperPageProps) {
             </div>
           </section>
 
-          <aside className="paper-oracle-note">
-            <div className="oracle-crop"><GreekCyberArt compact /></div>
-            <p className="mono-label">Research thread</p>
-            <h2 className="display-serif">Place this paper in the year</h2>
-            <p>Follow its lab, ideas, references, and open-source implementation across the wider atlas.</p>
-            <Link href="/#collections" className="signal-link">Explore the collection <ArrowIcon /></Link>
-          </aside>
         </div>
 
         {relatedPapers.length ? (
@@ -163,7 +176,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
       </article>
       <footer className="site-footer page-shell">
         <span>together.ai / research</span>
-        <span>1,000 papers. One year in motion.</span>
+        <span>Research summaries from the AI paper atlas.</span>
         <Link href="/">Return to the atlas ↑</Link>
       </footer>
     </main>

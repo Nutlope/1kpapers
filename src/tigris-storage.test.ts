@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   gzipJson,
   imageObjectKey,
+  paperDatabaseUrl,
   paperSummaryObjectKey,
   publicObjectUrl,
   tigrisClientConfig,
@@ -45,6 +46,10 @@ describe("Tigris site storage", () => {
     assert.equal(
       publicObjectUrl("papers/arxiv-2607.24653/summary.json"),
       "https://year-in-ai-papers.t3.tigrisfiles.io/papers/arxiv-2607.24653/summary.json",
+    );
+    assert.equal(
+      paperDatabaseUrl(),
+      "https://year-in-ai-papers.t3.tigrisfiles.io/data/papers.sqlite",
     );
   });
 });

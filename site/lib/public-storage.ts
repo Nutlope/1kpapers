@@ -7,6 +7,7 @@ export const HOMEPAGE_DATA_URL = process.env.HOMEPAGE_DATA_URL ?? `${PUBLIC_STOR
 export const MOST_CITED_DATA_URL = process.env.MOST_CITED_DATA_URL ?? `${PUBLIC_STORAGE_BASE_URL}/most-cited.json`;
 export const MOST_STARRED_DATA_URL = process.env.MOST_STARRED_DATA_URL ?? `${PUBLIC_STORAGE_BASE_URL}/most-starred.json`;
 export const SEARCH_INDEX_URL = `${PUBLIC_STORAGE_BASE_URL}/search-index.json`;
+export const PAPER_DATABASE_URL = `${PUBLIC_STORAGE_BASE_URL}/data/papers.sqlite`;
 
 export function paperAssetUrl(paperId: string, asset: "cover" | "social") {
   return `${PUBLIC_STORAGE_BASE_URL}/papers/${encodeURIComponent(paperId)}/${asset}.png`;

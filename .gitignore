@@ -13,6 +13,8 @@ tsconfig.tsbuildinfo
 site/tsconfig.tsbuildinfo
 /site/public/generated/
 /supplemental
+/data/*.sqlite
+/data/*.sqlite-*
 
 .DS_Store
 /output

@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { buildSiteData, type SitePaper, type SitePaperListing } from "./site-data.js";
+import { updatePaperDatabaseGeneratedAt } from "./paper-database.js";
 import {
   createTigrisClient,
   ensurePublicReadCors,
@@ -8,6 +9,7 @@ import {
   imageContentType,
   imageObjectKey,
   paperSummaryObjectKey,
+  PAPER_DATABASE_OBJECT_KEY,
   publicObjectUrl,
   uploadObject,
   type ImageKind,
@@ -24,11 +26,9 @@ if (args.kind || args.id || args.file) {
   }
   await uploadImage(args.kind, args.id, path.resolve(projectRoot, args.file));
 } else {
-  const { paperData, catalogData, homepageData, mostCitedData, mostStarredData, searchData, relatedPapersById } = await buildSiteData(projectRoot);
-  const selectedPaper = args.paperId
-    ? paperData.papers.find((paper) => paper.id === args.paperId)
-    : undefined;
-  if (args.paperId && !selectedPaper) throw new Error(`Unknown paper ID: ${args.paperId}`);
+  const databasePath = path.join(projectRoot, "data", "papers.sqlite");
+  updatePaperDatabaseGeneratedAt(databasePath, new Date().toISOString());
+  const { paperData, catalogData, homepageData, mostCitedData, mostStarredData, searchData, relatedPapersById } = await buildSiteData(projectRoot, databasePath);
 
   const uploads: Array<() => Promise<unknown>> = [];
 
@@ -83,7 +83,7 @@ if (args.kind || args.id || args.file) {
     }),
   );
 
-  const papers = selectedPaper ? [selectedPaper] : paperData.papers;
+  const papers = paperData.papers;
   uploads.push(...papers.map((paper) => () => uploadPaperSummary(
     paper,
     relatedPapersById.get(paper.id) ?? [],
@@ -97,7 +97,13 @@ if (args.kind || args.id || args.file) {
   await verifyPublicJson("most-cited.json", mostCitedData.papers.length);
   await verifyPublicJson("most-starred.json", mostStarredData.papers.length);
   await verifyPublicJson(paperSummaryObjectKey(papers[0]!.id), 1);
-  console.log(`Synced ${papers.length} paper summaries plus compact catalog, homepage, rankings, and search indexes.`);
+  const databaseUpload = await uploadObject(client, {
+    key: PAPER_DATABASE_OBJECT_KEY,
+    body: await readFile(databasePath),
+    contentType: "application/vnd.sqlite3",
+    cacheControl: "public, max-age=60, must-revalidate",
+  });
+  console.log(`Synced ${papers.length} paper summaries, derived indexes, and canonical SQLite (${databaseUpload.bytes} bytes).`);
 }
 
 async function uploadImage(kind: ImageKind, id: string, file: string) {
@@ -162,6 +168,5 @@ function parseArgs(argv: string[]) {
     kind: kind as ImageKind | undefined,
     id: values.id,
     file: values.file,
-    paperId: values["paper-id"],
   };
 }

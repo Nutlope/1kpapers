@@ -10,6 +10,8 @@
     "calibration:check": "tsx src/validate-calibration.ts",
     "corpus": "tsx src/discover.ts",
     "download": "tsx src/download.ts",
+    "data:import-json": "tsx src/import-paper-database.ts",
+    "data:pull": "tsx src/pull-paper-database.ts",
     "dev": "pnpm site:dev",
     "full": "tsx src/full.ts",
     "full-report": "tsx src/full-report.ts",

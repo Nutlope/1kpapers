@@ -4,6 +4,7 @@ The site reads generated images and JSON from the public `year-in-ai-papers`
 Tigris bucket:
 
 ```text
+data/papers.sqlite
 papers/{paperId}/cover.png
 papers/{paperId}/social.png
 papers/{paperId}/summary.json
@@ -15,6 +16,10 @@ most-cited.json
 most-starred.json
 search-index.json
 ```
+
+`data/papers.sqlite` is the canonical editable dataset. The local copy at
+`data/papers.sqlite` is gitignored. Every JSON object below it is generated
+from that database for fast static-site delivery.
 
 JSON objects are uploaded with gzip compression and `Content-Encoding: gzip`.
 Paper and topic IDs make replacement uploads overwrite the existing public key.
@@ -29,7 +34,18 @@ as a legacy compatibility export and is not fetched by the site.
 ## Sync summary data
 
 ```sh
+pnpm data:pull
+# Edit data/papers.sqlite with sqlite3 or a SQLite GUI.
 pnpm storage:sync
+```
+
+`storage:sync` republishes all derived JSON and paper objects, verifies them,
+then uploads the canonical SQLite database last.
+
+To bootstrap the database once from the legacy JSON snapshot:
+
+```sh
+pnpm data:import-json
 ```
 
 ## Replace one image
@@ -44,13 +60,5 @@ pnpm storage:sync -- \
 Valid image kinds are `cover`, `social`, and `topic`. For topic art, pass the
 topic slug as `--id`.
 
-## Update one paper summary
-
-After updating `metadata/papers.json`, this uploads that paper record with its
-precomputed related papers and also refreshes the catalog, homepage, legacy,
-and search indexes:
-
-```sh
-pnpm storage:sync -- \
-  --paper-id arxiv-2607.24653
-```
+The legacy `metadata/papers.json` file remains a generated review snapshot; it
+is not the publishing source of truth.

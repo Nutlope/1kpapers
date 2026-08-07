@@ -7,8 +7,19 @@ import { PersonalPaperPick } from "../components/personal-paper-pick";
 import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
-import { formatMonthYear, getHomepageData } from "../lib/papers";
+import { formatMonthYear, getHomepageData, getPaperCatalog } from "../lib/papers";
 import { topicArtUrl } from "../lib/public-storage";
+import { getTopicPapers, topics as topicDefinitions } from "../lib/topics";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    title: "The Year in AI Papers",
+    description: "Explore more than 1,000 papers in a curated atlas of artificial intelligence research.",
+    url: "/",
+  },
+};
 
 const featuredLabs = [
   { name: "OpenAI", slug: "openai" },
@@ -19,28 +30,24 @@ const featuredLabs = [
   { name: "Z.ai / GLM", slug: "zai-glm" },
 ] as const;
 export default async function HomePage() {
-  const {
-    trending,
-    mostCited,
-    monthCounts,
-    topicCounts,
-    reasoningCount,
-    agentCount,
-  } = await getHomepageData();
+  const [{ trending, mostCited, monthCounts }, { papers }] = await Promise.all([
+    getHomepageData(),
+    getPaperCatalog(),
+  ]);
+  const collectionPaperCount = papers.length;
+  const additionalResearchPapers = Math.max(0, collectionPaperCount - 1_000);
   const monthEntries: MonthEntry[] = monthDefinitions.map((month) => ({
     key: month.key,
     month: month.month,
     year: month.year,
     count: monthCounts[month.key] ?? 0,
   }));
-  const editorialTopics = [
-    { key: "reasoning", label: "Reasoning", count: reasoningCount },
-    { key: "agents", label: "Agents", count: agentCount },
-    { key: "multimodal", label: "Multimodal", count: topicCounts["vision-multimodal-generation"] ?? 0 },
-    { key: "systems", label: "Systems", count: topicCounts["systems-efficiency"] ?? 0 },
-    { key: "robotics", label: "Robotics", count: topicCounts["robotics-embodied-ai"] ?? 0 },
-    { key: "science", label: "Science", count: topicCounts["science-medicine"] ?? 0 },
-  ];
+  const editorialTopics = topicDefinitions.map((topic) => ({
+    key: topic.slug,
+    label: topic.shortLabel,
+    count: getTopicPapers(topic, papers).length,
+  }));
+  const topicCount = (slug: string) => editorialTopics.find((topic) => topic.key === slug)?.count ?? 0;
 
   if (trending.length === 0) return null;
 
@@ -54,7 +61,7 @@ export default async function HomePage() {
             <span>The year in AI</span>{" "}
             <span>papers</span>
           </h1>
-          <p>1,000 papers that defined the last year of AI.</p>
+          <p>{collectionPaperCount.toLocaleString("en")} papers in an atlas built around a frozen 1,000-paper benchmark.</p>
         </div>
       </section>
 
@@ -130,7 +137,7 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      <YearExplorer months={monthEntries} />
+      <YearExplorer months={monthEntries} totalCount={collectionPaperCount} />
 
       <section className="shelves page-shell rule-top" id="shelves" aria-labelledby="shelves-title">
         <div className="section-line">
@@ -138,9 +145,9 @@ export default async function HomePage() {
           <Link href="/topics" className="focus-ring">View all shelves →</Link>
         </div>
         <div className="shelf-grid">
-          <ShelfCard title="Reasoning" count={reasoningCount} artwork={topicArtUrl("reasoning")} slug="reasoning" />
-          <ShelfCard title="Agents" count={agentCount} artwork={topicArtUrl("agents")} slug="agents" />
-          <ShelfCard title="Multimodal" count={topicCounts["vision-multimodal-generation"] ?? 0} artwork={topicArtUrl("multimodal")} slug="multimodal" />
+          <ShelfCard title="Reasoning" count={topicCount("reasoning")} artwork={topicArtUrl("reasoning")} slug="reasoning" />
+          <ShelfCard title="Agents" count={topicCount("agents")} artwork={topicArtUrl("agents")} slug="agents" />
+          <ShelfCard title="Multimodal" count={topicCount("multimodal")} artwork={topicArtUrl("multimodal")} slug="multimodal" />
         </div>
       </section>
 
@@ -193,7 +200,7 @@ export default async function HomePage() {
             <div>
               <h3 className="display-serif">Build the research atlas</h3>
               <p className="text-pretty">
-                We combined the generated summaries with publication details, citations, official repositories, research labs, and topics, then organized the collection by month, field, lab, citation impact, and editorial shelves.
+                We combined the 1,000-paper benchmark with {additionalResearchPapers.toLocaleString("en")} verified Together AI research papers, then added publication details, citations, official repositories, labs, and editorial topics to create this {collectionPaperCount.toLocaleString("en")}-paper atlas.
               </p>
             </div>
           </article>
@@ -225,3 +232,4 @@ function ShelfCard({ title, count, artwork, slug }: { title: string; count: numb
     </Link>
   );
 }
+import type { Metadata } from "next";

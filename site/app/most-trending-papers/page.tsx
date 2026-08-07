@@ -8,6 +8,13 @@ import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib
 export const metadata: Metadata = {
   title: "Most trending AI papers",
   description: "The editorial selection of AI papers that moved the field forward from August 2025 through August 2026.",
+  alternates: { canonical: "/most-trending-papers" },
+  openGraph: {
+    type: "website",
+    title: "Most trending AI papers",
+    description: "The editorial selection of AI papers that moved the field forward from August 2025 through August 2026.",
+    url: "/most-trending-papers",
+  },
 };
 
 export default async function MostTrendingPapersPage() {

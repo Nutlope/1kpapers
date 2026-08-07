@@ -9,6 +9,7 @@ export type Paper = {
   pdfUrl: string | null;
   pageCount: number | null;
   topics: string[];
+  editorialTopics?: string[];
   categories: string[];
   upvotes: number | null;
   summary: string;
@@ -30,6 +31,7 @@ export type PaperListing = Pick<
   | "publishedAt"
   | "landingUrl"
   | "topics"
+  | "editorialTopics"
   | "upvotes"
   | "summary"
   | "lab"
@@ -56,7 +58,7 @@ export function formatCompactNumber(value: number | null) {
 
 export function topicLabel(topic: string) {
   const labels: Record<string, string> = {
-    "llms-agents-reasoning": "Reasoning and agents",
+    "llms-agents-reasoning": "Language models, agents, and reasoning",
     "vision-multimodal-generation": "Multimodal",
     "systems-efficiency": "Systems",
     "robotics-embodied-ai": "Robotics",

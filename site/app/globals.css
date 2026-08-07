@@ -2254,7 +2254,7 @@ button:active,
 
 .paper-page-grid {
   display: grid;
-  grid-template-columns: 190px minmax(0, 720px) minmax(240px, 1fr);
+  grid-template-columns: 190px minmax(0, 760px);
   gap: clamp(34px, 4vw, 62px);
   padding: 48px 0 90px;
 }
@@ -2371,51 +2371,6 @@ button:active,
 .paper-abstract-full {
   padding-left: 24px;
   border-left: 2px solid var(--blue);
-}
-
-.paper-oracle-note {
-  position: sticky;
-  top: 25px;
-  align-self: start;
-  padding: 20px;
-  border: 1px solid var(--rule);
-  background: linear-gradient(150deg, #fffefb, #f4f7ff);
-}
-
-.oracle-crop {
-  height: 135px;
-  margin: -20px -20px 20px;
-  border-bottom: 1px solid var(--rule);
-  overflow: hidden;
-}
-
-.oracle-crop .greek-art {
-  width: 160%;
-  margin: -68px 0 0 -75%;
-}
-
-.paper-oracle-note h2 {
-  margin: 16px 0;
-  font-size: 33px;
-  line-height: 0.98;
-}
-
-.paper-oracle-note > p:not(.mono-label) {
-  color: var(--muted);
-  font: 15px/1.45 "Iowan Old Style", Baskerville, serif;
-}
-
-.paper-oracle-note a {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  font-size: 11px;
-}
-
-.paper-oracle-note a svg {
-  width: 17px;
 }
 
 .related-papers {
@@ -2539,11 +2494,6 @@ button:active,
     grid-template-columns: 190px 1fr;
   }
 
-  .paper-oracle-note {
-    position: relative;
-    top: auto;
-    grid-column: 2;
-  }
 }
 
 @media (max-width: 720px) {
@@ -2650,11 +2600,6 @@ button:active,
   .paper-abstract-full {
     font-size: 18px;
     line-height: 1.52;
-  }
-
-  .paper-oracle-note {
-    order: 3;
-    grid-column: auto;
   }
 
   .related-papers {
@@ -3266,6 +3211,34 @@ button:active,
   border-bottom: 1px solid var(--rule);
 }
 
+.collection-pagination {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--ink);
+  font: 10px/1 "SFMono-Regular", Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.collection-pagination a:last-child,
+.collection-pagination span:last-child {
+  justify-self: end;
+}
+
+.collection-pagination a {
+  color: var(--signal);
+}
+
+.collection-pagination span[aria-disabled="true"] {
+  color: var(--muted);
+}
+
+.collection-pagination strong {
+  font-weight: 400;
+}
+
 .topic-paper-rank {
   color: var(--signal);
   font: 13px/1 "SFMono-Regular", Consolas, monospace;
@@ -3614,6 +3587,11 @@ button:active,
 
   .topic-paper-links {
     grid-column: 2;
+  }
+
+  .collection-pagination {
+    gap: 10px;
+    font-size: 8px;
   }
 }
 

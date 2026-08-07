@@ -1,0 +1,36 @@
+import { PAPER_CATALOG_URL, PAPER_DATABASE_URL, SEARCH_INDEX_URL } from "../../lib/public-storage";
+import { absoluteSiteUrl } from "../../lib/site-url";
+
+export function GET() {
+  const body = `# The Year in AI Papers
+
+> A Together AI research atlas containing more than 1,000 AI papers, concise summaries, original abstracts, citations, official code links, research labs, and editorial topics.
+
+## Primary pages
+
+- [Research atlas](${absoluteSiteUrl("/")})
+- [Topics](${absoluteSiteUrl("/topics")})
+- [Research labs](${absoluteSiteUrl("/labs")})
+- [Most trending papers](${absoluteSiteUrl("/most-trending-papers")})
+- [Most cited papers](${absoluteSiteUrl("/most-cited-papers")})
+- [Most starred papers](${absoluteSiteUrl("/most-starred-papers")})
+
+## Machine-readable resources
+
+- [XML sitemap](${absoluteSiteUrl("/sitemap.xml")})
+- [Paper catalog JSON](${PAPER_CATALOG_URL})
+- [Search index JSON](${SEARCH_INDEX_URL})
+- [Canonical SQLite database](${PAPER_DATABASE_URL})
+
+## Paper URLs
+
+Paper pages use the stable pattern \`${absoluteSiteUrl("/papers/{paper-id}")}\`. Each page includes a human-readable summary, the original abstract and publication metadata, and ScholarlyArticle JSON-LD. Prefer the paper's original arXiv or publisher link when verifying scientific claims.
+`;
+
+  return new Response(body, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+    },
+  });
+}

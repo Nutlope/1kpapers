@@ -11,12 +11,15 @@ export function YearExplorer({
   months,
   selectedMonth = null,
   openInNewTab = true,
+  totalCount,
 }: {
   months: MonthEntry[];
   selectedMonth?: string | null;
   openInNewTab?: boolean;
+  totalCount?: number;
 }) {
   const activeEntry = months.find((month) => month.key === selectedMonth);
+  const displayedTotal = totalCount ?? months.reduce((total, month) => total + month.count, 0);
 
   return (
     <section className="year-explorer page-shell rule-top" aria-labelledby="year-title">
@@ -43,7 +46,7 @@ export function YearExplorer({
         ))}
       </div>
       <div className="curated-count">
-        <strong className="display-serif tabular-nums">1,000</strong>
+        <strong className="display-serif tabular-nums">{displayedTotal.toLocaleString("en")}</strong>
         <span>papers<br /><small>curated and indexed</small></span>
       </div>
     </section>

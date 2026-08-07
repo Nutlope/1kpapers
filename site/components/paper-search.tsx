@@ -157,7 +157,7 @@ export function PaperSearch({ open, onClose }: { open: boolean; onClose: () => v
           {query.trim().length < 2 ? (
             <div className="search-command-empty">
               <span className="mono-label">Search the collection</span>
-              <p>Type at least two characters to explore {papers.length || "1,018"} papers.</p>
+              <p>Type at least two characters to explore {papers.length ? papers.length.toLocaleString("en") : "the full collection of"} papers.</p>
             </div>
           ) : loadFailed ? (
             <div className="search-command-empty">Search is unavailable right now. Please try again.</div>

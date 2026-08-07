@@ -1,5 +1,5 @@
-import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { readPaperDatabase } from "./paper-database.js";
 
 type SourcePaper = {
   collectionId: string;
@@ -96,7 +96,10 @@ const editorialTrendingIds = [
   "arxiv-2509.04664",
 ] as const;
 
-export async function buildSiteData(projectRoot = process.cwd()): Promise<{
+export async function buildSiteData(
+  projectRoot = process.cwd(),
+  databasePath = path.join(projectRoot, "data", "papers.sqlite"),
+): Promise<{
   paperData: SitePaperData;
   catalogData: SiteCatalogData;
   homepageData: SiteHomepageData;
@@ -105,8 +108,7 @@ export async function buildSiteData(projectRoot = process.cwd()): Promise<{
   searchData: SiteSearchData;
   relatedPapersById: Map<string, SitePaperListing[]>;
 }> {
-  const sourcePath = path.join(projectRoot, "metadata", "papers.json");
-  const source = JSON.parse(await readFile(sourcePath, "utf8")) as MetadataFile;
+  const source = readPaperDatabase(databasePath) as unknown as MetadataFile;
   const papers = source.papers.map(toSitePaper);
 
   const indexes = buildSiteIndexes(papers, source.generatedAt);
@@ -126,7 +128,7 @@ export async function buildSiteData(projectRoot = process.cwd()): Promise<{
         title: paper.title,
         authors: paper.authors,
         lab: paper.lab,
-        topics: paper.topics,
+        topics: [...new Set([...paper.topics, ...paper.editorialTopics])],
         publishedAt: paper.publishedAt,
       })),
     },
@@ -158,11 +160,15 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
     );
   const monthCounts: Record<string, number> = {};
   const topicCounts: Record<string, number> = {};
+  const editorialTopicCounts: Record<string, number> = {};
 
   for (const paper of papers) {
     const month = paper.publishedAt.slice(0, 7);
     monthCounts[month] = (monthCounts[month] ?? 0) + 1;
     for (const topic of paper.topics) topicCounts[topic] = (topicCounts[topic] ?? 0) + 1;
+    for (const topic of paper.editorialTopics) {
+      editorialTopicCounts[topic] = (editorialTopicCounts[topic] ?? 0) + 1;
+    }
   }
 
   return {
@@ -174,12 +180,8 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
       mostCited: mostCitedListings.slice(0, 3),
       monthCounts,
       topicCounts,
-      reasoningCount: papers.filter((paper) =>
-        /\breasoning\b|chain.of.thought|reinforcement learning|test.time|inference.time/i.test(`${paper.title} ${paper.summary}`),
-      ).length,
-      agentCount: papers.filter((paper) =>
-        /\bagents?\b|\bagentic\b|tool use|computer use/i.test(`${paper.title} ${paper.summary}`),
-      ).length,
+      reasoningCount: editorialTopicCounts.reasoning ?? 0,
+      agentCount: editorialTopicCounts.agents ?? 0,
     },
     mostCitedData: {
       schemaVersion: 1,
@@ -207,6 +209,7 @@ export function toListingPaper(paper: SitePaper) {
     publishedAt: paper.publishedAt,
     landingUrl: paper.landingUrl,
     topics: paper.topics,
+    editorialTopics: paper.editorialTopics,
     upvotes: paper.upvotes,
     summary: summaryExcerpt(paper.summary),
     lab: paper.lab,
@@ -269,7 +272,7 @@ function summaryExcerpt(summary: string, maxLength = 360) {
 }
 
 function toSitePaper(paper: SourcePaper) {
-  return {
+  const sitePaper = {
     id: paper.collectionId,
     arxivId: paper.arxivId,
     title: paper.title,
@@ -292,4 +295,25 @@ function toSitePaper(paper: SourcePaper) {
     venue: paper.venue,
     license: paper.licenseName,
   };
+  return {
+    ...sitePaper,
+    editorialTopics: classifyEditorialTopics(sitePaper),
+  };
+}
+
+export function classifyEditorialTopics(paper: {
+  title: string;
+  abstract: string | null;
+  topics: string[];
+}) {
+  const text = `${paper.title} ${paper.abstract ?? ""}`;
+  const matches = [
+    ["reasoning", /\breasoning\b|chain[- ]of[- ]thought|test[- ]time (?:compute|scaling|reasoning)|inference[- ]time (?:compute|scaling)|reinforcement learning with verifiable rewards|\brlvr\b|theorem proving|mathematical reasoning/i.test(text)],
+    ["agents", /\bagents?\b|\bagentic\b|tool[- ](?:use|using|integrated)|computer use|multi[- ]agent|autonomous (?:workflow|system)|long[- ]horizon (?:action|task|planning)/i.test(text)],
+    ["multimodal", paper.topics.includes("vision-multimodal-generation")],
+    ["systems", paper.topics.includes("systems-efficiency")],
+    ["robotics", paper.topics.includes("robotics-embodied-ai")],
+    ["science", paper.topics.includes("science-medicine")],
+  ] as const;
+  return matches.filter(([, matched]) => matched).map(([slug]) => slug);
 }

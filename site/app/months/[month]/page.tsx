@@ -6,6 +6,7 @@ import { SiteHeader } from "../../../components/site-header";
 import { YearExplorer, type MonthEntry } from "../../../components/year-explorer";
 import { getMonthDefinition, monthDefinitions } from "../../../lib/months";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
+import { absoluteSiteUrl } from "../../../lib/site-url";
 
 type MonthPageProps = { params: Promise<{ month: string }>; searchParams: Promise<{ sort?: string }> };
 
@@ -13,9 +14,14 @@ export async function generateMetadata({ params }: MonthPageProps): Promise<Meta
   const { month: key } = await params;
   const month = getMonthDefinition(key);
   if (!month) return {};
+  const title = `${month.label} AI papers`;
+  const description = `The most discussed AI research papers published in ${month.label}.`;
+  const canonicalUrl = absoluteSiteUrl(`/months/${key}`);
   return {
-    title: `${month.label} AI papers`,
-    description: `The most discussed AI research papers published in ${month.label}.`,
+    title,
+    description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: { type: "website", title, description, url: canonicalUrl },
   };
 }
 

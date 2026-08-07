@@ -7,6 +7,13 @@ import { formatCompactNumber, formatMonthYear, getMostStarredData } from "../../
 export const metadata: Metadata = {
   title: "Most starred AI papers on GitHub",
   description: "AI papers with the most-starred linked GitHub repositories in the Year in AI Papers collection.",
+  alternates: { canonical: "/most-starred-papers" },
+  openGraph: {
+    type: "website",
+    title: "Most starred AI papers on GitHub",
+    description: "AI papers with the most-starred linked GitHub repositories in the Year in AI Papers collection.",
+    url: "/most-starred-papers",
+  },
 };
 
 export default async function MostStarredPapersPage() {

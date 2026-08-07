@@ -7,6 +7,13 @@ import { formatCompactNumber, formatMonthYear, getMostCitedData } from "../../li
 export const metadata: Metadata = {
   title: "Most cited AI papers",
   description: "The most cited papers in the Year in AI Papers collection, ranked from a frozen scholarly citation snapshot.",
+  alternates: { canonical: "/most-cited-papers" },
+  openGraph: {
+    type: "website",
+    title: "Most cited AI papers",
+    description: "The most cited papers in the Year in AI Papers collection, ranked from a frozen scholarly citation snapshot.",
+    url: "/most-cited-papers",
+  },
 };
 
 export default async function MostCitedPapersPage() {

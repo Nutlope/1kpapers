@@ -10,6 +10,7 @@ import {
 
 export const TIGRIS_BUCKET = "year-in-ai-papers";
 export const TIGRIS_PUBLIC_BASE_URL = "https://year-in-ai-papers.t3.tigrisfiles.io";
+export const PAPER_DATABASE_OBJECT_KEY = "data/papers.sqlite";
 
 export type ImageKind = "cover" | "social" | "topic";
 
@@ -28,6 +29,10 @@ export function imageObjectKey(kind: ImageKind, id: string, extension = ".png") 
 
 export function paperSummaryObjectKey(paperId: string) {
   return `papers/${assertSafeObjectSegment(paperId, "paper ID")}/summary.json`;
+}
+
+export function paperDatabaseUrl(baseUrl = TIGRIS_PUBLIC_BASE_URL) {
+  return publicObjectUrl(PAPER_DATABASE_OBJECT_KEY, baseUrl);
 }
 
 export function publicObjectUrl(key: string, baseUrl = TIGRIS_PUBLIC_BASE_URL) {

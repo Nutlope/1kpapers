@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { classifyTopics } from "./corpus.js";
+import { createPaperDatabase } from "./paper-database.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -284,6 +285,7 @@ async function main() {
     papers,
   };
   const report = buildReport(papers, githubSnapshot.records, generatedAt);
+  createPaperDatabase(output, resolve(root, "data/papers.sqlite"), { overwrite: true });
   await writeJson(resolve(root, "metadata/papers.json"), output);
   await writeJson(resolve(root, "metadata/report.json"), report);
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);

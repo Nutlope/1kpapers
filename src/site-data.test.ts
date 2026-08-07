@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, it } from "node:test";
-import { buildSiteData, buildSiteIndexes, type SitePaper } from "./site-data.js";
+import { createPaperDatabase, type PaperDataset } from "./paper-database.js";
+import { buildSiteData, buildSiteIndexes, classifyEditorialTopics, type SitePaper } from "./site-data.js";
 
 function paper(overrides: Partial<SitePaper> & Pick<SitePaper, "id" | "title">): SitePaper {
   const { id, title, ...rest } = overrides;
@@ -15,6 +19,7 @@ function paper(overrides: Partial<SitePaper> & Pick<SitePaper, "id" | "title">):
     pdfUrl: null,
     pageCount: 10,
     topics: ["systems-efficiency"],
+    editorialTopics: ["systems"],
     categories: ["cs.LG"],
     upvotes: 10,
     summary: "Overview sentence with enough detail.\n\n- Result one.\n- Result two.",
@@ -31,6 +36,26 @@ function paper(overrides: Partial<SitePaper> & Pick<SitePaper, "id" | "title">):
 }
 
 describe("generated site indexes", () => {
+  it("keeps editorial reasoning and agent topics narrower than the raw combined tag", () => {
+    assert.deepEqual(classifyEditorialTopics({
+      title: "DINOv3",
+      abstract: "A self-supervised vision foundation model with dense visual features and text alignment.",
+      topics: ["llms-agents-reasoning", "vision-multimodal-generation"],
+    }), ["multimodal"]);
+
+    assert.deepEqual(classifyEditorialTopics({
+      title: "Reasoning with verifiable rewards",
+      abstract: "We study reinforcement learning with verifiable rewards for mathematical reasoning.",
+      topics: ["llms-agents-reasoning"],
+    }), ["reasoning"]);
+
+    assert.deepEqual(classifyEditorialTopics({
+      title: "A long-horizon coding agent",
+      abstract: "An agentic system for tool-use workflows.",
+      topics: ["llms-agents-reasoning"],
+    }), ["agents"]);
+  });
+
   it("precomputes homepage rankings and compact catalog summaries", () => {
     const papers = [
       paper({ id: "arxiv-2512.02556", title: "Editorial anchor", citations: 4, githubRepository: "https://github.com/lab/anchor", githubStars: 20 }),
@@ -69,11 +94,16 @@ describe("generated site indexes", () => {
   });
 
   it("keeps each generated index within its payload budget", async () => {
-    const { catalogData, homepageData, mostCitedData, mostStarredData } = await buildSiteData();
+    const directory = await mkdtemp(path.join(tmpdir(), "smartpdfs-site-data-"));
+    const databasePath = path.join(directory, "papers.sqlite");
+    const snapshot = JSON.parse(await readFile(path.join(process.cwd(), "metadata/papers.json"), "utf8")) as PaperDataset;
+    createPaperDatabase(snapshot, databasePath);
+    const { catalogData, homepageData, mostCitedData, mostStarredData } = await buildSiteData(process.cwd(), databasePath);
 
     assert.ok(Buffer.byteLength(JSON.stringify(catalogData)) < 2_000_000);
     assert.ok(Buffer.byteLength(JSON.stringify(homepageData)) < 50_000);
     assert.ok(Buffer.byteLength(JSON.stringify(mostCitedData)) < 500_000);
     assert.ok(Buffer.byteLength(JSON.stringify(mostStarredData)) < 500_000);
+    await rm(directory, { recursive: true, force: true });
   });
 });

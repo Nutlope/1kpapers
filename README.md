@@ -83,4 +83,6 @@ pnpm site:dev
 
 The site reads its generated artwork, paper summaries, and search index from the public Tigris bucket. After updating summary metadata, run `pnpm storage:sync`; replacement-image commands are documented in [`docs/tigris-storage.md`](./docs/tigris-storage.md). For Vercel, configure `site` as the project root directory.
 
+The canonical editable publication dataset is the gitignored `data/papers.sqlite` database mirrored at `data/papers.sqlite` in Tigris. Run `pnpm data:pull`, edit it with SQLite, then run `pnpm storage:sync` to regenerate and publish the site's JSON artifacts.
+
 Inspired by [Nutlope/SmartPDFs](https://github.com/Nutlope/smartpdfs). Built using Together AI.

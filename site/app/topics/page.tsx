@@ -10,6 +10,13 @@ import { getTopicPapers, topics } from "../../lib/topics";
 export const metadata: Metadata = {
   title: "Research topics",
   description: "Browse the ideas that defined the last year of AI research.",
+  alternates: { canonical: "/topics" },
+  openGraph: {
+    type: "website",
+    title: "Research topics",
+    description: "Browse the ideas that defined the last year of AI research.",
+    url: "/topics",
+  },
 };
 
 export default async function TopicsPage() {
@@ -22,7 +29,7 @@ export default async function TopicsPage() {
         <div>
           <p className="mono-label">The research atlas</p>
           <h1 className="display-serif text-balance">Browse the ideas that shaped the year.</h1>
-          <p>Six editorial paths through 1,000 papers, from reasoning systems to scientific discovery.</p>
+          <p>Six editorial paths through {papers.length.toLocaleString("en")} papers, from reasoning systems to scientific discovery.</p>
         </div>
         <GreekCyberArt compact />
       </section>
@@ -55,7 +62,7 @@ export default async function TopicsPage() {
       </section>
       <footer className="site-footer page-shell">
         <span>together.ai / research</span>
-        <span>1,000 papers. One year in motion.</span>
+        <span>{papers.length.toLocaleString("en")} papers. One research atlas.</span>
         <Link href="/">Return to the atlas ↑</Link>
       </footer>
     </main>

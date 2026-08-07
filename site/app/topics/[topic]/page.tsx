@@ -6,21 +6,43 @@ import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { getTopic, getTopicPapers } from "../../../lib/topics";
+import { absoluteSiteUrl } from "../../../lib/site-url";
 
 type TopicPageProps = {
   params: Promise<{ topic: string }>;
-  searchParams: Promise<{ sort?: string }>;
+  searchParams: Promise<{ sort?: string; page?: string }>;
 };
+
+const PAGE_SIZE = 50;
 
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { topic: slug } = await params;
   const topic = getTopic(slug);
   if (!topic) return {};
-  return { title: topic.label, description: topic.description };
+  const title = `${topic.label} AI papers`;
+  const canonicalUrl = absoluteSiteUrl(`/topics/${slug}`);
+  return {
+    title,
+    description: topic.description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      type: "website",
+      title,
+      description: topic.description,
+      url: canonicalUrl,
+      images: [{ url: topic.artwork, alt: `${topic.label} research collection` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: topic.description,
+      images: [topic.artwork],
+    },
+  };
 }
 
 export default async function TopicPage({ params, searchParams }: TopicPageProps) {
-  const [{ topic: slug }, { sort }] = await Promise.all([params, searchParams]);
+  const [{ topic: slug }, { sort, page: pageParam }] = await Promise.all([params, searchParams]);
   const topic = getTopic(slug);
   if (!topic) notFound();
 
@@ -33,6 +55,12 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
   });
   const labs = new Set(topicPapers.map((paper) => paper.lab).filter(Boolean)).size;
   const repositories = topicPapers.filter((paper) => paper.githubRepository).length;
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const page = Number.parseInt(pageParam ?? "1", 10);
+  if (!Number.isInteger(page) || page < 1 || page > pageCount) notFound();
+  const pageStart = (page - 1) * PAGE_SIZE;
+  const displayed = sorted.slice(pageStart, pageStart + PAGE_SIZE);
+  const pageEnd = pageStart + displayed.length;
 
   return (
     <main>
@@ -58,7 +86,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
 
       <section className="topic-results page-shell">
         <div className="topic-results-bar">
-          <p><strong>{topicPapers.length}</strong> papers in this collection</p>
+          <p><strong>{pageStart + 1}–{pageEnd}</strong> of {topicPapers.length} papers in this collection</p>
           <nav aria-label="Sort papers">
             <Link className={!sort || sort === "newest" ? "active" : ""} href={`/topics/${slug}`}>Newest</Link>
             <Link className={sort === "cited" ? "active" : ""} href={`/topics/${slug}?sort=cited`}>Most cited</Link>
@@ -66,9 +94,9 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
           </nav>
         </div>
         <div className="topic-paper-list">
-          {sorted.slice(0, 100).map((paper, index) => (
+          {displayed.map((paper, index) => (
             <article key={paper.id} className="topic-paper-row">
-              <span className="topic-paper-rank">{String(index + 1).padStart(2, "0")}</span>
+              <span className="topic-paper-rank">{String(pageStart + index + 1).padStart(2, "0")}</span>
               <div className="topic-paper-main">
                 <p className="mono-label">{paper.lab ?? paper.venue ?? "Independent research"}</p>
                 <h2 className="display-serif"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
@@ -87,12 +115,27 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
             </article>
           ))}
         </div>
+        {pageCount > 1 ? (
+          <nav className="collection-pagination" aria-label={`${topic.label} result pages`}>
+            {page > 1 ? <Link href={topicPageHref(slug, sort, page - 1)}>← Previous</Link> : <span aria-disabled="true">← Previous</span>}
+            <strong>Page {page} of {pageCount}</strong>
+            {page < pageCount ? <Link href={topicPageHref(slug, sort, page + 1)}>Next →</Link> : <span aria-disabled="true">Next →</span>}
+          </nav>
+        ) : null}
       </section>
       <footer className="site-footer page-shell">
         <span>together.ai / research</span>
-        <span>1,000 papers. One year in motion.</span>
+        <span>Curated AI research, organized by topic.</span>
         <Link href="/topics">All topics ↑</Link>
       </footer>
     </main>
   );
+}
+
+function topicPageHref(slug: string, sort: string | undefined, page: number) {
+  const params = new URLSearchParams();
+  if (sort && sort !== "newest") params.set("sort", sort);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return `/topics/${slug}${query ? `?${query}` : ""}`;
 }

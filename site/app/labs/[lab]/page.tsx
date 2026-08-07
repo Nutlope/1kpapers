@@ -6,6 +6,7 @@ import { LabLogo } from "../../../components/lab-mark";
 import { SiteHeader } from "../../../components/site-header";
 import { getLabBySlug, labIncludesPaper } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
+import { absoluteSiteUrl } from "../../../lib/site-url";
 
 type LabPageProps = { params: Promise<{ lab: string }>; searchParams: Promise<{ sort?: string }> };
 
@@ -13,7 +14,24 @@ export async function generateMetadata({ params }: LabPageProps): Promise<Metada
   const { lab: slug } = await params;
   const lab = getLabBySlug(slug);
   if (!lab) return {};
-  return { title: `${lab.shortName} papers`, description: lab.description };
+  const title = `${lab.shortName} AI research papers`;
+  const canonicalUrl = absoluteSiteUrl(`/labs/${slug}`);
+  return {
+    title,
+    description: lab.description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      type: "website",
+      title,
+      description: lab.description,
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: lab.description,
+    },
+  };
 }
 
 export default async function LabPage({ params, searchParams }: LabPageProps) {
@@ -56,7 +74,7 @@ export default async function LabPage({ params, searchParams }: LabPageProps) {
           ))}
         </div>
       </section>
-      <footer className="site-footer page-shell"><span>together.ai / research</span><span>1,000 papers. One year in motion.</span><Link href="/labs">All labs ↑</Link></footer>
+      <footer className="site-footer page-shell"><span>together.ai / research</span><span>Curated AI research, organized by lab.</span><Link href="/labs">All labs ↑</Link></footer>
     </main>
   );
 }

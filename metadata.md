@@ -141,7 +141,8 @@ These fields are useful but lower priority than lab, citations, and code. Keep t
 
 ## Output files
 
-- `metadata/papers.json`: final website-ready records for all 1,018 papers
+- `data/papers.sqlite`: canonical editable records for all 1,018 papers; the local copy is gitignored and the published copy lives in Tigris
+- `metadata/papers.json`: legacy generated review snapshot, not a publishing source
 - `metadata/report.json`: completeness counts, unresolved records, and source snapshots
 - `metadata/raw/semantic-scholar.json`: reproducible scholarly lookup snapshot
 - `metadata/raw/publication.json`: DataCite DOI and license snapshot plus exact OpenAlex fallbacks

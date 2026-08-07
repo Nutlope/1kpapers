@@ -9,6 +9,13 @@ import { getPaperCatalog } from "../../lib/papers";
 export const metadata: Metadata = {
   title: "Research labs",
   description: "Explore the research labs represented across the year in AI papers.",
+  alternates: { canonical: "/labs" },
+  openGraph: {
+    type: "website",
+    title: "Research labs",
+    description: "Explore the research labs represented across the year in AI papers.",
+    url: "/labs",
+  },
 };
 
 export default async function LabsPage() {
@@ -42,7 +49,7 @@ export default async function LabsPage() {
           );
         })}
       </section>
-      <footer className="site-footer page-shell"><span>together.ai / research</span><span>1,000 papers. One year in motion.</span><Link href="/">Return to the atlas ↑</Link></footer>
+      <footer className="site-footer page-shell"><span>together.ai / research</span><span>{papers.length.toLocaleString("en")} papers. One research atlas.</span><Link href="/">Return to the atlas ↑</Link></footer>
     </main>
   );
 }
