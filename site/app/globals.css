@@ -751,7 +751,7 @@ button:active,
   display: flex;
   gap: 24px;
   align-items: start;
-  padding: 2px 2px 28px;
+  padding: 8px 2px 28px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-behavior: smooth;
@@ -1823,7 +1823,7 @@ button:active,
   .featured-cards {
     width: 100%;
     margin-top: 20px;
-    padding: 2px 0 15px;
+    padding: 8px 0 15px;
     display: flex;
     gap: 8px;
     overflow-x: auto;
