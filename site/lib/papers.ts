@@ -14,7 +14,6 @@ type PaperCatalogData = {
 export type HomepageData = {
   schemaVersion: number;
   generatedAt: string;
-  featured: Paper;
   trending: PaperListing[];
   mostCited: PaperListing[];
   monthCounts: Record<string, number>;

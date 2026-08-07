@@ -41,7 +41,7 @@ describe("generated site indexes", () => {
     ];
     const { catalogData, homepageData, mostCitedData, mostStarredData } = buildSiteIndexes(papers, "2026-08-07T00:00:00Z");
 
-    assert.equal(homepageData.featured.id, "arxiv-2512.02556");
+    assert.equal(homepageData.trending[0]?.id, "arxiv-2512.02556");
     assert.equal(homepageData.mostCited[0]?.id, "arxiv-highly-cited");
     assert.equal(homepageData.mostCited.length, 3);
     assert.equal(mostCitedData.papers.length, 5);

@@ -3,11 +3,11 @@ import Link from "next/link";
 import { ArrowIcon } from "../components/icons";
 import { FeaturedCarousel } from "../components/featured-carousel";
 import { LabMark } from "../components/lab-mark";
-import { PaperCard } from "../components/paper-card";
+import { PersonalPaperPick } from "../components/personal-paper-pick";
 import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
-import { formatMonthYear, getHomepageData, type Paper } from "../lib/papers";
+import { formatMonthYear, getHomepageData } from "../lib/papers";
 import { topicArtUrl } from "../lib/public-storage";
 
 const featuredLabs = [
@@ -20,7 +20,6 @@ const featuredLabs = [
 ] as const;
 export default async function HomePage() {
   const {
-    featured: lead,
     trending,
     mostCited,
     monthCounts,
@@ -43,7 +42,7 @@ export default async function HomePage() {
     { key: "science", label: "Science", count: topicCounts["science-medicine"] ?? 0 },
   ];
 
-  if (!lead) return null;
+  if (trending.length === 0) return null;
 
   return (
     <main>
@@ -145,7 +144,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <FeaturedPaper paper={lead} />
+      <PersonalPaperPick papers={[...trending, ...mostCited]} />
 
       <section className="about-section page-shell" id="about" aria-labelledby="about-title">
         <div className="about-intro">
@@ -224,36 +223,5 @@ function ShelfCard({ title, count, artwork, slug }: { title: string; count: numb
       </div>
       <Image className="shelf-art" src={artwork} alt="" fill sizes="(max-width: 900px) 100vw, 33vw" />
     </Link>
-  );
-}
-
-function FeaturedPaper({ paper }: { paper: Paper }) {
-  const points = paper.summary.split(/(?<=[.!?])\s+/).filter(Boolean).slice(0, 3);
-  return (
-    <article className="featured-paper page-shell" id="featured-paper">
-      <PaperCard paper={paper} />
-      <div className="feature-number"><span>01</span></div>
-      <div className="feature-main">
-        <h2 className="display-serif text-balance">{paper.title}</h2>
-        <div className="authors-row">
-          <span className="mono-label">Authors</span>
-          <p>{paper.authors.join(", ")}</p>
-        </div>
-        <p className="feature-abstract text-pretty">{paper.abstract}</p>
-      </div>
-      <dl className="paper-facts">
-        <div><dt>Venue</dt><dd>{paper.venue ?? "Independent release"}</dd></div>
-        <div><dt>Pages</dt><dd>{paper.pageCount ?? "Not indexed"}</dd></div>
-        <div><dt>Citations</dt><dd>{paper.citations ?? "Not indexed"}</dd></div>
-        <div><dt>Code</dt><dd>{paper.githubStars !== null ? `${paper.githubStars} GitHub stars` : "No official repository"}</dd></div>
-        <a href={paper.landingUrl} target="_blank" rel="noreferrer">View original paper <ArrowIcon /></a>
-      </dl>
-      <div className="summary-panel">
-        <p className="summary-panel-label mono-label">In brief</p>
-        <ul>
-          {points.map((point, index) => <li key={point}><span>{["▧", "▤", "⌘"][index]}</span><p>{point}</p></li>)}
-        </ul>
-      </div>
-    </article>
   );
 }

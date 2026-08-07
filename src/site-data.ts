@@ -62,7 +62,6 @@ export type SiteCatalogData = {
 export type SiteHomepageData = {
   schemaVersion: 1;
   generatedAt: string;
-  featured: SitePaper;
   trending: SitePaperListing[];
   mostCited: SitePaperListing[];
   monthCounts: Record<string, number>;
@@ -171,7 +170,6 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
     homepageData: {
       schemaVersion: 1,
       generatedAt,
-      featured: trendingPapers[0] ?? papers[0]!,
       trending: trendingPapers.map(toListingPaper),
       mostCited: mostCitedListings.slice(0, 3),
       monthCounts,
