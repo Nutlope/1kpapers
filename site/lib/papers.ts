@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { Paper, PaperListing } from "./paper-shared";
-import { HOMEPAGE_DATA_URL, MOST_CITED_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
+import { HOMEPAGE_DATA_URL, MOST_CITED_DATA_URL, MOST_STARRED_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
 
 export type { Paper, PaperListing } from "./paper-shared";
 export { formatCompactNumber, formatMonthYear, topicLabel } from "./paper-shared";
@@ -30,6 +30,8 @@ export type MostCitedData = {
   paperCount: number;
 };
 
+export type MostStarredData = MostCitedData;
+
 export type PaperDetails = {
   paper: Paper;
   relatedPapers: PaperListing[];
@@ -57,6 +59,14 @@ export const getMostCitedData = cache(async (): Promise<MostCitedData> => {
     throw new Error(`Could not load most-cited data from ${MOST_CITED_DATA_URL}: ${response.status}`);
   }
   return (await response.json()) as MostCitedData;
+});
+
+export const getMostStarredData = cache(async (): Promise<MostStarredData> => {
+  const response = await fetch(MOST_STARRED_DATA_URL, { next: { revalidate: 3600 } });
+  if (!response.ok) {
+    throw new Error(`Could not load most-starred data from ${MOST_STARRED_DATA_URL}: ${response.status}`);
+  }
+  return (await response.json()) as MostStarredData;
 });
 
 export const getPaperDetails = cache(async (id: string): Promise<PaperDetails | undefined> => {

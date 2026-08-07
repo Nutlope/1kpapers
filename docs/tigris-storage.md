@@ -12,6 +12,7 @@ summaries.json
 catalog.json
 homepage.json
 most-cited.json
+most-starred.json
 search-index.json
 ```
 
@@ -20,7 +21,8 @@ Paper and topic IDs make replacement uploads overwrite the existing public key.
 `catalog.json` is the compact browse payload, while `homepage.json` contains
 precomputed featured, trending, top-three most-cited, topic, and month data.
 `most-cited.json` contains the complete top-100 ranking and is only fetched by
-the ranking page. Full
+the citation ranking page. `most-starred.json` does the same for linked GitHub
+repositories, so the starred ranking page does not fetch the full catalog. Full
 abstracts and summaries stay in the per-paper objects; `summaries.json` remains
 as a legacy compatibility export and is not fetched by the site.
 

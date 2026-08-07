@@ -33,19 +33,21 @@ function paper(overrides: Partial<SitePaper> & Pick<SitePaper, "id" | "title">):
 describe("generated site indexes", () => {
   it("precomputes homepage rankings and compact catalog summaries", () => {
     const papers = [
-      paper({ id: "arxiv-2512.02556", title: "Editorial anchor", citations: 4 }),
-      paper({ id: "arxiv-highly-cited", title: "Highly cited", citations: 100 }),
-      paper({ id: "arxiv-second", title: "Second", citations: 80 }),
+      paper({ id: "arxiv-2512.02556", title: "Editorial anchor", citations: 4, githubRepository: "https://github.com/lab/anchor", githubStars: 20 }),
+      paper({ id: "arxiv-highly-cited", title: "Highly cited", citations: 100, githubRepository: "https://github.com/lab/high", githubStars: 10 }),
+      paper({ id: "arxiv-second", title: "Second", citations: 80, githubRepository: "https://github.com/lab/second", githubStars: 50 }),
       paper({ id: "arxiv-third", title: "Third", citations: 60 }),
       paper({ id: "arxiv-fourth", title: "Fourth", citations: 40 }),
     ];
-    const { catalogData, homepageData, mostCitedData } = buildSiteIndexes(papers, "2026-08-07T00:00:00Z");
+    const { catalogData, homepageData, mostCitedData, mostStarredData } = buildSiteIndexes(papers, "2026-08-07T00:00:00Z");
 
     assert.equal(homepageData.featured.id, "arxiv-2512.02556");
     assert.equal(homepageData.mostCited[0]?.id, "arxiv-highly-cited");
     assert.equal(homepageData.mostCited.length, 3);
     assert.equal(mostCitedData.papers.length, 5);
     assert.equal(mostCitedData.paperCount, 5);
+    assert.equal(mostStarredData.papers[0]?.id, "arxiv-second");
+    assert.equal(mostStarredData.paperCount, 3);
     assert.equal("abstract" in catalogData.papers[0]!, false);
     assert.doesNotMatch(catalogData.papers[0]?.summary ?? "", /Result one/);
   });
@@ -67,10 +69,11 @@ describe("generated site indexes", () => {
   });
 
   it("keeps each generated index within its payload budget", async () => {
-    const { catalogData, homepageData, mostCitedData } = await buildSiteData();
+    const { catalogData, homepageData, mostCitedData, mostStarredData } = await buildSiteData();
 
     assert.ok(Buffer.byteLength(JSON.stringify(catalogData)) < 2_000_000);
     assert.ok(Buffer.byteLength(JSON.stringify(homepageData)) < 50_000);
     assert.ok(Buffer.byteLength(JSON.stringify(mostCitedData)) < 500_000);
+    assert.ok(Buffer.byteLength(JSON.stringify(mostStarredData)) < 500_000);
   });
 });

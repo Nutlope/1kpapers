@@ -78,6 +78,13 @@ export type SiteMostCitedData = {
   paperCount: number;
 };
 
+export type SiteMostStarredData = {
+  schemaVersion: 1;
+  generatedAt: string;
+  papers: SitePaperListing[];
+  paperCount: number;
+};
+
 const editorialTrendingIds = [
   "arxiv-2512.02556",
   "arxiv-2602.02276",
@@ -95,6 +102,7 @@ export async function buildSiteData(projectRoot = process.cwd()): Promise<{
   catalogData: SiteCatalogData;
   homepageData: SiteHomepageData;
   mostCitedData: SiteMostCitedData;
+  mostStarredData: SiteMostStarredData;
   searchData: SiteSearchData;
   relatedPapersById: Map<string, SitePaperListing[]>;
 }> {
@@ -130,6 +138,7 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
   catalogData: SiteCatalogData;
   homepageData: SiteHomepageData;
   mostCitedData: SiteMostCitedData;
+  mostStarredData: SiteMostStarredData;
   relatedPapersById: Map<string, SitePaperListing[]>;
 } {
   if (papers.length === 0) throw new Error("Cannot build site indexes without papers");
@@ -140,6 +149,14 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
     .filter((paper) => paper.citations !== null)
     .sort((a, b) => (b.citations ?? 0) - (a.citations ?? 0));
   const mostCitedListings = mostCitedPapers.slice(0, 100).map(toListingPaper);
+  const mostStarredPapers = papers
+    .filter((paper) => paper.githubRepository && paper.githubStars !== null)
+    .sort((left, right) =>
+      (right.githubStars ?? 0) - (left.githubStars ?? 0) ||
+      (right.citations ?? 0) - (left.citations ?? 0) ||
+      right.publishedAt.localeCompare(left.publishedAt) ||
+      left.id.localeCompare(right.id),
+    );
   const monthCounts: Record<string, number> = {};
   const topicCounts: Record<string, number> = {};
 
@@ -171,6 +188,12 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
       generatedAt,
       papers: mostCitedListings,
       paperCount: mostCitedPapers.length,
+    },
+    mostStarredData: {
+      schemaVersion: 1,
+      generatedAt,
+      papers: mostStarredPapers.slice(0, 100).map(toListingPaper),
+      paperCount: mostStarredPapers.length,
     },
     relatedPapersById: new Map(
       papers.map((paper) => [paper.id, selectRelatedPapers(paper, papers).map(toListingPaper)]),
