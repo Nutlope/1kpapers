@@ -3,8 +3,7 @@ import Link from "next/link";
 import { ArrowIcon } from "../../components/icons";
 import { PaperCard } from "../../components/paper-card";
 import { SiteHeader } from "../../components/site-header";
-import { formatCompactNumber, formatMonthYear, getPaperData } from "../../lib/papers";
-import { selectTrendingPapers } from "../../lib/trending";
+import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib/papers";
 
 export const metadata: Metadata = {
   title: "Most trending AI papers",
@@ -12,8 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MostTrendingPapersPage() {
-  const { papers } = await getPaperData();
-  const trending = selectTrendingPapers(papers);
+  const { trending } = await getHomepageData();
 
   return (
     <main>

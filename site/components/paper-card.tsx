@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatMonthYear, type Paper } from "../lib/paper-shared";
+import { formatMonthYear, type PaperCardData } from "../lib/paper-shared";
 import { getPaperArtwork } from "../lib/paper-artwork";
 
-export function PaperCard({ paper, accent = "magenta", eager = false }: { paper: Paper; accent?: "magenta" | "yellow" | "cyan"; eager?: boolean }) {
+export function PaperCard({ paper, accent = "magenta", eager = false }: { paper: PaperCardData; accent?: "magenta" | "yellow" | "cyan"; eager?: boolean }) {
   const artwork = getPaperArtwork(paper.id);
 
   if (artwork) {

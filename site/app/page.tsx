@@ -7,9 +7,8 @@ import { PaperCard } from "../components/paper-card";
 import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
-import { formatMonthYear, getPaperData, type Paper } from "../lib/papers";
+import { formatMonthYear, getHomepageData, type Paper } from "../lib/papers";
 import { topicArtUrl } from "../lib/public-storage";
-import { selectTrendingPapers } from "../lib/trending";
 
 const featuredLabs = [
   { name: "OpenAI", slug: "openai" },
@@ -20,32 +19,28 @@ const featuredLabs = [
   { name: "Z.ai / GLM", slug: "zai-glm" },
 ] as const;
 export default async function HomePage() {
-  const { papers } = await getPaperData();
-  const mostCited = [...papers]
-    .filter((paper) => paper.citations !== null)
-    .sort((a, b) => (b.citations ?? 0) - (a.citations ?? 0));
-  const trending = selectTrendingPapers(papers);
-  const lead = trending[0] ?? papers[0];
-  const topicCounts = countTopics(papers);
+  const {
+    featured: lead,
+    trending,
+    mostCited,
+    monthCounts,
+    topicCounts,
+    reasoningCount,
+    agentCount,
+  } = await getHomepageData();
   const monthEntries: MonthEntry[] = monthDefinitions.map((month) => ({
     key: month.key,
     month: month.month,
     year: month.year,
-    count: papers.filter((paper) => paper.publishedAt.startsWith(month.key)).length,
+    count: monthCounts[month.key] ?? 0,
   }));
-  const agentCount = papers.filter((paper) =>
-    /\bagents?\b|\bagentic\b|tool use|computer use/i.test(`${paper.title} ${paper.summary}`),
-  ).length;
-  const reasoningCount = papers.filter((paper) =>
-    /\breasoning\b|chain.of.thought|reinforcement learning|test.time|inference.time/i.test(`${paper.title} ${paper.summary}`),
-  ).length;
   const editorialTopics = [
     { key: "reasoning", label: "Reasoning", count: reasoningCount },
     { key: "agents", label: "Agents", count: agentCount },
-    { key: "multimodal", label: "Multimodal", count: topicCounts.get("vision-multimodal-generation") ?? 0 },
-    { key: "systems", label: "Systems", count: topicCounts.get("systems-efficiency") ?? 0 },
-    { key: "robotics", label: "Robotics", count: topicCounts.get("robotics-embodied-ai") ?? 0 },
-    { key: "science", label: "Science", count: topicCounts.get("science-medicine") ?? 0 },
+    { key: "multimodal", label: "Multimodal", count: topicCounts["vision-multimodal-generation"] ?? 0 },
+    { key: "systems", label: "Systems", count: topicCounts["systems-efficiency"] ?? 0 },
+    { key: "robotics", label: "Robotics", count: topicCounts["robotics-embodied-ai"] ?? 0 },
+    { key: "science", label: "Science", count: topicCounts["science-medicine"] ?? 0 },
   ];
 
   if (!lead) return null;
@@ -146,7 +141,7 @@ export default async function HomePage() {
         <div className="shelf-grid">
           <ShelfCard title="Reasoning" count={reasoningCount} artwork={topicArtUrl("reasoning")} slug="reasoning" />
           <ShelfCard title="Agents" count={agentCount} artwork={topicArtUrl("agents")} slug="agents" />
-          <ShelfCard title="Multimodal" count={topicCounts.get("vision-multimodal-generation") ?? 0} artwork={topicArtUrl("multimodal")} slug="multimodal" />
+          <ShelfCard title="Multimodal" count={topicCounts["vision-multimodal-generation"] ?? 0} artwork={topicArtUrl("multimodal")} slug="multimodal" />
         </div>
       </section>
 
@@ -219,14 +214,6 @@ export default async function HomePage() {
   );
 }
 
-function countTopics(papers: Paper[]) {
-  const counts = new Map<string, number>();
-  for (const paper of papers) {
-    for (const topic of paper.topics) counts.set(topic, (counts.get(topic) ?? 0) + 1);
-  }
-  return counts;
-}
-
 function ShelfCard({ title, count, artwork, slug }: { title: string; count: number; artwork: string; slug: string }) {
   return (
     <Link className="shelf-card focus-ring" href={`/topics/${slug}`}>
@@ -262,7 +249,7 @@ function FeaturedPaper({ paper }: { paper: Paper }) {
         <a href={paper.landingUrl} target="_blank" rel="noreferrer">View original paper <ArrowIcon /></a>
       </dl>
       <div className="summary-panel">
-        <div className="summary-tabs"><span className="active">Summary</span><span>Method</span><span>Results</span></div>
+        <p className="summary-panel-label mono-label">In brief</p>
         <ul>
           {points.map((point, index) => <li key={point}><span>{["▧", "▤", "⌘"][index]}</span><p>{point}</p></li>)}
         </ul>

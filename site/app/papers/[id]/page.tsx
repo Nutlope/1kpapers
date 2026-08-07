@@ -8,14 +8,15 @@ import { SiteHeader } from "../../../components/site-header";
 import { getLabByName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
-import { formatCompactNumber, formatMonthYear, getPaper, topicLabel } from "../../../lib/papers";
+import { formatCompactNumber, formatMonthYear, getPaperDetails, topicLabel } from "../../../lib/papers";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: PaperPageProps): Promise<Metadata> {
   const { id } = await params;
-  const paper = await getPaper(id);
-  if (!paper) return {};
+  const details = await getPaperDetails(id);
+  if (!details) return {};
+  const { paper } = details;
   const artwork = getPaperArtwork(id);
   return {
     title: paper.title,
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
 
 export default async function PaperPage({ params }: PaperPageProps) {
   const { id } = await params;
-  const paper = await getPaper(id);
-  if (!paper) notFound();
+  const details = await getPaperDetails(id);
+  if (!details) notFound();
+  const { paper, relatedPapers } = details;
 
   const summary = parsePaperSummaryMarkdown(paper.summary);
   const lab = getLabByName(paper.lab);
@@ -131,6 +133,33 @@ export default async function PaperPage({ params }: PaperPageProps) {
             <Link href="/#collections" className="signal-link">Explore the collection <ArrowIcon /></Link>
           </aside>
         </div>
+
+        {relatedPapers.length ? (
+          <section className="related-papers" id="related-papers" aria-labelledby="related-papers-title">
+            <div className="related-papers-heading">
+              <p className="mono-label">Continue exploring</p>
+              <h2 id="related-papers-title" className="display-serif text-balance">Related papers</h2>
+            </div>
+            <div className="related-paper-grid">
+              {relatedPapers.map((related, index) => (
+                <article key={related.id} className="related-paper-card">
+                  <div className="related-paper-meta">
+                    <span className="mono-label">{String(index + 1).padStart(2, "0")}</span>
+                    <span>{related.lab ?? related.venue ?? "Research paper"}</span>
+                  </div>
+                  <h3 className="display-serif text-balance">
+                    <Link href={`/papers/${related.id}`}>{related.title}</Link>
+                  </h3>
+                  <p className="text-pretty">{related.summary}</p>
+                  <div className="related-paper-footer">
+                    <time dateTime={related.publishedAt}>{formatMonthYear(related.publishedAt)}</time>
+                    <Link href={`/papers/${related.id}`}>Read summary <ArrowIcon /></Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </article>
       <footer className="site-footer page-shell">
         <span>together.ai / research</span>

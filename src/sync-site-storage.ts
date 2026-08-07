@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { buildSiteData, type SitePaper } from "./site-data.js";
+import { buildSiteData, type SitePaper, type SitePaperListing } from "./site-data.js";
 import {
   createTigrisClient,
   ensurePublicReadCors,
@@ -24,7 +24,7 @@ if (args.kind || args.id || args.file) {
   }
   await uploadImage(args.kind, args.id, path.resolve(projectRoot, args.file));
 } else {
-  const { paperData, searchData } = await buildSiteData(projectRoot);
+  const { paperData, catalogData, homepageData, searchData, relatedPapersById } = await buildSiteData(projectRoot);
   const selectedPaper = args.paperId
     ? paperData.papers.find((paper) => paper.id === args.paperId)
     : undefined;
@@ -33,11 +33,27 @@ if (args.kind || args.id || args.file) {
   const uploads: Array<() => Promise<unknown>> = [];
 
   const globalJson = gzipJson(paperData);
+  const catalogJson = gzipJson(catalogData);
+  const homepageJson = gzipJson(homepageData);
   const searchJson = gzipJson(searchData);
   uploads.push(
     () => uploadObject(client, {
       key: "summaries.json",
       body: globalJson.body,
+      contentType: "application/json",
+      contentEncoding: "gzip",
+      cacheControl: "public, max-age=300, stale-while-revalidate=3600",
+    }),
+    () => uploadObject(client, {
+      key: "catalog.json",
+      body: catalogJson.body,
+      contentType: "application/json",
+      contentEncoding: "gzip",
+      cacheControl: "public, max-age=300, stale-while-revalidate=3600",
+    }),
+    () => uploadObject(client, {
+      key: "homepage.json",
+      body: homepageJson.body,
       contentType: "application/json",
       contentEncoding: "gzip",
       cacheControl: "public, max-age=300, stale-while-revalidate=3600",
@@ -52,12 +68,18 @@ if (args.kind || args.id || args.file) {
   );
 
   const papers = selectedPaper ? [selectedPaper] : paperData.papers;
-  uploads.push(...papers.map((paper) => () => uploadPaperSummary(paper, paperData.generatedAt)));
+  uploads.push(...papers.map((paper) => () => uploadPaperSummary(
+    paper,
+    relatedPapersById.get(paper.id) ?? [],
+    paperData.generatedAt,
+  )));
   await runWithConcurrency(uploads, 12);
 
   await verifyPublicJson("summaries.json", paperData.papers.length);
+  await verifyPublicJson("catalog.json", catalogData.papers.length);
+  await verifyPublicJson("homepage.json", homepageData.mostCited.length, "mostCited");
   await verifyPublicJson(paperSummaryObjectKey(papers[0]!.id), 1);
-  console.log(`Synced ${papers.length} paper summaries plus global indexes.`);
+  console.log(`Synced ${papers.length} paper summaries plus compact catalog, homepage, and search indexes.`);
 }
 
 async function uploadImage(kind: ImageKind, id: string, file: string) {
@@ -73,8 +95,8 @@ async function uploadImage(kind: ImageKind, id: string, file: string) {
   return result;
 }
 
-async function uploadPaperSummary(paper: SitePaper, generatedAt: string) {
-  const json = gzipJson({ schemaVersion: 1, generatedAt, paper });
+async function uploadPaperSummary(paper: SitePaper, relatedPapers: SitePaperListing[], generatedAt: string) {
+  const json = gzipJson({ schemaVersion: 1, generatedAt, paper, relatedPapers });
   return uploadObject(client, {
     key: paperSummaryObjectKey(paper.id),
     body: json.body,
@@ -84,11 +106,12 @@ async function uploadPaperSummary(paper: SitePaper, generatedAt: string) {
   });
 }
 
-async function verifyPublicJson(key: string, expectedPapers: number) {
+async function verifyPublicJson(key: string, expectedPapers: number, arrayField = "papers") {
   const response = await fetch(publicObjectUrl(key), { cache: "no-store" });
   if (!response.ok) throw new Error(`Public verification failed for ${key}: ${response.status}`);
-  const data = await response.json() as { papers?: unknown[]; paper?: unknown };
-  const count = data.papers?.length ?? (data.paper ? 1 : 0);
+  const data = await response.json() as Record<string, unknown> & { paper?: unknown };
+  const collection = data[arrayField];
+  const count = Array.isArray(collection) ? collection.length : (data.paper ? 1 : 0);
   if (count !== expectedPapers) {
     throw new Error(`Public verification returned ${count} papers for ${key}; expected ${expectedPapers}`);
   }

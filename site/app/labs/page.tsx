@@ -4,7 +4,7 @@ import { ArrowIcon } from "../../components/icons";
 import { LabLogo } from "../../components/lab-mark";
 import { SiteHeader } from "../../components/site-header";
 import { labs } from "../../lib/labs";
-import { getPaperData } from "../../lib/papers";
+import { getPaperCatalog } from "../../lib/papers";
 
 export const metadata: Metadata = {
   title: "Research labs",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LabsPage() {
-  const { papers } = await getPaperData();
+  const { papers } = await getPaperCatalog();
 
   return (
     <main>

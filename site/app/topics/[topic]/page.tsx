@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
-import { formatCompactNumber, formatMonthYear, getPaperData } from "../../../lib/papers";
+import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { getTopic, getTopicPapers } from "../../../lib/topics";
 
 type TopicPageProps = {
@@ -24,7 +24,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
   const topic = getTopic(slug);
   if (!topic) notFound();
 
-  const { papers } = await getPaperData();
+  const { papers } = await getPaperCatalog();
   const topicPapers = getTopicPapers(topic, papers);
   const sorted = [...topicPapers].sort((a, b) => {
     if (sort === "cited") return (b.citations ?? 0) - (a.citations ?? 0);

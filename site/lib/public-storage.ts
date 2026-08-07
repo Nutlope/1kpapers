@@ -2,7 +2,8 @@ export const PUBLIC_STORAGE_BASE_URL = (
   process.env.NEXT_PUBLIC_STORAGE_BASE_URL ?? "https://year-in-ai-papers.t3.tigrisfiles.io"
 ).replace(/\/$/, "");
 
-export const SUMMARIES_URL = process.env.PAPERS_DATA_URL ?? `${PUBLIC_STORAGE_BASE_URL}/summaries.json`;
+export const PAPER_CATALOG_URL = process.env.PAPER_CATALOG_URL ?? `${PUBLIC_STORAGE_BASE_URL}/catalog.json`;
+export const HOMEPAGE_DATA_URL = process.env.HOMEPAGE_DATA_URL ?? `${PUBLIC_STORAGE_BASE_URL}/homepage.json`;
 export const SEARCH_INDEX_URL = `${PUBLIC_STORAGE_BASE_URL}/search-index.json`;
 
 export function paperAssetUrl(paperId: string, asset: "cover" | "social") {
@@ -10,7 +11,7 @@ export function paperAssetUrl(paperId: string, asset: "cover" | "social") {
 }
 
 export function paperSummaryUrl(paperId: string) {
-  return `${PUBLIC_STORAGE_BASE_URL}/papers/${encodeURIComponent(paperId)}/summary.json`;
+  return `${PUBLIC_STORAGE_BASE_URL}/papers/${encodeURIComponent(paperId)}/summary.json?v=2`;
 }
 
 export function topicArtUrl(topicId: string) {

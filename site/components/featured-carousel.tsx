@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Paper } from "../lib/paper-shared";
+import type { PaperCardData } from "../lib/paper-shared";
 import { PaperCard } from "./paper-card";
 
 const accents = ["magenta", "yellow", "cyan"] as const;
 const AUTOPLAY_INTERVAL_MS = 6_000;
 
-export function FeaturedCarousel({ papers }: { papers: Paper[] }) {
+export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);

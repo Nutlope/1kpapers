@@ -22,6 +22,25 @@ export type Paper = {
   license: string | null;
 };
 
+export type PaperListing = Pick<
+  Paper,
+  | "id"
+  | "title"
+  | "authors"
+  | "publishedAt"
+  | "landingUrl"
+  | "topics"
+  | "upvotes"
+  | "summary"
+  | "lab"
+  | "citations"
+  | "githubRepository"
+  | "githubStars"
+  | "venue"
+>;
+
+export type PaperCardData = Pick<Paper, "id" | "title" | "publishedAt" | "lab" | "venue">;
+
 export function formatMonthYear(date: string) {
   return new Intl.DateTimeFormat("en", {
     month: "short",

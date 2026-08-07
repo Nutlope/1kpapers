@@ -5,7 +5,7 @@ import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
 import { YearExplorer, type MonthEntry } from "../../../components/year-explorer";
 import { getMonthDefinition, monthDefinitions } from "../../../lib/months";
-import { formatCompactNumber, formatMonthYear, getPaperData } from "../../../lib/papers";
+import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 
 type MonthPageProps = { params: Promise<{ month: string }>; searchParams: Promise<{ sort?: string }> };
 
@@ -24,7 +24,7 @@ export default async function MonthPage({ params, searchParams }: MonthPageProps
   const month = getMonthDefinition(key);
   if (!month) notFound();
 
-  const { papers } = await getPaperData();
+  const { papers } = await getPaperCatalog();
   const monthPapers = papers.filter((paper) => paper.publishedAt.startsWith(month.key));
   const sorted = [...monthPapers].sort((a, b) => {
     if (sort === "newest") return Date.parse(b.publishedAt) - Date.parse(a.publishedAt);

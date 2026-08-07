@@ -8,7 +8,7 @@ export type TopicDefinition = {
   description: string;
   artwork: string;
   accent: "blue" | "orange" | "pink" | "cyan" | "yellow" | "violet";
-  matches: (paper: Paper) => boolean;
+  matches: (paper: Pick<Paper, "title" | "summary" | "topics">) => boolean;
 };
 
 export const topics: TopicDefinition[] = [
@@ -72,6 +72,6 @@ export function getTopic(slug: string) {
   return topics.find((topic) => topic.slug === slug);
 }
 
-export function getTopicPapers(topic: TopicDefinition, papers: Paper[]) {
+export function getTopicPapers<T extends Pick<Paper, "title" | "summary" | "topics">>(topic: TopicDefinition, papers: T[]) {
   return papers.filter(topic.matches);
 }

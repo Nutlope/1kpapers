@@ -17,14 +17,6 @@ export function SearchIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function BookmarkIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 20 24" fill="none" aria-hidden="true" {...props}>
-      <path d="M3 2.5h14v19l-7-4.3-7 4.3v-19Z" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  );
-}
-
 export function ExternalIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>

@@ -1,28 +1,54 @@
 import { cache } from "react";
-import type { Paper } from "./paper-shared";
-import { paperSummaryUrl, SUMMARIES_URL } from "./public-storage";
+import type { Paper, PaperListing } from "./paper-shared";
+import { HOMEPAGE_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
 
-export type { Paper } from "./paper-shared";
+export type { Paper, PaperListing } from "./paper-shared";
 export { formatCompactNumber, formatMonthYear, topicLabel } from "./paper-shared";
 
-type PaperData = {
+type PaperCatalogData = {
   schemaVersion: number;
   generatedAt: string;
-  papers: Paper[];
+  papers: PaperListing[];
 };
 
-export const getPaperData = cache(async (): Promise<PaperData> => {
-  const response = await fetch(SUMMARIES_URL, { next: { revalidate: 3600 } });
+export type HomepageData = {
+  schemaVersion: number;
+  generatedAt: string;
+  featured: Paper;
+  trending: PaperListing[];
+  mostCited: PaperListing[];
+  mostCitedCount: number;
+  monthCounts: Record<string, number>;
+  topicCounts: Record<string, number>;
+  reasoningCount: number;
+  agentCount: number;
+};
+
+export type PaperDetails = {
+  paper: Paper;
+  relatedPapers: PaperListing[];
+};
+
+export const getPaperCatalog = cache(async (): Promise<PaperCatalogData> => {
+  const response = await fetch(PAPER_CATALOG_URL, { next: { revalidate: 3600 } });
   if (!response.ok) {
-    throw new Error(`Could not load paper data from ${SUMMARIES_URL}: ${response.status}`);
+    throw new Error(`Could not load paper catalog from ${PAPER_CATALOG_URL}: ${response.status}`);
   }
-  return (await response.json()) as PaperData;
+  return (await response.json()) as PaperCatalogData;
 });
 
-export const getPaper = cache(async (id: string): Promise<Paper | undefined> => {
+export const getHomepageData = cache(async (): Promise<HomepageData> => {
+  const response = await fetch(HOMEPAGE_DATA_URL, { next: { revalidate: 3600 } });
+  if (!response.ok) {
+    throw new Error(`Could not load homepage data from ${HOMEPAGE_DATA_URL}: ${response.status}`);
+  }
+  return (await response.json()) as HomepageData;
+});
+
+export const getPaperDetails = cache(async (id: string): Promise<PaperDetails | undefined> => {
   const response = await fetch(paperSummaryUrl(id), { next: { revalidate: 3600 } });
   if (response.status === 404) return undefined;
   if (!response.ok) throw new Error(`Could not load paper ${id}: ${response.status}`);
-  const data = await response.json() as { paper: Paper };
-  return data.paper;
+  const data = await response.json() as { paper: Paper; relatedPapers?: PaperListing[] };
+  return { paper: data.paper, relatedPapers: data.relatedPapers ?? [] };
 });

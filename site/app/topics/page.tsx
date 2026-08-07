@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowIcon } from "../../components/icons";
 import { GreekCyberArt } from "../../components/greek-cyber-art";
 import { SiteHeader } from "../../components/site-header";
-import { getPaperData } from "../../lib/papers";
+import { getPaperCatalog } from "../../lib/papers";
 import { getTopicPapers, topics } from "../../lib/topics";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TopicsPage() {
-  const { papers } = await getPaperData();
+  const { papers } = await getPaperCatalog();
 
   return (
     <main>

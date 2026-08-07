@@ -6,21 +6,34 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowIcon, SearchIcon } from "./icons";
 import { PaperSearch } from "./paper-search";
 
+const navigationItems = [
+  { href: "/", label: "The year", active: (pathname: string) => pathname === "/" },
+  { href: "/most-trending-papers", label: "Most trending", active: (pathname: string) => pathname === "/most-trending-papers" },
+  { href: "/most-cited-papers", label: "Most cited", active: (pathname: string) => pathname === "/most-cited-papers" },
+  { href: "/topics", label: "Topics", active: (pathname: string) => pathname.startsWith("/topics") },
+  { href: "/#about", label: "How we built it", active: () => false },
+] as const;
+
 export function SiteHeader() {
   const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleShortcut(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        setIsMobileMenuOpen(false);
         setIsSearchOpen(true);
       }
+      if (event.key === "Escape") setIsMobileMenuOpen(false);
     }
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
   }, []);
+
+  useEffect(() => setIsMobileMenuOpen(false), [pathname]);
 
   function closeSearch() {
     setIsSearchOpen(false);
@@ -34,22 +47,8 @@ export function SiteHeader() {
         <i />
         <small>Research</small>
       </Link>
-      <nav aria-label="Primary navigation">
-        <Link className={`${pathname === "/" ? "active " : ""}focus-ring`} href="/">
-          The year
-        </Link>
-        <Link className={`${pathname === "/most-trending-papers" ? "active " : ""}focus-ring`} href="/most-trending-papers">
-          Most trending
-        </Link>
-        <Link className={`${pathname === "/most-cited-papers" ? "active " : ""}focus-ring`} href="/most-cited-papers">
-          Most cited
-        </Link>
-        <Link className={`${pathname.startsWith("/topics") ? "active " : ""}focus-ring`} href="/topics">
-          Topics
-        </Link>
-        <Link className="focus-ring" href="/#about">
-          How we built it
-        </Link>
+      <nav className="desktop-nav" aria-label="Primary navigation">
+        <NavigationLinks pathname={pathname} />
       </nav>
       <div className="header-actions">
         <button
@@ -60,7 +59,10 @@ export function SiteHeader() {
           aria-haspopup="dialog"
           aria-expanded={isSearchOpen}
           aria-keyshortcuts="Meta+K Control+K"
-          onClick={() => setIsSearchOpen(true)}
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            setIsSearchOpen(true);
+          }}
         >
           <SearchIcon />
           <kbd>⌘K</kbd>
@@ -68,8 +70,38 @@ export function SiteHeader() {
         <a className="about-link focus-ring" href="https://www.together.ai" target="_blank" rel="noreferrer">
           About Together AI <ArrowIcon />
         </a>
+        <button
+          type="button"
+          className="mobile-menu-button focus-ring"
+          aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
+          aria-controls="mobile-navigation"
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => {
+            setIsSearchOpen(false);
+            setIsMobileMenuOpen((open) => !open);
+          }}
+        >
+          <span className={`mobile-menu-icon${isMobileMenuOpen ? " open" : ""}`} aria-hidden="true"><i /><i /></span>
+          <span>Menu</span>
+        </button>
       </div>
+      <nav id="mobile-navigation" className={`mobile-nav${isMobileMenuOpen ? " open" : ""}`} aria-label="Mobile navigation">
+        <NavigationLinks pathname={pathname} onNavigate={() => setIsMobileMenuOpen(false)} />
+      </nav>
       <PaperSearch open={isSearchOpen} onClose={closeSearch} />
     </header>
   );
+}
+
+function NavigationLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+  return navigationItems.map((item) => (
+    <Link
+      key={item.href}
+      className={`${item.active(pathname) ? "active " : ""}focus-ring`}
+      href={item.href}
+      onClick={onNavigate}
+    >
+      {item.label}
+    </Link>
+  ));
 }
