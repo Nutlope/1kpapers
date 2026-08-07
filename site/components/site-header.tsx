@@ -2,10 +2,30 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowIcon, BookmarkIcon } from "./icons";
+import { useEffect, useRef, useState } from "react";
+import { ArrowIcon, BookmarkIcon, SearchIcon } from "./icons";
+import { PaperSearch } from "./paper-search";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    function handleShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setIsSearchOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
+
+  function closeSearch() {
+    setIsSearchOpen(false);
+    window.requestAnimationFrame(() => searchButtonRef.current?.focus());
+  }
 
   return (
     <header className="site-header page-shell">
@@ -35,6 +55,19 @@ export function SiteHeader() {
         </Link>
       </nav>
       <div className="header-actions">
+        <button
+          ref={searchButtonRef}
+          type="button"
+          className="header-search-button focus-ring"
+          aria-label="Search papers"
+          aria-haspopup="dialog"
+          aria-expanded={isSearchOpen}
+          aria-keyshortcuts="Meta+K Control+K"
+          onClick={() => setIsSearchOpen(true)}
+        >
+          <SearchIcon />
+          <kbd>⌘K</kbd>
+        </button>
         <a className="about-link focus-ring" href="https://www.together.ai" target="_blank" rel="noreferrer">
           About Together AI <ArrowIcon />
         </a>
@@ -42,6 +75,7 @@ export function SiteHeader() {
           <BookmarkIcon />
         </button>
       </div>
+      <PaperSearch open={isSearchOpen} onClose={closeSearch} />
     </header>
   );
 }

@@ -15,7 +15,7 @@ export function PaperCard({ paper, accent = "magenta", eager = false }: { paper:
           alt={`Editorial cover for ${paper.title}`}
           fill
           loading={eager ? "eager" : "lazy"}
-          sizes="(max-width: 700px) 68vw, 220px"
+          sizes="(max-width: 960px) calc((100vw - 44px) / 3), 220px"
         />
       </Link>
     );

@@ -2,10 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "../components/icons";
 import { FeaturedCarousel } from "../components/featured-carousel";
-import { GreekCyberArt } from "../components/greek-cyber-art";
 import { LabMark } from "../components/lab-mark";
 import { PaperCard } from "../components/paper-card";
-import { PaperSearch } from "../components/paper-search";
 import { SiteHeader } from "../components/site-header";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
@@ -44,10 +42,10 @@ export default async function HomePage() {
   const editorialTopics = [
     { key: "reasoning", label: "Reasoning", count: reasoningCount },
     { key: "agents", label: "Agents", count: agentCount },
-    { key: "vision-multimodal-generation", label: "Multimodal", count: topicCounts.get("vision-multimodal-generation") ?? 0 },
-    { key: "systems-efficiency", label: "Systems", count: topicCounts.get("systems-efficiency") ?? 0 },
-    { key: "robotics-embodied-ai", label: "Robotics", count: topicCounts.get("robotics-embodied-ai") ?? 0 },
-    { key: "science-medicine", label: "Science", count: topicCounts.get("science-medicine") ?? 0 },
+    { key: "multimodal", label: "Multimodal", count: topicCounts.get("vision-multimodal-generation") ?? 0 },
+    { key: "systems", label: "Systems", count: topicCounts.get("systems-efficiency") ?? 0 },
+    { key: "robotics", label: "Robotics", count: topicCounts.get("robotics-embodied-ai") ?? 0 },
+    { key: "science", label: "Science", count: topicCounts.get("science-medicine") ?? 0 },
   ];
 
   if (!lead) return null;
@@ -63,12 +61,6 @@ export default async function HomePage() {
             <span>papers</span>
           </h1>
           <p>1,000 papers that defined the last year of AI.</p>
-        </div>
-        <div className="hero-art-wrap">
-          <GreekCyberArt />
-        </div>
-        <div className="hero-tools">
-          <PaperSearch />
         </div>
       </section>
 
@@ -90,7 +82,7 @@ export default async function HomePage() {
 
       <section className="atlas-grid page-shell rule-top" id="collections">
         <aside className="topic-column">
-          <h2 className="mono-label">Browse by topic</h2>
+          <h2 className="mono-label">Browse by topics</h2>
           <ol>
             {editorialTopics.map((topic, index) => (
               <li key={topic.key}>

@@ -7,6 +7,7 @@ import { GreekCyberArt } from "../../../components/greek-cyber-art";
 import { SiteHeader } from "../../../components/site-header";
 import { getLabByName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
+import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
 import { formatCompactNumber, formatMonthYear, getPaper, topicLabel } from "../../../lib/papers";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
@@ -33,7 +34,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
   const paper = await getPaper(id);
   if (!paper) notFound();
 
-  const summaryPoints = paper.summary.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const summary = parsePaperSummaryMarkdown(paper.summary);
   const lab = getLabByName(paper.lab);
   const artwork = getPaperArtwork(id);
 
@@ -104,7 +105,14 @@ export default async function PaperPage({ params }: PaperPageProps) {
               <p className="mono-label"><span>01</span> In brief</p>
               <h2 className="display-serif">Summary</h2>
               <div className="summary-lede">
-                {summaryPoints.map((point, index) => <p key={`${index}-${point}`}>{point}</p>)}
+                {summary.paragraphs.map((paragraph, index) => (
+                  <p className="text-pretty" key={`${index}-${paragraph}`}>{paragraph}</p>
+                ))}
+                {summary.bullets.length ? (
+                  <ul>
+                    {summary.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                  </ul>
+                ) : null}
               </div>
             </div>
 

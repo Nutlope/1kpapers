@@ -28,11 +28,11 @@ export function FeaturedCarousel({ papers }: { papers: Paper[] }) {
 
   useEffect(() => {
     if (isPaused || papers.length <= 1) return;
-    const interval = window.setInterval(() => {
+    const timeout = window.setTimeout(() => {
       scrollToPaper((activeIndexRef.current + 1) % papers.length);
     }, AUTOPLAY_INTERVAL_MS);
-    return () => window.clearInterval(interval);
-  }, [isPaused, papers.length]);
+    return () => window.clearTimeout(timeout);
+  }, [activeIndex, isPaused, papers.length]);
 
   useEffect(() => () => {
     if (animationFrameRef.current !== null) cancelAnimationFrame(animationFrameRef.current);
@@ -124,7 +124,20 @@ export function FeaturedCarousel({ papers }: { papers: Paper[] }) {
             ))}
           </div>
         </div>
-        <button type="button" className="carousel-arrow focus-ring" onClick={() => move(1)} disabled={papers.length <= 1} aria-label="Next trending paper">→</button>
+        <button type="button" className="carousel-arrow carousel-arrow-next focus-ring" onClick={() => move(1)} disabled={papers.length <= 1} aria-label="Next trending paper">
+          {!isPaused && papers.length > 1 ? (
+            <svg
+              key={activeIndex}
+              className="carousel-countdown"
+              viewBox="0 0 40 40"
+              aria-hidden="true"
+              style={{ animationDuration: `${AUTOPLAY_INTERVAL_MS}ms` }}
+            >
+              <circle cx="20" cy="20" r="18.75" pathLength="1" />
+            </svg>
+          ) : null}
+          <span aria-hidden="true">→</span>
+        </button>
       </div>
     </div>
   );
