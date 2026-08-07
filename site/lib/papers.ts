@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { Paper, PaperListing } from "./paper-shared";
-import { HOMEPAGE_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
+import { HOMEPAGE_DATA_URL, MOST_CITED_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
 
 export type { Paper, PaperListing } from "./paper-shared";
 export { formatCompactNumber, formatMonthYear, topicLabel } from "./paper-shared";
@@ -17,11 +17,17 @@ export type HomepageData = {
   featured: Paper;
   trending: PaperListing[];
   mostCited: PaperListing[];
-  mostCitedCount: number;
   monthCounts: Record<string, number>;
   topicCounts: Record<string, number>;
   reasoningCount: number;
   agentCount: number;
+};
+
+export type MostCitedData = {
+  schemaVersion: number;
+  generatedAt: string;
+  papers: PaperListing[];
+  paperCount: number;
 };
 
 export type PaperDetails = {
@@ -43,6 +49,14 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
     throw new Error(`Could not load homepage data from ${HOMEPAGE_DATA_URL}: ${response.status}`);
   }
   return (await response.json()) as HomepageData;
+});
+
+export const getMostCitedData = cache(async (): Promise<MostCitedData> => {
+  const response = await fetch(MOST_CITED_DATA_URL, { next: { revalidate: 3600 } });
+  if (!response.ok) {
+    throw new Error(`Could not load most-cited data from ${MOST_CITED_DATA_URL}: ${response.status}`);
+  }
+  return (await response.json()) as MostCitedData;
 });
 
 export const getPaperDetails = cache(async (id: string): Promise<PaperDetails | undefined> => {

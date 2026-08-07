@@ -24,7 +24,7 @@ if (args.kind || args.id || args.file) {
   }
   await uploadImage(args.kind, args.id, path.resolve(projectRoot, args.file));
 } else {
-  const { paperData, catalogData, homepageData, searchData, relatedPapersById } = await buildSiteData(projectRoot);
+  const { paperData, catalogData, homepageData, mostCitedData, searchData, relatedPapersById } = await buildSiteData(projectRoot);
   const selectedPaper = args.paperId
     ? paperData.papers.find((paper) => paper.id === args.paperId)
     : undefined;
@@ -35,6 +35,7 @@ if (args.kind || args.id || args.file) {
   const globalJson = gzipJson(paperData);
   const catalogJson = gzipJson(catalogData);
   const homepageJson = gzipJson(homepageData);
+  const mostCitedJson = gzipJson(mostCitedData);
   const searchJson = gzipJson(searchData);
   uploads.push(
     () => uploadObject(client, {
@@ -59,6 +60,13 @@ if (args.kind || args.id || args.file) {
       cacheControl: "public, max-age=300, stale-while-revalidate=3600",
     }),
     () => uploadObject(client, {
+      key: "most-cited.json",
+      body: mostCitedJson.body,
+      contentType: "application/json",
+      contentEncoding: "gzip",
+      cacheControl: "public, max-age=300, stale-while-revalidate=3600",
+    }),
+    () => uploadObject(client, {
       key: "search-index.json",
       body: searchJson.body,
       contentType: "application/json",
@@ -78,8 +86,9 @@ if (args.kind || args.id || args.file) {
   await verifyPublicJson("summaries.json", paperData.papers.length);
   await verifyPublicJson("catalog.json", catalogData.papers.length);
   await verifyPublicJson("homepage.json", homepageData.mostCited.length, "mostCited");
+  await verifyPublicJson("most-cited.json", mostCitedData.papers.length);
   await verifyPublicJson(paperSummaryObjectKey(papers[0]!.id), 1);
-  console.log(`Synced ${papers.length} paper summaries plus compact catalog, homepage, and search indexes.`);
+  console.log(`Synced ${papers.length} paper summaries plus compact catalog, homepage, ranking, and search indexes.`);
 }
 
 async function uploadImage(kind: ImageKind, id: string, file: string) {

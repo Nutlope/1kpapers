@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowIcon, ExternalIcon } from "../../components/icons";
 import { SiteHeader } from "../../components/site-header";
-import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib/papers";
+import { formatCompactNumber, formatMonthYear, getMostCitedData } from "../../lib/papers";
 
 export const metadata: Metadata = {
   title: "Most cited AI papers",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MostCitedPapersPage() {
-  const { mostCited: displayed, mostCitedCount, generatedAt } = await getHomepageData();
+  const { papers: displayed, paperCount, generatedAt } = await getMostCitedData();
 
   return (
     <main>
@@ -22,7 +22,7 @@ export default async function MostCitedPapersPage() {
           <p className="text-pretty">A snapshot-ranked view of scholarly impact across the collection, separate from Hugging Face popularity.</p>
         </div>
         <dl className="ranking-hero-stats">
-          <div><dt>Ranked papers</dt><dd className="tabular-nums">{mostCitedCount}</dd></div>
+          <div><dt>Ranked papers</dt><dd className="tabular-nums">{paperCount}</dd></div>
           <div><dt>Showing</dt><dd className="tabular-nums">Top {displayed.length}</dd></div>
           <div><dt>Snapshot</dt><dd>{formatSnapshotDate(generatedAt)}</dd></div>
         </dl>

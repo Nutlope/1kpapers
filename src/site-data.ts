@@ -65,11 +65,17 @@ export type SiteHomepageData = {
   featured: SitePaper;
   trending: SitePaperListing[];
   mostCited: SitePaperListing[];
-  mostCitedCount: number;
   monthCounts: Record<string, number>;
   topicCounts: Record<string, number>;
   reasoningCount: number;
   agentCount: number;
+};
+
+export type SiteMostCitedData = {
+  schemaVersion: 1;
+  generatedAt: string;
+  papers: SitePaperListing[];
+  paperCount: number;
 };
 
 const editorialTrendingIds = [
@@ -88,6 +94,7 @@ export async function buildSiteData(projectRoot = process.cwd()): Promise<{
   paperData: SitePaperData;
   catalogData: SiteCatalogData;
   homepageData: SiteHomepageData;
+  mostCitedData: SiteMostCitedData;
   searchData: SiteSearchData;
   relatedPapersById: Map<string, SitePaperListing[]>;
 }> {
@@ -122,6 +129,7 @@ export async function buildSiteData(projectRoot = process.cwd()): Promise<{
 export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
   catalogData: SiteCatalogData;
   homepageData: SiteHomepageData;
+  mostCitedData: SiteMostCitedData;
   relatedPapersById: Map<string, SitePaperListing[]>;
 } {
   if (papers.length === 0) throw new Error("Cannot build site indexes without papers");
@@ -131,6 +139,7 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
   const mostCitedPapers = papers
     .filter((paper) => paper.citations !== null)
     .sort((a, b) => (b.citations ?? 0) - (a.citations ?? 0));
+  const mostCitedListings = mostCitedPapers.slice(0, 100).map(toListingPaper);
   const monthCounts: Record<string, number> = {};
   const topicCounts: Record<string, number> = {};
 
@@ -147,8 +156,7 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
       generatedAt,
       featured: trendingPapers[0] ?? papers[0]!,
       trending: trendingPapers.map(toListingPaper),
-      mostCited: mostCitedPapers.slice(0, 100).map(toListingPaper),
-      mostCitedCount: mostCitedPapers.length,
+      mostCited: mostCitedListings.slice(0, 3),
       monthCounts,
       topicCounts,
       reasoningCount: papers.filter((paper) =>
@@ -157,6 +165,12 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
       agentCount: papers.filter((paper) =>
         /\bagents?\b|\bagentic\b|tool use|computer use/i.test(`${paper.title} ${paper.summary}`),
       ).length,
+    },
+    mostCitedData: {
+      schemaVersion: 1,
+      generatedAt,
+      papers: mostCitedListings,
+      paperCount: mostCitedPapers.length,
     },
     relatedPapersById: new Map(
       papers.map((paper) => [paper.id, selectRelatedPapers(paper, papers).map(toListingPaper)]),

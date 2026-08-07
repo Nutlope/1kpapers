@@ -35,12 +35,17 @@ describe("generated site indexes", () => {
     const papers = [
       paper({ id: "arxiv-2512.02556", title: "Editorial anchor", citations: 4 }),
       paper({ id: "arxiv-highly-cited", title: "Highly cited", citations: 100 }),
+      paper({ id: "arxiv-second", title: "Second", citations: 80 }),
+      paper({ id: "arxiv-third", title: "Third", citations: 60 }),
+      paper({ id: "arxiv-fourth", title: "Fourth", citations: 40 }),
     ];
-    const { catalogData, homepageData } = buildSiteIndexes(papers, "2026-08-07T00:00:00Z");
+    const { catalogData, homepageData, mostCitedData } = buildSiteIndexes(papers, "2026-08-07T00:00:00Z");
 
     assert.equal(homepageData.featured.id, "arxiv-2512.02556");
     assert.equal(homepageData.mostCited[0]?.id, "arxiv-highly-cited");
-    assert.equal(homepageData.mostCitedCount, 2);
+    assert.equal(homepageData.mostCited.length, 3);
+    assert.equal(mostCitedData.papers.length, 5);
+    assert.equal(mostCitedData.paperCount, 5);
     assert.equal("abstract" in catalogData.papers[0]!, false);
     assert.doesNotMatch(catalogData.papers[0]?.summary ?? "", /Result one/);
   });
@@ -61,10 +66,11 @@ describe("generated site indexes", () => {
     assert.ok(!relatedPapersById.get(source.id)?.some((paper) => paper.id === source.id));
   });
 
-  it("keeps generated indexes below the Next.js two-megabyte cache limit", async () => {
-    const { catalogData, homepageData } = await buildSiteData();
+  it("keeps each generated index within its payload budget", async () => {
+    const { catalogData, homepageData, mostCitedData } = await buildSiteData();
 
     assert.ok(Buffer.byteLength(JSON.stringify(catalogData)) < 2_000_000);
-    assert.ok(Buffer.byteLength(JSON.stringify(homepageData)) < 2_000_000);
+    assert.ok(Buffer.byteLength(JSON.stringify(homepageData)) < 50_000);
+    assert.ok(Buffer.byteLength(JSON.stringify(mostCitedData)) < 500_000);
   });
 });

@@ -11,13 +11,16 @@ topics/{topicId}/art.png
 summaries.json
 catalog.json
 homepage.json
+most-cited.json
 search-index.json
 ```
 
 JSON objects are uploaded with gzip compression and `Content-Encoding: gzip`.
 Paper and topic IDs make replacement uploads overwrite the existing public key.
 `catalog.json` is the compact browse payload, while `homepage.json` contains
-precomputed featured, trending, most-cited, topic, and month data. Full
+precomputed featured, trending, top-three most-cited, topic, and month data.
+`most-cited.json` contains the complete top-100 ranking and is only fetched by
+the ranking page. Full
 abstracts and summaries stay in the per-paper objects; `summaries.json` remains
 as a legacy compatibility export and is not fetched by the site.
 
