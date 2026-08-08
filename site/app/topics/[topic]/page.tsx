@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
-import { getTopic, getTopicPapers } from "../../../lib/topics";
+import { getSection, getSectionPapers, getTopic, getTopicPapers } from "../../../lib/topics";
 import { absoluteSiteUrl } from "../../../lib/site-url";
 
 type TopicPageProps = {
@@ -15,9 +15,46 @@ type TopicPageProps = {
 
 const PAGE_SIZE = 50;
 
+type ResolvedCollection = {
+  kind: "topic" | "section";
+  slug: string;
+  label: string;
+  shortLabel: string;
+  description: string;
+  accent: string;
+  artwork: string;
+  children: Array<{ slug: string; label: string }>;
+};
+
+/**
+ * A slug is either one of the precise editorial topics or one of the sections
+ * that group them. Serving both keeps the original `/topics/reasoning` URLs
+ * working now that the vocabulary is finer-grained.
+ */
+function resolveCollection(slug: string): ResolvedCollection | undefined {
+  const topic = getTopic(slug);
+  if (topic) {
+    return { kind: "topic", slug, label: topic.label, shortLabel: topic.shortLabel, description: topic.description, accent: topic.accent, artwork: topic.artwork, children: [] };
+  }
+  const section = getSection(slug);
+  if (section) {
+    return {
+      kind: "section",
+      slug,
+      label: section.label,
+      shortLabel: section.label,
+      description: `Every collection across ${section.label.toLowerCase()}.`,
+      accent: section.accent,
+      artwork: section.artwork,
+      children: section.topics.map((child) => ({ slug: child.slug, label: child.label })),
+    };
+  }
+  return undefined;
+}
+
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { topic: slug } = await params;
-  const topic = getTopic(slug);
+  const topic = resolveCollection(slug);
   if (!topic) return {};
   const title = `${topic.label} AI papers`;
   const canonicalUrl = absoluteSiteUrl(`/topics/${slug}`);
@@ -43,11 +80,13 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
 
 export default async function TopicPage({ params, searchParams }: TopicPageProps) {
   const [{ topic: slug }, { sort, page: pageParam }] = await Promise.all([params, searchParams]);
-  const topic = getTopic(slug);
+  const topic = resolveCollection(slug);
   if (!topic) notFound();
 
   const { papers } = await getPaperCatalog();
-  const topicPapers = getTopicPapers(topic, papers);
+  const topicPapers = topic.kind === "section"
+    ? getSectionPapers(topic.slug, papers)
+    : getTopicPapers({ slug: topic.slug }, papers);
   const sorted = [...topicPapers].sort((a, b) => {
     if (sort === "cited") return (b.citations ?? 0) - (a.citations ?? 0);
     if (sort === "upvoted") return (b.upvotes ?? 0) - (a.upvotes ?? 0);
@@ -77,6 +116,15 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
             <Image src={topic.artwork} alt="" fill priority sizes="(max-width: 720px) 100vw, 30vw" />
           </div>
         </div>
+        {topic.children.length > 0 ? (
+          <nav className="topic-section-children" aria-label={`${topic.label} collections`}>
+            {topic.children.map((child) => (
+              <Link key={child.slug} href={`/topics/${child.slug}`} className="focus-ring">
+                {child.label} <span>{getTopicPapers(child, papers).length}</span>
+              </Link>
+            ))}
+          </nav>
+        ) : null}
         <dl className="paper-stat-row topic-stat-row">
           <div><dt>Papers</dt><dd>{topicPapers.length}</dd></div>
           <div><dt>Research labs</dt><dd>{labs}</dd></div>

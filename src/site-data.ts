@@ -1,4 +1,5 @@
 import path from "node:path";
+import { assignmentToList, readEditorialTopics } from "./editorial-topics.js";
 import { readPaperDatabase } from "./paper-database.js";
 
 type SourcePaper = {
@@ -66,8 +67,6 @@ export type SiteHomepageData = {
   mostCited: SitePaperListing[];
   monthCounts: Record<string, number>;
   topicCounts: Record<string, number>;
-  reasoningCount: number;
-  agentCount: number;
 };
 
 export type SiteMostCitedData = {
@@ -109,7 +108,8 @@ export async function buildSiteData(
   relatedPapersById: Map<string, SitePaperListing[]>;
 }> {
   const source = readPaperDatabase(databasePath) as unknown as MetadataFile;
-  const papers = source.papers.map(toSitePaper);
+  const editorialTopics = readEditorialTopics(path.join(projectRoot, "data", "derived.sqlite"));
+  const papers = source.papers.map((paper) => toSitePaper(paper, editorialTopics));
 
   const indexes = buildSiteIndexes(papers, source.generatedAt);
 
@@ -160,15 +160,11 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
     );
   const monthCounts: Record<string, number> = {};
   const topicCounts: Record<string, number> = {};
-  const editorialTopicCounts: Record<string, number> = {};
 
   for (const paper of papers) {
     const month = paper.publishedAt.slice(0, 7);
     monthCounts[month] = (monthCounts[month] ?? 0) + 1;
     for (const topic of paper.topics) topicCounts[topic] = (topicCounts[topic] ?? 0) + 1;
-    for (const topic of paper.editorialTopics) {
-      editorialTopicCounts[topic] = (editorialTopicCounts[topic] ?? 0) + 1;
-    }
   }
 
   return {
@@ -180,8 +176,6 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
       mostCited: mostCitedListings.slice(0, 3),
       monthCounts,
       topicCounts,
-      reasoningCount: editorialTopicCounts.reasoning ?? 0,
-      agentCount: editorialTopicCounts.agents ?? 0,
     },
     mostCitedData: {
       schemaVersion: 1,
@@ -210,6 +204,7 @@ export function toListingPaper(paper: SitePaper) {
     landingUrl: paper.landingUrl,
     topics: paper.topics,
     editorialTopics: paper.editorialTopics,
+    primaryTopic: paper.primaryTopic,
     upvotes: paper.upvotes,
     summary: summaryExcerpt(paper.summary),
     lab: paper.lab,
@@ -271,7 +266,7 @@ function summaryExcerpt(summary: string, maxLength = 360) {
   return `${candidate || overview.slice(0, maxLength - 1)}…`;
 }
 
-function toSitePaper(paper: SourcePaper) {
+function toSitePaper(paper: SourcePaper, editorialTopics: Map<string, { primary: string; secondary: string[] }>) {
   const sitePaper = {
     id: paper.collectionId,
     arxivId: paper.arxivId,
@@ -297,23 +292,7 @@ function toSitePaper(paper: SourcePaper) {
   };
   return {
     ...sitePaper,
-    editorialTopics: classifyEditorialTopics(sitePaper),
+    editorialTopics: assignmentToList(editorialTopics.get(paper.collectionId)),
+    primaryTopic: editorialTopics.get(paper.collectionId)?.primary ?? null,
   };
-}
-
-export function classifyEditorialTopics(paper: {
-  title: string;
-  abstract: string | null;
-  topics: string[];
-}) {
-  const text = `${paper.title} ${paper.abstract ?? ""}`;
-  const matches = [
-    ["reasoning", /\breasoning\b|chain[- ]of[- ]thought|test[- ]time (?:compute|scaling|reasoning)|inference[- ]time (?:compute|scaling)|reinforcement learning with verifiable rewards|\brlvr\b|theorem proving|mathematical reasoning/i.test(text)],
-    ["agents", /\bagents?\b|\bagentic\b|tool[- ](?:use|using|integrated)|computer use|multi[- ]agent|autonomous (?:workflow|system)|long[- ]horizon (?:action|task|planning)/i.test(text)],
-    ["multimodal", paper.topics.includes("vision-multimodal-generation")],
-    ["systems", paper.topics.includes("systems-efficiency")],
-    ["robotics", paper.topics.includes("robotics-embodied-ai")],
-    ["science", paper.topics.includes("science-medicine")],
-  ] as const;
-  return matches.filter(([, matched]) => matched).map(([slug]) => slug);
 }

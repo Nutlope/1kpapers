@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowIcon } from "../../components/icons";
 import { GreekCyberArt } from "../../components/greek-cyber-art";
 import { SiteHeader } from "../../components/site-header";
 import { getPaperCatalog } from "../../lib/papers";
-import { getTopicPapers, topics } from "../../lib/topics";
+import { getSectionPapers, getTopicPapers, sections } from "../../lib/topics";
 
 export const metadata: Metadata = {
   title: "Research topics",
@@ -29,34 +28,41 @@ export default async function TopicsPage() {
         <div>
           <p className="mono-label">The research atlas</p>
           <h1 className="display-serif text-balance">Browse the ideas that shaped the year.</h1>
-          <p>Six editorial paths through {papers.length.toLocaleString("en")} papers, from reasoning systems to scientific discovery.</p>
+          <p>{sections.reduce((count, section) => count + section.topics.length, 0)} collections across {sections.length} paths through {papers.length.toLocaleString("en")} papers, from reasoning systems to scientific discovery.</p>
         </div>
         <GreekCyberArt compact />
       </section>
 
       <section className="topic-index-grid page-shell" aria-label="Research topics">
-        {topics.map((topic, index) => {
-          const topicPapers = getTopicPapers(topic, papers);
-          const labs = new Set(topicPapers.map((paper) => paper.lab).filter(Boolean)).size;
-          const repositories = topicPapers.filter((paper) => paper.githubRepository).length;
+        {sections.map((section, index) => {
+          const sectionPapers = getSectionPapers(section.slug, papers);
+          const labs = new Set(sectionPapers.map((paper) => paper.lab).filter(Boolean)).size;
+          const repositories = sectionPapers.filter((paper) => paper.githubRepository).length;
           return (
-            <Link key={topic.slug} href={`/topics/${topic.slug}`} className={`topic-index-card topic-${topic.accent} focus-ring`}>
+            <article key={section.slug} className={`topic-index-card topic-${section.accent}`}>
               <div className="topic-card-number">{String(index + 1).padStart(2, "0")}</div>
               <div className="topic-index-copy">
-                <p className="mono-label">Editorial collection</p>
-                <h2 className="display-serif">{topic.label}</h2>
-                <p>{topic.description}</p>
+                <p className="mono-label">Editorial path</p>
+                <h2 className="display-serif">{section.label}</h2>
+                <ul className="topic-index-links">
+                  {section.topics.map((topic) => (
+                    <li key={topic.slug}>
+                      <Link href={`/topics/${topic.slug}`} className="focus-ring">
+                        {topic.label} <span>{getTopicPapers(topic, papers).length}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <div className="topic-index-art" aria-hidden="true">
-                <Image src={topic.artwork} alt="" fill sizes="(max-width: 900px) 90vw, 45vw" />
+                <Image src={section.artwork} alt="" fill sizes="(max-width: 900px) 90vw, 45vw" />
               </div>
               <dl>
-                <div><dt>Papers</dt><dd>{topicPapers.length}</dd></div>
+                <div><dt>Papers</dt><dd>{sectionPapers.length}</dd></div>
                 <div><dt>Labs</dt><dd>{labs}</dd></div>
                 <div><dt>Code</dt><dd>{repositories}</dd></div>
               </dl>
-              <span>Explore topic <ArrowIcon /></span>
-            </Link>
+            </article>
           );
         })}
       </section>

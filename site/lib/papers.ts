@@ -18,8 +18,6 @@ export type HomepageData = {
   mostCited: PaperListing[];
   monthCounts: Record<string, number>;
   topicCounts: Record<string, number>;
-  reasoningCount: number;
-  agentCount: number;
 };
 
 export type MostCitedData = {

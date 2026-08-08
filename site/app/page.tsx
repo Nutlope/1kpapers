@@ -9,7 +9,7 @@ import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
 import { formatMonthYear, getHomepageData, getPaperCatalog } from "../lib/papers";
 import { topicArtUrl } from "../lib/public-storage";
-import { getTopicPapers, topics as topicDefinitions } from "../lib/topics";
+import { getSectionPapers, sections as topicSections } from "../lib/topics";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -42,10 +42,12 @@ export default async function HomePage() {
     year: month.year,
     count: monthCounts[month.key] ?? 0,
   }));
-  const editorialTopics = topicDefinitions.map((topic) => ({
-    key: topic.slug,
-    label: topic.shortLabel,
-    count: getTopicPapers(topic, papers).length,
+  // The homepage lists the seven editorial paths; each one links through to
+  // the precise topics beneath it.
+  const editorialTopics = topicSections.map((section) => ({
+    key: section.slug,
+    label: section.label,
+    count: getSectionPapers(section.slug, papers).length,
   }));
   const topicCount = (slug: string) => editorialTopics.find((topic) => topic.key === slug)?.count ?? 0;
 

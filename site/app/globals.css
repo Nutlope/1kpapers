@@ -2879,6 +2879,45 @@ button:active,
   max-width: 58%;
 }
 
+.topic-index-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topic-index-links a {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid rgb(0 0 0 / 7%);
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.topic-index-links li:last-child a {
+  border-bottom: 0;
+}
+
+.topic-index-links a:hover {
+  color: var(--accent, currentColor);
+}
+
+.topic-index-links a span {
+  flex: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
 .topic-index-art {
   position: absolute;
   z-index: 0;

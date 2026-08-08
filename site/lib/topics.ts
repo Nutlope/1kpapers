@@ -1,96 +1,65 @@
 import type { Paper } from "./paper-shared";
 import { topicArtUrl } from "./public-storage";
+import { TOPIC_SECTIONS, TOPIC_TAXONOMY } from "./topic-taxonomy";
 
-type TopicPaper = Pick<Paper, "title" | "summary" | "topics"> &
-  Partial<Pick<Paper, "abstract" | "editorialTopics">>;
+type TopicPaper = Pick<Paper, "topics"> & Partial<Pick<Paper, "editorialTopics" | "primaryTopic">>;
 
 export type TopicDefinition = {
   slug: string;
   label: string;
   shortLabel: string;
   description: string;
+  section: string;
+  accent: string;
+  /** Every topic has its own cover; sections keep their own separate artwork. */
   artwork: string;
-  accent: "blue" | "orange" | "pink" | "cyan" | "yellow" | "violet";
-  matches: (paper: TopicPaper) => boolean;
 };
 
-function matchesEditorialTopic(paper: TopicPaper, slug: string, fallback: () => boolean) {
-  return paper.editorialTopics?.length ? paper.editorialTopics.includes(slug) : fallback();
-}
+const sectionBySlug = new Map(TOPIC_SECTIONS.map((section) => [section.slug, section]));
 
-function paperText(paper: TopicPaper) {
-  return `${paper.title} ${paper.abstract ?? ""} ${paper.summary}`;
-}
+export const topics: TopicDefinition[] = TOPIC_TAXONOMY.map((topic) => {
+  const section = sectionBySlug.get(topic.section);
+  return {
+    slug: topic.slug,
+    label: topic.label,
+    shortLabel: topic.label,
+    description: topic.description,
+    section: topic.section,
+    accent: section?.accent ?? "blue",
+    artwork: topicArtUrl(topic.slug),
+  };
+});
 
-export const topics: TopicDefinition[] = [
-  {
-    slug: "reasoning",
-    label: "Reasoning",
-    shortLabel: "Reasoning",
-    description: "Models that plan, verify, deliberate, and improve through inference-time or reinforcement-learning techniques.",
-    artwork: topicArtUrl("reasoning"),
-    accent: "blue",
-    matches: (paper) => matchesEditorialTopic(paper, "reasoning", () =>
-      /\breasoning\b|chain[- ]of[- ]thought|test[- ]time (?:compute|scaling|reasoning)|inference[- ]time (?:compute|scaling)|reinforcement learning with verifiable rewards|\brlvr\b|theorem proving|mathematical reasoning/i.test(paperText(paper)),
-    ),
-  },
-  {
-    slug: "agents",
-    label: "Agents",
-    shortLabel: "Agents",
-    description: "Research on tool use, autonomous workflows, computer use, multi-agent coordination, and long-horizon action.",
-    artwork: topicArtUrl("agents"),
-    accent: "orange",
-    matches: (paper) => matchesEditorialTopic(paper, "agents", () =>
-      /\bagents?\b|\bagentic\b|tool[- ](?:use|using|integrated)|computer use|multi[- ]agent|autonomous (?:workflow|system)|long[- ]horizon (?:action|task|planning)/i.test(paperText(paper)),
-    ),
-  },
-  {
-    slug: "multimodal",
-    label: "Multimodal",
-    shortLabel: "Multimodal",
-    description: "Vision, audio, video, image generation, and models that reason across several kinds of media.",
-    artwork: topicArtUrl("multimodal"),
-    accent: "pink",
-    matches: (paper) => matchesEditorialTopic(paper, "multimodal", () => paper.topics.includes("vision-multimodal-generation")),
-  },
-  {
-    slug: "systems",
-    label: "Systems and efficiency",
-    shortLabel: "Systems",
-    description: "Inference, training, architecture, memory, serving, and the systems work that makes frontier AI practical.",
-    artwork: topicArtUrl("systems"),
-    accent: "cyan",
-    matches: (paper) => matchesEditorialTopic(paper, "systems", () => paper.topics.includes("systems-efficiency")),
-  },
-  {
-    slug: "robotics",
-    label: "Robotics and embodied AI",
-    shortLabel: "Robotics",
-    description: "Models that perceive, navigate, manipulate, and learn through physical or simulated environments.",
-    artwork: topicArtUrl("robotics"),
-    accent: "yellow",
-    matches: (paper) => matchesEditorialTopic(paper, "robotics", () => paper.topics.includes("robotics-embodied-ai")),
-  },
-  {
-    slug: "science",
-    label: "Science and medicine",
-    shortLabel: "Science",
-    description: "AI research applied to discovery, biology, medicine, materials, mathematics, and the scientific process.",
-    artwork: topicArtUrl("science"),
-    accent: "violet",
-    matches: (paper) => matchesEditorialTopic(paper, "science", () => paper.topics.includes("science-medicine")),
-  },
-];
+export const sections = TOPIC_SECTIONS.map((section) => ({
+  ...section,
+  artwork: topicArtUrl(section.slug),
+  topics: topics.filter((topic) => topic.section === section.slug),
+}));
 
 export function getTopic(slug: string) {
   return topics.find((topic) => topic.slug === slug);
 }
 
-export function getTopicPapers<T extends TopicPaper>(topic: TopicDefinition, papers: T[]) {
-  return papers.filter(topic.matches);
+export function getSection(slug: string) {
+  return sections.find((section) => section.slug === slug);
+}
+
+/**
+ * Topic membership comes only from the editorial assignment produced by
+ * `pnpm topics:classify` + `pnpm topics:resolve`. There is deliberately no
+ * keyword fallback: a classifier that silently changes its answer depending on
+ * which page called it is worse than one that returns nothing.
+ */
+export function getTopicPapers<T extends TopicPaper>(topic: Pick<TopicDefinition, "slug">, papers: T[]) {
+  return papers.filter((paper) => paper.primaryTopic === topic.slug);
+}
+
+/** A paper counts toward a section if any of its topics sit in that section. */
+export function getSectionPapers<T extends TopicPaper>(sectionSlug: string, papers: T[]) {
+  const slugs = new Set(topics.filter((topic) => topic.section === sectionSlug).map((topic) => topic.slug));
+  return papers.filter((paper) => paper.primaryTopic !== null && paper.primaryTopic !== undefined && slugs.has(paper.primaryTopic));
 }
 
 export function getPaperEditorialTopics(paper: TopicPaper) {
-  return topics.filter((topic) => topic.matches(paper));
+  return topics.filter((topic) => paper.editorialTopics?.includes(topic.slug));
 }

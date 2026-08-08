@@ -10,6 +10,8 @@ export type Paper = {
   pageCount: number | null;
   topics: string[];
   editorialTopics?: string[];
+  /** The single shelf this paper belongs to; secondary topics are cross-references. */
+  primaryTopic?: string | null;
   categories: string[];
   upvotes: number | null;
   summary: string;
@@ -32,6 +34,7 @@ export type PaperListing = Pick<
   | "landingUrl"
   | "topics"
   | "editorialTopics"
+  | "primaryTopic"
   | "upvotes"
   | "summary"
   | "lab"
