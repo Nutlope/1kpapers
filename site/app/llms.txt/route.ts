@@ -6,6 +6,11 @@ export function GET() {
 
 > A Together AI research atlas containing more than 1,000 AI papers, concise summaries, original abstracts, citations, official code links, research labs, and editorial topics.
 
+## Coverage
+
+- Current publication window: August 2025 through August 2026.
+- The atlas prioritizes widely discussed, high-impact papers from this period; it is not an exhaustive index of every AI paper.
+
 ## Primary pages
 
 - [Research atlas](${absoluteSiteUrl("/")})
