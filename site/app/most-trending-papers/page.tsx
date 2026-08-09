@@ -7,6 +7,7 @@ import { TogetherResearchLink } from "../../components/together-research-link";
 import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib/papers";
 import { paperHref } from "../../lib/paper-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Most trending AI papers",
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     title: "Most trending AI papers",
     description: "The editorial selection of AI papers that moved the field forward from August 2025 through August 2026.",
     url: "/most-trending-papers",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

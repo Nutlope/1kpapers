@@ -11,7 +11,8 @@ corpus/shards/
 .next/
 tsconfig.tsbuildinfo
 site/tsconfig.tsbuildinfo
-/site/public/generated/
+/site/public/generated/*
+!/site/public/generated/site-og/
 /supplemental
 /data/*.sqlite
 /data/*.sqlite-*

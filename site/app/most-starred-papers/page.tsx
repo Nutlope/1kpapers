@@ -6,6 +6,7 @@ import { TogetherResearchLink } from "../../components/together-research-link";
 import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getMostStarredData } from "../../lib/papers";
 import { paperHref } from "../../lib/paper-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Most starred AI papers on GitHub",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     title: "Most starred AI papers on GitHub",
     description: "AI papers with the most-starred linked GitHub repositories in the Year in AI Papers collection.",
     url: "/most-starred-papers",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

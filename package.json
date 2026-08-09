@@ -29,6 +29,7 @@
     "storage:sync": "node --env-file=.env --import tsx src/sync-site-storage.ts",
     "site:build": "pnpm --dir site build",
     "site:dev": "pnpm --dir site dev",
+    "site:og": "node --env-file=.env --import tsx src/generate-site-og-images.ts",
     "site:typecheck": "pnpm --dir site typecheck",
     "test": "node --import tsx --test src/*.test.ts",
     "together-batch": "tsx src/together-batch.ts",

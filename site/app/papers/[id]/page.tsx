@@ -13,6 +13,7 @@ import { buildScholarlyArticleJsonLd } from "../../../lib/paper-structured-data"
 import { formatCompactNumber, formatMonthYear, getPaperDetails, resolvePaperRoute } from "../../../lib/papers";
 import { paperHref } from "../../../lib/paper-url";
 import { absoluteSiteUrl } from "../../../lib/site-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE, DEFAULT_TWITTER_IMAGE } from "../../../lib/social-metadata";
 import { getPaperEditorialTopics } from "../../../lib/topics";
 
 type PaperPageProps = { params: Promise<{ id: string }> };
@@ -38,13 +39,15 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
       description,
       url: canonicalUrl,
       publishedTime: paper.publishedAt,
-      ...(artwork?.social ? { images: [{ url: artwork.social, width: 1672, height: 941, alt: `Cover for ${paper.title}` }] } : {}),
+      images: artwork?.social
+        ? [{ url: artwork.social, width: 1672, height: 941, alt: `Cover for ${paper.title}` }]
+        : [DEFAULT_OPEN_GRAPH_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: metadataTitle,
       description,
-      ...(artwork?.social ? { images: [artwork.social] } : {}),
+      images: [artwork?.social ?? DEFAULT_TWITTER_IMAGE],
     },
   };
 }

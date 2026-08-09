@@ -6,6 +6,7 @@ import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
 import { labIncludesPaper, labs } from "../../lib/labs";
 import { getPaperCatalog } from "../../lib/papers";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Research labs",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     title: "Research labs",
     description: "Explore the research labs represented across the year in AI papers.",
     url: "/labs",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
 import { getPaperCatalog } from "../../lib/papers";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 import { getSectionPapers, sections } from "../../lib/topics";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     title: "Research topics",
     description: "Browse the ideas that defined the last year of AI research.",
     url: "/topics",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

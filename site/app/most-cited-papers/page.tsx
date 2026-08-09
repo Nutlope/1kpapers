@@ -6,6 +6,7 @@ import { TogetherResearchLink } from "../../components/together-research-link";
 import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getMostCitedData } from "../../lib/papers";
 import { paperHref } from "../../lib/paper-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Most cited AI papers",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     title: "Most cited AI papers",
     description: "The most cited papers in the Year in AI Papers collection, ranked from a frozen scholarly citation snapshot.",
     url: "/most-cited-papers",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

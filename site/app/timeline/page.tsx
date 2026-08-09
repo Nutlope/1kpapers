@@ -5,6 +5,7 @@ import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
 import { monthDefinitions } from "../../lib/months";
 import { getPaperCatalog } from "../../lib/papers";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "AI research timeline",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     title: "AI research timeline",
     description: "Browse the year in AI papers month by month.",
     url: "/timeline",
+    images: [DEFAULT_OPEN_GRAPH_IMAGE],
   },
 };
 

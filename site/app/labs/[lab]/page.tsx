@@ -9,6 +9,7 @@ import { getLabBySlug, labIncludesPaper } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { paperHref } from "../../../lib/paper-url";
 import { absoluteSiteUrl } from "../../../lib/site-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE, DEFAULT_TWITTER_IMAGE } from "../../../lib/social-metadata";
 
 type LabPageProps = { params: Promise<{ lab: string }>; searchParams: Promise<{ sort?: string }> };
 
@@ -27,11 +28,13 @@ export async function generateMetadata({ params }: LabPageProps): Promise<Metada
       title,
       description: lab.description,
       url: canonicalUrl,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: lab.description,
+      images: [DEFAULT_TWITTER_IMAGE],
     },
   };
 }

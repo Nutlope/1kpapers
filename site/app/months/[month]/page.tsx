@@ -10,6 +10,7 @@ import { getMonthDefinition, monthDefinitions } from "../../../lib/months";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { paperHref } from "../../../lib/paper-url";
 import { absoluteSiteUrl } from "../../../lib/site-url";
+import { DEFAULT_OPEN_GRAPH_IMAGE } from "../../../lib/social-metadata";
 
 type MonthPageProps = { params: Promise<{ month: string }>; searchParams: Promise<{ sort?: string }> };
 
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: MonthPageProps): Promise<Meta
     title,
     description,
     alternates: { canonical: canonicalUrl },
-    openGraph: { type: "website", title, description, url: canonicalUrl },
+    openGraph: { type: "website", title, description, url: canonicalUrl, images: [DEFAULT_OPEN_GRAPH_IMAGE] },
   };
 }
 
