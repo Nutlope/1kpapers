@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import siteIcon from "../app/icon.png";
 import { SearchIcon } from "./icons";
 import { PaperSearch } from "./paper-search";
 
@@ -43,10 +45,13 @@ export function SiteHeader() {
 
   return (
     <header className="site-header page-shell">
-      <Link href="/" className="brand focus-ring" aria-label="Together AI research home">
-        <img src="/brands/together-ai.svg" alt="Together AI" />
-        <i />
-        <small>Research</small>
+      <Link href="/" className="brand focus-ring" aria-label="The Year in AI Papers home">
+        <span className="site-brand-mark" aria-hidden="true">
+          <Image src={siteIcon} alt="" priority />
+        </span>
+        <span className="site-brand-name">The Year in AI Papers</span>
+        <i className="brand-divider" aria-hidden="true" />
+        <img className="header-together-logo" src="/brands/together-ai.svg" alt="Together AI" />
       </Link>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <NavigationLinks pathname={pathname} />

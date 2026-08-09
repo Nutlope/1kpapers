@@ -140,26 +140,45 @@ button:active,
   display: flex;
   align-items: center;
   width: max-content;
-  gap: 11px;
+  gap: 10px;
 }
 
-.brand > img {
-  display: block;
-  width: 150px;
-  height: auto;
+.site-brand-mark {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  overflow: hidden;
+  background: #fff;
 }
 
-.brand > i {
+.site-brand-mark img {
+  position: absolute;
+  top: -9px;
+  left: -10px;
+  width: 54px;
+  height: 54px;
+  max-width: none;
+}
+
+.site-brand-name {
+  font-family: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+.brand-divider {
   width: 1px;
   height: 25px;
   background: var(--ink);
 }
 
-.brand > small {
-  color: var(--signal);
-  font: 10px/1 "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.header-together-logo {
+  display: block;
+  width: 78px;
+  height: auto;
 }
 
 .desktop-nav {
@@ -1416,6 +1435,24 @@ button:active,
   text-transform: uppercase;
 }
 
+.footer-together-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-together-link img {
+  display: block;
+  width: 112px;
+  height: auto;
+}
+
+.footer-together-link span {
+  color: var(--signal);
+  letter-spacing: 0.05em;
+}
+
 .footer-window {
   display: flex;
   align-items: center;
@@ -1598,11 +1635,29 @@ button:active,
     min-height: 52px;
   }
 
-  .brand > img {
-    width: 124px;
+  .brand {
+    gap: 8px;
   }
 
-  .brand > small {
+  .site-brand-mark {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .site-brand-mark img {
+    top: -8px;
+    left: -9px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .site-brand-name {
+    font-size: 15px;
+  }
+
+  .brand-divider,
+  .header-together-logo {
     display: none;
   }
 
@@ -1977,7 +2032,7 @@ button:active,
     padding: 24px 0;
   }
 
-  .site-footer span:nth-child(2) {
+  .site-footer > span:nth-child(2) {
     width: 100%;
     order: 3;
   }

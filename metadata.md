@@ -53,7 +53,7 @@ Every record must contain these keys. Unknown values use `null` or an empty arra
 - `summaryMethodologyVersion`
 - `summaryGeneratedAt`
 
-The local completed summary set currently uses GPT Luna for the core 1,000 papers and DeepSeek V4 Flash for the 18 supplemental Together AI papers. The model must be explicit on every record.
+The local completed summary set uses DeepSeek V4 Flash for all 1,018 papers: the core 1,000-paper corpus and the 18 supplemental Together AI papers. The model must be explicit on every record.
 
 ### Official lab
 
