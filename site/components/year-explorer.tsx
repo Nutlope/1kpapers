@@ -12,11 +12,13 @@ export function YearExplorer({
   selectedMonth = null,
   openInNewTab = true,
   totalCount,
+  totalLabel,
 }: {
   months: MonthEntry[];
   selectedMonth?: string | null;
   openInNewTab?: boolean;
   totalCount?: number;
+  totalLabel?: string;
 }) {
   const activeEntry = months.find((month) => month.key === selectedMonth);
   const displayedTotal = totalCount ?? months.reduce((total, month) => total + month.count, 0);
@@ -46,7 +48,7 @@ export function YearExplorer({
         ))}
       </div>
       <div className="curated-count">
-        <strong className="display-serif tabular-nums">{displayedTotal.toLocaleString("en")}</strong>
+        <strong className="display-serif tabular-nums">{totalLabel ?? displayedTotal.toLocaleString("en")}</strong>
         <span>papers<br /><small>curated and indexed</small></span>
       </div>
     </section>

@@ -143,7 +143,7 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      <YearExplorer months={monthEntries} totalCount={collectionPaperCount} />
+      <YearExplorer months={monthEntries} totalCount={collectionPaperCount} totalLabel="1,000+" />
 
       <PersonalPaperPick papers={[...trending, ...mostCited]} />
 
