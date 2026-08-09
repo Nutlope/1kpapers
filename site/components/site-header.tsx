@@ -51,7 +51,7 @@ export function SiteHeader() {
         </span>
         <span className="site-brand-name">The Year in AI Papers</span>
         <i className="brand-divider" aria-hidden="true" />
-        <img className="header-together-logo" src="/brands/together-ai.svg" alt="Together AI" />
+        <img className="header-together-logo" src="/brands/together-ai.svg" alt="Together AI" width="1147" height="241" />
       </Link>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <NavigationLinks pathname={pathname} />

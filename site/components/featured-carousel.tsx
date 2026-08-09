@@ -116,17 +116,21 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
         <button type="button" className="carousel-arrow focus-ring" onClick={() => move(-1)} disabled={positionCount <= 1} aria-label="Previous trending papers">←</button>
         <div className="carousel-position">
           <span className="mono-label tabular-nums" aria-live={isPaused ? "polite" : "off"}>{String(activeIndex + 1).padStart(2, "0")} / {String(positionCount).padStart(2, "0")}</span>
-          <div className="carousel-ticks" aria-label="Choose a carousel position">
-            {papers.slice(0, positionCount).map((paper, index) => (
-              <button
-                key={paper.id}
-                type="button"
-                className={`${activeIndex === index ? "active " : ""}focus-ring`}
-                onClick={() => scrollToPosition(index)}
-                aria-label={`Go to position ${index + 1}, starting with ${paper.title}`}
-                aria-current={activeIndex === index ? "true" : undefined}
-              />
-            ))}
+          <div className="carousel-scrubber">
+            <div className="carousel-ticks" aria-hidden="true">
+              {papers.slice(0, positionCount).map((paper, index) => (
+                <i key={paper.id} className={activeIndex === index ? "active" : undefined} />
+              ))}
+            </div>
+            <input
+              type="range"
+              min="0"
+              max={positionCount - 1}
+              step="1"
+              value={activeIndex}
+              onChange={(event) => scrollToPosition(Number(event.currentTarget.value))}
+              aria-label="Choose a trending-paper carousel position"
+            />
           </div>
         </div>
         <button type="button" className="carousel-arrow carousel-arrow-next focus-ring" onClick={() => move(1)} disabled={positionCount <= 1} aria-label="Next trending papers">

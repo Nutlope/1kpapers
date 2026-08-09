@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "The Year in AI Papers",
-    description: "Explore more than 1,000 papers in a curated atlas of artificial intelligence research.",
+    title: "The Year in AI Papers: Essential Research from 2025–2026",
+    description: "Read clear summaries of the most important AI papers from 2025–2026, organized by topic, research lab, citations, code, and publication date.",
     url: "/",
   },
 };
@@ -154,9 +154,9 @@ export default async function HomePage() {
           <h2 id="benchmark-cost-title" className="display-serif text-balance">What 1,000 summaries cost.</h2>
           <p className="text-pretty">Each model summarized the same extracted paper text with the same prompt, chunk boundaries, and output contract.</p>
         </div>
-        <div className="benchmark-cost-results" role="list" aria-label="Completed-summary inference costs by model">
+        <div className="benchmark-cost-results">
           {benchmarkCosts.map((result, index) => (
-            <article key={result.model} className="benchmark-cost-row" role="listitem">
+            <article key={result.model} className="benchmark-cost-row">
               <span className="mono-label">{String(index + 1).padStart(2, "0")}</span>
               <div className="benchmark-model">
                 <h3 className="display-serif">{result.model}</h3>

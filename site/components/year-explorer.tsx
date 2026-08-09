@@ -37,11 +37,11 @@ export function YearExplorer({
             rel={openInNewTab ? "noreferrer" : undefined}
             className={`${selectedMonth === month.key ? "current " : ""}focus-ring`}
             aria-current={selectedMonth === month.key ? "page" : undefined}
-            aria-label={`${selectedMonth === month.key ? "Current month, " : "Open "}${month.month} ${month.year}, ${month.count} papers${openInNewTab ? ", in a new tab" : ""}`}
             title={`Open ${month.count} papers from ${month.month} ${month.year}${openInNewTab ? " in a new tab" : ""}`}
           >
             <span>{month.month}</span>
             <small>{month.year}</small>
+            <span className="sr-only">, {selectedMonth === month.key ? "current month, " : ""}{month.count} papers{openInNewTab ? ", opens in a new tab" : ""}</span>
             <i />
           </Link>
         ))}
