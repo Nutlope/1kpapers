@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { labDisplayName } from "../lib/labs";
 import { SEARCH_INDEX_URL } from "../lib/public-storage";
 import { SearchIcon } from "./icons";
 
@@ -175,7 +176,7 @@ export function PaperSearch({ open, onClose }: { open: boolean; onClose: () => v
                 onClick={onClose}
               >
                 <span className="search-command-index mono-label">{String(index + 1).padStart(2, "0")}</span>
-                <span className="mono-label">{paper.lab ?? "Research paper"}</span>
+                <span className="mono-label">{labDisplayName(paper.lab) ?? "Research paper"}</span>
                 <strong>{paper.title}</strong>
                 <small>{paper.authors.slice(0, 3).join(", ")}</small>
                 <i>↵</i>

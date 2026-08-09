@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { TOGETHER_REFERRAL_URL } from "../lib/external-links";
 import { ArrowIcon, SearchIcon } from "./icons";
 import { PaperSearch } from "./paper-search";
 
@@ -68,7 +69,7 @@ export function SiteHeader() {
           <SearchIcon />
           <kbd>⌘K</kbd>
         </button>
-        <a className="about-link focus-ring" href="https://www.together.ai" target="_blank" rel="noreferrer">
+        <a className="about-link focus-ring" href={TOGETHER_REFERRAL_URL} target="_blank" rel="noreferrer">
           About Together AI <ArrowIcon />
         </a>
         <button

@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
+import { TogetherResearchLink } from "../../../components/together-research-link";
 import { YearExplorer, type MonthEntry } from "../../../components/year-explorer";
+import { labDisplayName } from "../../../lib/labs";
 import { getMonthDefinition, monthDefinitions } from "../../../lib/months";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { absoluteSiteUrl } from "../../../lib/site-url";
@@ -70,14 +72,14 @@ export default async function MonthPage({ params, searchParams }: MonthPageProps
           {sorted.map((paper, index) => (
             <article key={paper.id} className="topic-paper-row">
               <span className="topic-paper-rank">{String(index + 1).padStart(2, "0")}</span>
-              <div className="topic-paper-main"><p className="mono-label">{paper.lab ?? paper.venue ?? "Research paper"}</p><h2 className="display-serif"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2><p>{paper.summary}</p><span>{paper.authors.slice(0, 4).join(", ")}{paper.authors.length > 4 ? ", et al." : ""}</span></div>
+              <div className="topic-paper-main"><p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Research paper"}</p><h2 className="display-serif"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2><p>{paper.summary}</p><span>{paper.authors.slice(0, 4).join(", ")}{paper.authors.length > 4 ? ", et al." : ""}</span></div>
               <dl className="topic-paper-facts"><div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div><div><dt>Upvotes</dt><dd>{formatCompactNumber(paper.upvotes)}</dd></div><div><dt>Citations</dt><dd>{formatCompactNumber(paper.citations)}</dd></div></dl>
               <div className="topic-paper-links"><Link href={`/papers/${paper.id}`}>Read summary <ArrowIcon /></Link><a href={paper.landingUrl} target="_blank" rel="noreferrer">Original <ExternalIcon /></a></div>
             </article>
           ))}
         </div>
       </section>
-      <footer className="site-footer page-shell"><span>together.ai / research</span><span>{month.label} in AI</span><Link href="/">Return to the year ↑</Link></footer>
+      <footer className="site-footer page-shell"><TogetherResearchLink /><span>{month.label} in AI</span><Link href="/">Return to the year ↑</Link></footer>
     </main>
   );
 }

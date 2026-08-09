@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowIcon } from "../../components/icons";
 import { LabLogo } from "../../components/lab-mark";
 import { SiteHeader } from "../../components/site-header";
+import { TogetherResearchLink } from "../../components/together-research-link";
 import { labs } from "../../lib/labs";
 import { getPaperCatalog } from "../../lib/papers";
 
@@ -49,7 +50,7 @@ export default async function LabsPage() {
           );
         })}
       </section>
-      <footer className="site-footer page-shell"><span>together.ai / research</span><span>{papers.length.toLocaleString("en")} papers. One research atlas.</span><Link href="/">Return to the atlas ↑</Link></footer>
+      <footer className="site-footer page-shell"><TogetherResearchLink /><Link href="/">Return to the atlas ↑</Link></footer>
     </main>
   );
 }

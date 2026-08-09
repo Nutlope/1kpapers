@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { LabLogo } from "../../../components/lab-mark";
 import { SiteHeader } from "../../../components/site-header";
+import { TogetherResearchLink } from "../../../components/together-research-link";
 import { getLabBySlug, labIncludesPaper } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { absoluteSiteUrl } from "../../../lib/site-url";
@@ -74,7 +75,7 @@ export default async function LabPage({ params, searchParams }: LabPageProps) {
           ))}
         </div>
       </section>
-      <footer className="site-footer page-shell"><span>together.ai / research</span><span>Curated AI research, organized by lab.</span><Link href="/labs">All labs ↑</Link></footer>
+      <footer className="site-footer page-shell"><TogetherResearchLink /><span>Curated AI research, organized by lab.</span><Link href="/labs">All labs ↑</Link></footer>
     </main>
   );
 }

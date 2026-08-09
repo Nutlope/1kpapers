@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { GreekCyberArt } from "../../components/greek-cyber-art";
 import { SiteHeader } from "../../components/site-header";
+import { TogetherResearchLink } from "../../components/together-research-link";
 import { getPaperCatalog } from "../../lib/papers";
-import { getSectionPapers, getTopicPapers, sections } from "../../lib/topics";
+import { getSectionPapers, sections } from "../../lib/topics";
 
 export const metadata: Metadata = {
   title: "Research topics",
@@ -28,9 +28,8 @@ export default async function TopicsPage() {
         <div>
           <p className="mono-label">The research atlas</p>
           <h1 className="display-serif text-balance">Browse the ideas that shaped the year.</h1>
-          <p>{sections.reduce((count, section) => count + section.topics.length, 0)} collections across {sections.length} paths through {papers.length.toLocaleString("en")} papers, from reasoning systems to scientific discovery.</p>
+          <p>{sections.reduce((count, section) => count + section.topics.length, 0)} collections across {sections.length} topic areas, covering {papers.length.toLocaleString("en")} papers from reasoning systems to scientific discovery.</p>
         </div>
-        <GreekCyberArt compact />
       </section>
 
       <section className="topic-index-grid page-shell" aria-label="Research topics">
@@ -39,20 +38,19 @@ export default async function TopicsPage() {
           const labs = new Set(sectionPapers.map((paper) => paper.lab).filter(Boolean)).size;
           const repositories = sectionPapers.filter((paper) => paper.githubRepository).length;
           return (
-            <article key={section.slug} className={`topic-index-card topic-${section.accent}`}>
+            <Link
+              key={section.slug}
+              href={`/topics/${section.slug}`}
+              className={`topic-index-card topic-${section.accent} focus-ring`}
+              aria-label={`Explore ${section.label}: ${sectionPapers.length} papers`}
+            >
               <div className="topic-card-number">{String(index + 1).padStart(2, "0")}</div>
               <div className="topic-index-copy">
-                <p className="mono-label">Editorial path</p>
+                <p className="mono-label">Topic area</p>
                 <h2 className="display-serif">{section.label}</h2>
-                <ul className="topic-index-links">
-                  {section.topics.map((topic) => (
-                    <li key={topic.slug}>
-                      <Link href={`/topics/${topic.slug}`} className="focus-ring">
-                        {topic.label} <span>{getTopicPapers(topic, papers).length}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <p className="topic-index-collection-count">
+                  {section.topics.length} {section.topics.length === 1 ? "collection" : "collections"}
+                </p>
               </div>
               <div className="topic-index-art" aria-hidden="true">
                 <Image src={section.artwork} alt="" fill sizes="(max-width: 900px) 90vw, 45vw" />
@@ -62,13 +60,13 @@ export default async function TopicsPage() {
                 <div><dt>Labs</dt><dd>{labs}</dd></div>
                 <div><dt>Code</dt><dd>{repositories}</dd></div>
               </dl>
-            </article>
+              <span>Explore topic <span aria-hidden="true">→</span></span>
+            </Link>
           );
         })}
       </section>
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
-        <span>{papers.length.toLocaleString("en")} papers. One research atlas.</span>
+        <TogetherResearchLink />
         <Link href="/">Return to the atlas ↑</Link>
       </footer>
     </main>

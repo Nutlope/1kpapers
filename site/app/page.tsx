@@ -1,15 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "../components/icons";
 import { FeaturedCarousel } from "../components/featured-carousel";
 import { LabMark } from "../components/lab-mark";
 import { PersonalPaperPick } from "../components/personal-paper-pick";
 import { SiteHeader } from "../components/site-header";
+import { TogetherResearchLink } from "../components/together-research-link";
+import { TopicStrip } from "../components/topic-strip";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
 import { formatMonthYear, getHomepageData, getPaperCatalog } from "../lib/papers";
-import { topicArtUrl } from "../lib/public-storage";
-import { getSectionPapers, sections as topicSections } from "../lib/topics";
+import { getSectionPapers } from "../lib/topics";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -29,6 +29,22 @@ const featuredLabs = [
   { name: "MiniMax", slug: "minimax" },
   { name: "Z.ai / GLM", slug: "zai-glm" },
 ] as const;
+
+const homepageTopics = [
+  { slug: "reasoning", label: "Reasoning" },
+  { slug: "agents", label: "Agents" },
+  { slug: "multimodal", label: "Multimodal" },
+  { slug: "video-spatial", label: "Video" },
+  { slug: "systems", label: "Systems" },
+  { slug: "robotics", label: "Robotics" },
+] as const;
+
+const benchmarkCosts = [
+  { model: "DeepSeek V4 Flash", totalUsd: 3.994620, perPaperUsd: 0.003995, relativeCost: "1.00×" },
+  { model: "GPT-5.6 Luna", totalUsd: 6.003684, perPaperUsd: 0.006004, relativeCost: "1.50×" },
+  { model: "Claude Haiku 4.5", totalUsd: 35.755200, perPaperUsd: 0.035755, relativeCost: "8.95×" },
+] as const;
+
 export default async function HomePage() {
   const [{ trending, mostCited, monthCounts }, { papers }] = await Promise.all([
     getHomepageData(),
@@ -42,15 +58,13 @@ export default async function HomePage() {
     year: month.year,
     count: monthCounts[month.key] ?? 0,
   }));
-  // The homepage lists the seven editorial paths; each one links through to
-  // the precise topics beneath it.
-  const editorialTopics = topicSections.map((section) => ({
-    key: section.slug,
-    label: section.label,
-    count: getSectionPapers(section.slug, papers).length,
+  // Keep the homepage index compact; the full eight-area taxonomy lives on
+  // /topics. Short labels prevent the navigation from wrapping.
+  const featuredTopics = homepageTopics.map((topic) => ({
+    key: topic.slug,
+    label: topic.label,
+    count: getSectionPapers(topic.slug, papers).length,
   }));
-  const topicCount = (slug: string) => editorialTopics.find((topic) => topic.key === slug)?.count ?? 0;
-
   if (trending.length === 0) return null;
 
   return (
@@ -63,7 +77,7 @@ export default async function HomePage() {
             <span>The year in AI</span>{" "}
             <span>papers</span>
           </h1>
-          <p>{collectionPaperCount.toLocaleString("en")} papers in an atlas built around a frozen 1,000-paper benchmark.</p>
+          <p>An ongoing collection of more than 1,000 papers, summarized and organized around the AI developments shaping 2025–2026.</p>
         </div>
       </section>
 
@@ -86,19 +100,9 @@ export default async function HomePage() {
       <section className="atlas-grid page-shell rule-top" id="collections">
         <aside className="topic-column">
           <h2 className="mono-label">Browse by topics</h2>
-          <ol>
-            {editorialTopics.map((topic, index) => (
-              <li key={topic.key}>
-                <Link href={`/topics/${topic.key}`} className="focus-ring">
-                  <span className="topic-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="display-serif">{topic.label}</span>
-                  <small className="tabular-nums">{topic.count}</small>
-                </Link>
-              </li>
-            ))}
-          </ol>
+          <TopicStrip topics={featuredTopics.map((topic) => ({ ...topic, slug: topic.key }))} />
           <Link className="signal-link row-link focus-ring" href="/topics">
-            View all topics <ArrowIcon />
+            View all 8 topics <ArrowIcon />
           </Link>
         </aside>
 
@@ -141,19 +145,41 @@ export default async function HomePage() {
 
       <YearExplorer months={monthEntries} totalCount={collectionPaperCount} />
 
-      <section className="shelves page-shell rule-top" id="shelves" aria-labelledby="shelves-title">
-        <div className="section-line">
-          <h2 id="shelves-title" className="mono-label">Editorial shelves</h2>
-          <Link href="/topics" className="focus-ring">View all shelves →</Link>
+      <PersonalPaperPick papers={[...trending, ...mostCited]} />
+
+      <section className="benchmark-costs page-shell rule-top" aria-labelledby="benchmark-cost-title">
+        <div className="benchmark-cost-intro">
+          <p className="mono-label">The cost benchmark</p>
+          <h2 id="benchmark-cost-title" className="display-serif text-balance">What 1,000 summaries cost.</h2>
+          <p className="text-pretty">Each model summarized the same extracted paper text with the same prompt, chunk boundaries, and output contract.</p>
         </div>
-        <div className="shelf-grid">
-          <ShelfCard title="Reasoning" count={topicCount("reasoning")} artwork={topicArtUrl("reasoning")} slug="reasoning" />
-          <ShelfCard title="Agents" count={topicCount("agents")} artwork={topicArtUrl("agents")} slug="agents" />
-          <ShelfCard title="Multimodal" count={topicCount("multimodal")} artwork={topicArtUrl("multimodal")} slug="multimodal" />
+        <div className="benchmark-cost-results" role="list" aria-label="Completed-summary inference costs by model">
+          {benchmarkCosts.map((result, index) => (
+            <article key={result.model} className="benchmark-cost-row" role="listitem">
+              <span className="mono-label">{String(index + 1).padStart(2, "0")}</span>
+              <div className="benchmark-model">
+                <h3 className="display-serif">{result.model}</h3>
+                <p>1,000 / 1,000 completed</p>
+              </div>
+              <dl>
+                <div>
+                  <dt>Total inference</dt>
+                  <dd className="tabular-nums">${result.totalUsd.toFixed(2)}</dd>
+                </div>
+                <div>
+                  <dt>Per paper</dt>
+                  <dd className="tabular-nums">${result.perPaperUsd.toFixed(3)}</dd>
+                </div>
+                <div>
+                  <dt>Relative</dt>
+                  <dd className="tabular-nums">{result.relativeCost}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+          <p className="benchmark-cost-note text-pretty">Completed-summary model inference only, using provider-reported token counts and standard prices frozen on August 5, 2026. This is a cost comparison, not a factual-quality ranking.</p>
         </div>
       </section>
-
-      <PersonalPaperPick papers={[...trending, ...mostCited]} />
 
       <section className="about-section page-shell" id="about" aria-labelledby="about-title">
         <div className="about-intro">
@@ -214,24 +240,11 @@ export default async function HomePage() {
       </section>
 
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
+        <TogetherResearchLink />
         <span className="footer-window"><b>Aug 2025 to Aug 2026</b><small>Last 12 months</small></span>
         <a href="#hero-title">Back to top ↑</a>
       </footer>
     </main>
-  );
-}
-
-function ShelfCard({ title, count, artwork, slug }: { title: string; count: number; artwork: string; slug: string }) {
-  return (
-    <Link className="shelf-card focus-ring" href={`/topics/${slug}`}>
-      <div>
-        <strong className="mono-label">{title}</strong>
-        <small>{count} papers</small>
-        <span>◉ &nbsp; Explore &nbsp; →</span>
-      </div>
-      <Image className="shelf-art" src={artwork} alt="" fill sizes="(max-width: 900px) 100vw, 33vw" />
-    </Link>
   );
 }
 import type { Metadata } from "next";

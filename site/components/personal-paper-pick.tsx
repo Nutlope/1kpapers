@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { labDisplayName } from "../lib/labs";
 import { formatMonthYear, type PaperListing } from "../lib/papers";
 import { ArrowIcon } from "./icons";
 
@@ -48,7 +49,7 @@ export function PersonalPaperPick({ papers }: { papers: PaperListing[] }) {
           </div>
           <div className="personal-pick-copy">
             <p className="mono-label">
-              {paper.lab ?? paper.venue ?? "Independent research"} / {formatMonthYear(paper.publishedAt)}
+              {labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"} / {formatMonthYear(paper.publishedAt)}
             </p>
             <h2 className="display-serif text-balance">{paper.title}</h2>
             <p className="text-pretty">{paper.summary}</p>

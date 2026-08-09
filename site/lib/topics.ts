@@ -32,7 +32,7 @@ export const topics: TopicDefinition[] = TOPIC_TAXONOMY.map((topic) => {
 
 export const sections = TOPIC_SECTIONS.map((section) => ({
   ...section,
-  artwork: topicArtUrl(section.slug),
+  artwork: topicArtUrl(section.artworkSlug),
   topics: topics.filter((topic) => topic.section === section.slug),
 }));
 
@@ -61,5 +61,14 @@ export function getSectionPapers<T extends TopicPaper>(sectionSlug: string, pape
 }
 
 export function getPaperEditorialTopics(paper: TopicPaper) {
-  return topics.filter((topic) => paper.editorialTopics?.includes(topic.slug));
+  const assignedSlugs = paper.editorialTopics?.length
+    ? paper.editorialTopics
+    : paper.primaryTopic
+      ? [paper.primaryTopic]
+      : [];
+  const topicsBySlug = new Map(topics.map((topic) => [topic.slug, topic]));
+  return assignedSlugs.flatMap((slug) => {
+    const topic = topicsBySlug.get(slug);
+    return topic ? [topic] : [];
+  });
 }

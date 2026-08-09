@@ -30,6 +30,11 @@ export function getLabByName(name: string | null) {
   return labs.find((lab) => lab.name === name || lab.aliases?.includes(name));
 }
 
+export function labDisplayName(name: string | null | undefined) {
+  if (!name) return undefined;
+  return getLabByName(name)?.shortName ?? name;
+}
+
 export function labIncludesPaper(lab: LabDefinition, paperLab: string | null) {
   if (!paperLab) return false;
   return paperLab === lab.name || Boolean(lab.aliases?.includes(paperLab));

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowIcon, ExternalIcon } from "../../components/icons";
 import { SiteHeader } from "../../components/site-header";
+import { TogetherResearchLink } from "../../components/together-research-link";
+import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getMostCitedData } from "../../lib/papers";
 
 export const metadata: Metadata = {
@@ -45,7 +47,7 @@ export default async function MostCitedPapersPage() {
             <article key={paper.id} className="topic-paper-row">
               <span className="topic-paper-rank tabular-nums">{String(index + 1).padStart(2, "0")}</span>
               <div className="topic-paper-main">
-                <p className="mono-label">{paper.lab ?? paper.venue ?? "Independent research"}</p>
+                <p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"}</p>
                 <h2 className="display-serif"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
                 <p>{paper.summary}</p>
                 <span>{paper.authors.slice(0, 4).join(", ")}{paper.authors.length > 4 ? ", et al." : ""}</span>
@@ -65,7 +67,7 @@ export default async function MostCitedPapersPage() {
       </section>
 
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
+        <TogetherResearchLink />
         <span>Citation counts are a time-bound snapshot.</span>
         <Link href="/">Return to the atlas ↑</Link>
       </footer>

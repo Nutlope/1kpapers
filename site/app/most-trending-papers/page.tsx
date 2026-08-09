@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ArrowIcon } from "../../components/icons";
 import { PaperCard } from "../../components/paper-card";
 import { SiteHeader } from "../../components/site-header";
+import { TogetherResearchLink } from "../../components/together-research-link";
+import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib/papers";
 
 export const metadata: Metadata = {
@@ -44,7 +46,7 @@ export default async function MostTrendingPapersPage() {
               <PaperCard paper={paper} accent={index % 3 === 0 ? "magenta" : index % 3 === 1 ? "yellow" : "cyan"} eager={index === 0} />
             </div>
             <div className="trending-ranking-copy">
-              <p className="mono-label">{paper.lab ?? paper.venue ?? "Independent research"}</p>
+              <p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"}</p>
               <h2 className="display-serif text-balance"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
               <dl>
                 <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
@@ -58,7 +60,7 @@ export default async function MostTrendingPapersPage() {
       </section>
 
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
+        <TogetherResearchLink />
         <span>Editorial signals, not a live popularity chart.</span>
         <Link href="/">Return to the atlas ↑</Link>
       </footer>

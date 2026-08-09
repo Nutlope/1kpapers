@@ -16,12 +16,13 @@ export type TopicDefinition = {
 };
 
 export type TopicSection =
-  | "reasoning" | "agents" | "multimodal" | "systems" | "robotics" | "science" | "safety";
+  | "reasoning" | "agents" | "multimodal" | "video-spatial" | "systems" | "robotics" | "science" | "safety";
 
-export const TOPIC_SECTIONS: Array<{ slug: TopicSection; label: string }> = [
+export const TOPIC_SECTIONS: Array<{ slug: TopicSection; label: string; artworkSlug?: string }> = [
   { slug: "reasoning", label: "Reasoning" },
   { slug: "agents", label: "Agents" },
   { slug: "multimodal", label: "Multimodal" },
+  { slug: "video-spatial", label: "Video and spatial AI", artworkSlug: "video-generation" },
   { slug: "systems", label: "Systems and efficiency" },
   { slug: "robotics", label: "Robotics and embodied AI" },
   { slug: "science", label: "Science and medicine" },
@@ -121,19 +122,19 @@ export const TOPIC_TAXONOMY: TopicDefinition[] = [
   },
   {
     slug: "video-generation",
-    section: "multimodal",
+    section: "video-spatial",
     label: "Video generation and world models",
     description: "Generating or simulating video: long-form and interactive video generation, controllable video synthesis, and generative video world models.",
   },
   {
     slug: "video-understanding",
-    section: "multimodal",
+    section: "video-spatial",
     label: "Video understanding",
     description: "Comprehending existing video: video question answering, temporal grounding, video reasoning, and video understanding benchmarks.",
   },
   {
     slug: "spatial-3d",
-    section: "multimodal",
+    section: "video-spatial",
     label: "3D and spatial intelligence",
     description: "3D and 4D scene generation, reconstruction, spatial reasoning, point clouds, and 3D detection or perception.",
   },

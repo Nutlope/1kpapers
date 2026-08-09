@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { labDisplayName } from "../lib/labs";
 import { formatMonthYear, type PaperCardData } from "../lib/paper-shared";
 import { getPaperArtwork } from "../lib/paper-artwork";
 
@@ -24,7 +25,7 @@ export function PaperCard({ paper, accent = "magenta", eager = false }: { paper:
   return (
     <Link href={`/papers/${paper.id}`} className={`paper-card paper-shadow focus-ring accent-${accent}`}>
       <span className="corner-fold" />
-      <span className="mono-label">{paper.lab ?? paper.venue ?? "Research"}</span>
+      <span className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Research"}</span>
       <h3 className="display-serif text-balance">{paper.title}</h3>
       <time dateTime={paper.publishedAt}>{formatMonthYear(paper.publishedAt)}</time>
     </Link>

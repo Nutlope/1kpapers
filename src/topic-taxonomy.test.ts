@@ -9,6 +9,14 @@ import { TOPIC_SECTIONS, TOPIC_SLUGS, TOPIC_TAXONOMY, topicsInSection } from "./
 const derivedDatabasePath = path.join(process.cwd(), "data", "derived.sqlite");
 
 describe("topic taxonomy", () => {
+  it("exposes eight balanced topic areas for the site index", () => {
+    assert.equal(TOPIC_SECTIONS.length, 8);
+    assert.deepEqual(
+      topicsInSection("video-spatial").map((topic) => topic.slug),
+      ["video-generation", "video-understanding", "spatial-3d"],
+    );
+  });
+
   it("has unique slugs and a known section for every topic", () => {
     assert.equal(new Set(TOPIC_SLUGS).size, TOPIC_SLUGS.length);
     const sectionSlugs = new Set(TOPIC_SECTIONS.map((section) => section.slug));

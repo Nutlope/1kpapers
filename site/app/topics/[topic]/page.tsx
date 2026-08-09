@@ -4,6 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
+import { TogetherResearchLink } from "../../../components/together-research-link";
+import { TopicStrip } from "../../../components/topic-strip";
+import { labDisplayName } from "../../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getPaperCatalog } from "../../../lib/papers";
 import { getSection, getSectionPapers, getTopic, getTopicPapers } from "../../../lib/topics";
 import { absoluteSiteUrl } from "../../../lib/site-url";
@@ -100,6 +103,11 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
   const pageStart = (page - 1) * PAGE_SIZE;
   const displayed = sorted.slice(pageStart, pageStart + PAGE_SIZE);
   const pageEnd = pageStart + displayed.length;
+  const childTopics = topic.children.map((child) => ({
+    slug: child.slug,
+    label: child.label,
+    count: getTopicPapers(child, papers).length,
+  }));
 
   return (
     <main>
@@ -107,7 +115,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
       <section className={`topic-detail-hero topic-${topic.accent} page-shell`}>
         <div className="paper-breadcrumb topic-breadcrumb mono-label"><Link href="/">The year</Link><span>/</span><Link href="/topics">Topics</Link><span>/</span><span>{topic.shortLabel}</span></div>
         <div className="paper-title-block topic-page-title">
-          <p className="mono-label">Research collection</p>
+          <p className="mono-label">{topic.kind === "section" ? "Topic area" : "Research collection"}</p>
           <h1 className="display-serif text-balance">{topic.label}</h1>
           <p>{topic.description}</p>
         </div>
@@ -118,11 +126,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
         </div>
         {topic.children.length > 0 ? (
           <nav className="topic-section-children" aria-label={`${topic.label} collections`}>
-            {topic.children.map((child) => (
-              <Link key={child.slug} href={`/topics/${child.slug}`} className="focus-ring">
-                {child.label} <span>{getTopicPapers(child, papers).length}</span>
-              </Link>
-            ))}
+            <TopicStrip topics={childTopics} />
           </nav>
         ) : null}
         <dl className="paper-stat-row topic-stat-row">
@@ -134,7 +138,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
 
       <section className="topic-results page-shell">
         <div className="topic-results-bar">
-          <p><strong>{pageStart + 1}–{pageEnd}</strong> of {topicPapers.length} papers in this collection</p>
+          <p><strong>{pageStart + 1}–{pageEnd}</strong> of {topicPapers.length} papers in this {topic.kind === "section" ? "topic area" : "collection"}</p>
           <nav aria-label="Sort papers">
             <Link className={!sort || sort === "newest" ? "active" : ""} href={`/topics/${slug}`}>Newest</Link>
             <Link className={sort === "cited" ? "active" : ""} href={`/topics/${slug}?sort=cited`}>Most cited</Link>
@@ -146,7 +150,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
             <article key={paper.id} className="topic-paper-row">
               <span className="topic-paper-rank">{String(pageStart + index + 1).padStart(2, "0")}</span>
               <div className="topic-paper-main">
-                <p className="mono-label">{paper.lab ?? paper.venue ?? "Independent research"}</p>
+                <p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"}</p>
                 <h2 className="display-serif"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
                 <p>{paper.summary}</p>
                 <span>{paper.authors.slice(0, 4).join(", ")}{paper.authors.length > 4 ? ", et al." : ""}</span>
@@ -172,7 +176,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
         ) : null}
       </section>
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
+        <TogetherResearchLink />
         <span>Curated AI research, organized by topic.</span>
         <Link href="/topics">All topics ↑</Link>
       </footer>

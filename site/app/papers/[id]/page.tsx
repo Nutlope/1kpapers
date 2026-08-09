@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
-import { GreekCyberArt } from "../../../components/greek-cyber-art";
 import { SiteHeader } from "../../../components/site-header";
-import { getLabByName } from "../../../lib/labs";
+import { TogetherResearchLink } from "../../../components/together-research-link";
+import { getLabByName, labDisplayName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
 import { buildScholarlyArticleJsonLd, serializeJsonLd } from "../../../lib/paper-structured-data";
@@ -64,9 +64,9 @@ export default async function PaperPage({ params }: PaperPageProps) {
       />
       <SiteHeader />
       <article className="paper-page page-shell">
-        <header className="paper-page-header">
+        <header className={`paper-page-header${artwork ? "" : " no-artwork"}`}>
           <div className="paper-breadcrumb mono-label">
-            <Link href="/">The year</Link><span>/</span>{lab ? <Link href={`/labs/${lab.slug}`}>{paper.lab}</Link> : <span>{paper.lab ?? "Independent research"}</span>}
+            <Link href="/">The year</Link><span>/</span>{lab ? <Link href={`/labs/${lab.slug}`}>{lab.shortName}</Link> : <span>{paper.lab ?? "Independent research"}</span>}
           </div>
           <div className="paper-title-block">
             <p className="mono-label">Paper {paper.arxivId ?? paper.id}</p>
@@ -76,8 +76,8 @@ export default async function PaperPage({ params }: PaperPageProps) {
               {paper.authors.length > 12 ? ", et al." : ""}
             </p>
           </div>
-          <div className="paper-page-art">
-            {artwork ? (
+          {artwork ? (
+            <div className="paper-page-art">
               <div className="paper-cover-book">
                 <Image
                   className="paper-page-cover"
@@ -88,10 +88,8 @@ export default async function PaperPage({ params }: PaperPageProps) {
                   sizes="(max-width: 720px) 190px, (max-width: 1050px) 210px, 245px"
                 />
               </div>
-            ) : (
-              <GreekCyberArt />
-            )}
-          </div>
+            </div>
+          ) : null}
           <dl className="paper-stat-row">
             <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
             <div><dt>Research lab</dt><dd>{lab ? <Link href={`/labs/${lab.slug}`}>{lab.shortName} <ArrowIcon /></Link> : paper.lab ?? "Independent"}</dd></div>
@@ -102,10 +100,12 @@ export default async function PaperPage({ params }: PaperPageProps) {
 
         <div className="paper-page-grid">
           <aside className="paper-page-aside">
-            <div>
-              <p className="mono-label">Topics</p>
-              <ul>{editorialTopics.map((topic) => <li key={topic.slug}>{topic.label}</li>)}</ul>
-            </div>
+            {editorialTopics.length > 0 ? (
+              <div>
+                <p className="mono-label">Topics</p>
+                <ul>{editorialTopics.map((topic) => <li key={topic.slug}><Link href={`/topics/${topic.slug}`}>{topic.label}</Link></li>)}</ul>
+              </div>
+            ) : null}
             <div>
               <p className="mono-label">Publication</p>
               <dl>
@@ -158,7 +158,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
                 <article key={related.id} className="related-paper-card">
                   <div className="related-paper-meta">
                     <span className="mono-label">{String(index + 1).padStart(2, "0")}</span>
-                    <span>{related.lab ?? related.venue ?? "Research paper"}</span>
+                    <span>{labDisplayName(related.lab) ?? related.venue ?? "Research paper"}</span>
                   </div>
                   <h3 className="display-serif text-balance">
                     <Link href={`/papers/${related.id}`}>{related.title}</Link>
@@ -175,7 +175,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
         ) : null}
       </article>
       <footer className="site-footer page-shell">
-        <span>together.ai / research</span>
+        <TogetherResearchLink />
         <span>Research summaries from the AI paper atlas.</span>
         <Link href="/">Return to the atlas ↑</Link>
       </footer>
