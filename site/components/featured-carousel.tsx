@@ -6,6 +6,7 @@ import { PaperCard } from "./paper-card";
 
 const accents = ["magenta", "yellow", "cyan"] as const;
 const AUTOPLAY_INTERVAL_MS = 6_000;
+const VISIBLE_PAPERS = 3;
 
 export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -15,6 +16,7 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
   const railRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const activeIndexRef = useRef(0);
+  const positionCount = Math.max(1, papers.length - VISIBLE_PAPERS + 1);
 
   const isPaused = isHovered || isFocusWithin || prefersReducedMotion;
 
@@ -27,25 +29,26 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
   }, []);
 
   useEffect(() => {
-    if (isPaused || papers.length <= 1) return;
+    if (isPaused || positionCount <= 1) return;
     const timeout = window.setTimeout(() => {
-      scrollToPaper((activeIndexRef.current + 1) % papers.length);
+      scrollToPosition((activeIndexRef.current + 1) % positionCount);
     }, AUTOPLAY_INTERVAL_MS);
     return () => window.clearTimeout(timeout);
-  }, [activeIndex, isPaused, papers.length]);
+  }, [activeIndex, isPaused, positionCount]);
 
   useEffect(() => () => {
     if (animationFrameRef.current !== null) cancelAnimationFrame(animationFrameRef.current);
   }, []);
 
-  function scrollToPaper(index: number) {
+  function scrollToPosition(index: number) {
     const rail = railRef.current;
     if (!rail) return;
-    const paper = rail.children.item(index);
+    const position = Math.min(Math.max(index, 0), positionCount - 1);
+    const paper = rail.children.item(position);
     if (!(paper instanceof HTMLElement)) return;
 
-    activeIndexRef.current = index;
-    setActiveIndex(index);
+    activeIndexRef.current = position;
+    setActiveIndex(position);
     rail.scrollTo({
       left: paper.offsetLeft - rail.offsetLeft,
       behavior: prefersReducedMotion ? "auto" : "smooth",
@@ -53,8 +56,8 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
   }
 
   function move(direction: -1 | 1) {
-    if (papers.length <= 1) return;
-    scrollToPaper((activeIndexRef.current + direction + papers.length) % papers.length);
+    if (positionCount <= 1) return;
+    scrollToPosition((activeIndexRef.current + direction + positionCount) % positionCount);
   }
 
   function updateActivePaper() {
@@ -63,7 +66,9 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
 
     if (animationFrameRef.current !== null) cancelAnimationFrame(animationFrameRef.current);
     animationFrameRef.current = requestAnimationFrame(() => {
-      const children = Array.from(rail.children).filter((child): child is HTMLElement => child instanceof HTMLElement);
+      const children = Array.from(rail.children)
+        .filter((child): child is HTMLElement => child instanceof HTMLElement)
+        .slice(0, positionCount);
       const closest = children.reduce((best, child, index) => {
         const distance = Math.abs((child.offsetLeft - rail.offsetLeft) - rail.scrollLeft);
         return distance < best.distance ? { index, distance } : best;
@@ -108,24 +113,24 @@ export function FeaturedCarousel({ papers }: { papers: PaperCardData[] }) {
         ))}
       </div>
       <div className="carousel-nav">
-        <button type="button" className="carousel-arrow focus-ring" onClick={() => move(-1)} disabled={papers.length <= 1} aria-label="Previous trending paper">←</button>
+        <button type="button" className="carousel-arrow focus-ring" onClick={() => move(-1)} disabled={positionCount <= 1} aria-label="Previous trending papers">←</button>
         <div className="carousel-position">
-          <span className="mono-label tabular-nums" aria-live={isPaused ? "polite" : "off"}>{String(activeIndex + 1).padStart(2, "0")} / {String(papers.length).padStart(2, "0")}</span>
-          <div className="carousel-ticks" aria-label="Choose a trending paper">
-            {papers.map((paper, index) => (
+          <span className="mono-label tabular-nums" aria-live={isPaused ? "polite" : "off"}>{String(activeIndex + 1).padStart(2, "0")} / {String(positionCount).padStart(2, "0")}</span>
+          <div className="carousel-ticks" aria-label="Choose a carousel position">
+            {papers.slice(0, positionCount).map((paper, index) => (
               <button
                 key={paper.id}
                 type="button"
                 className={`${activeIndex === index ? "active " : ""}focus-ring`}
-                onClick={() => scrollToPaper(index)}
-                aria-label={`Go to paper ${index + 1}: ${paper.title}`}
+                onClick={() => scrollToPosition(index)}
+                aria-label={`Go to position ${index + 1}, starting with ${paper.title}`}
                 aria-current={activeIndex === index ? "true" : undefined}
               />
             ))}
           </div>
         </div>
-        <button type="button" className="carousel-arrow carousel-arrow-next focus-ring" onClick={() => move(1)} disabled={papers.length <= 1} aria-label="Next trending paper">
-          {!isPaused && papers.length > 1 ? (
+        <button type="button" className="carousel-arrow carousel-arrow-next focus-ring" onClick={() => move(1)} disabled={positionCount <= 1} aria-label="Next trending papers">
+          {!isPaused && positionCount > 1 ? (
             <svg
               key={activeIndex}
               className="carousel-countdown"

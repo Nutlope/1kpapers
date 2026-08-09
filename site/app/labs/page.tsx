@@ -4,7 +4,7 @@ import { ArrowIcon } from "../../components/icons";
 import { LabLogo } from "../../components/lab-mark";
 import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
-import { labs } from "../../lib/labs";
+import { labIncludesPaper, labs } from "../../lib/labs";
 import { getPaperCatalog } from "../../lib/papers";
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default async function LabsPage() {
       </section>
       <section className="lab-index-grid page-shell">
         {labs.map((lab, index) => {
-          const labPapers = papers.filter((paper) => paper.lab === lab.name);
+          const labPapers = papers.filter((paper) => labIncludesPaper(lab, paper.lab));
           if (labPapers.length === 0) return null;
           const citations = labPapers.reduce((total, paper) => total + (paper.citations ?? 0), 0);
           return (

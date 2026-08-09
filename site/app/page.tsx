@@ -52,7 +52,7 @@ export default async function HomePage() {
   ]);
   const collectionPaperCount = papers.length;
   const additionalResearchPapers = Math.max(0, collectionPaperCount - 1_000);
-  const monthEntries: MonthEntry[] = monthDefinitions.map((month) => ({
+  const monthEntries: MonthEntry[] = [...monthDefinitions].reverse().map((month) => ({
     key: month.key,
     month: month.month,
     year: month.year,
@@ -77,14 +77,17 @@ export default async function HomePage() {
             <span>The year in AI</span>{" "}
             <span>papers</span>
           </h1>
-          <p>An ongoing collection of more than 1,000 papers, summarized and organized around the AI developments shaping 2025–2026.</p>
+          <p>1,000+ papers mapping AI research from 2025–2026.</p>
         </div>
       </section>
 
       <section className="lab-index page-shell" aria-labelledby="lab-index-title">
-        <h2 id="lab-index-title" className="mono-label">
-          Explore by research lab
-        </h2>
+        <div className="lab-index-heading">
+          <h2 id="lab-index-title" className="mono-label">Explore by research lab</h2>
+          <Link href="/labs" className="signal-link section-action focus-ring">
+            View all labs <ArrowIcon />
+          </Link>
+        </div>
         <div className="lab-list">
           {featuredLabs.map((lab) => (
             <Link key={lab.slug} href={`/labs/${lab.slug}`} className="focus-ring">
@@ -92,17 +95,14 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
-        <Link href="/labs" className="signal-link index-link focus-ring">
-          View all labs <ArrowIcon />
-        </Link>
       </section>
 
       <section className="atlas-grid page-shell rule-top" id="collections">
         <aside className="topic-column">
           <h2 className="mono-label">Browse by topics</h2>
           <TopicStrip topics={featuredTopics.map((topic) => ({ ...topic, slug: topic.key }))} />
-          <Link className="signal-link row-link focus-ring" href="/topics">
-            View all 8 topics <ArrowIcon />
+          <Link className="signal-link row-link section-action focus-ring" href="/topics">
+            View all topics <ArrowIcon />
           </Link>
         </aside>
 
@@ -113,8 +113,8 @@ export default async function HomePage() {
             <p className="story-description text-pretty">
               Selected for citation impact, official-code adoption, recency, and field-wide significance.
             </p>
-            <Link className="signal-link row-link focus-ring" href="/most-trending-papers">
-              Explore the top papers <ArrowIcon />
+            <Link className="signal-link row-link section-action focus-ring" href="/most-trending-papers">
+              View all top papers <ArrowIcon />
             </Link>
           </div>
           <FeaturedCarousel papers={trending} />

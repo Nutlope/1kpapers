@@ -240,19 +240,6 @@ button:active,
   transform: translateY(-0.5px);
 }
 
-.about-link {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 10px/1 "SFMono-Regular", Consolas, monospace;
-  text-transform: uppercase;
-}
-
-.about-link svg {
-  width: 17px;
-}
-
 .mobile-menu-button,
 .mobile-nav {
   display: none;
@@ -551,15 +538,23 @@ button:active,
 .lab-index {
   min-height: 62px;
   display: grid;
-  grid-template-columns: 180px 1fr 118px;
+  grid-template-columns: 180px minmax(0, 1fr);
   align-items: stretch;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
 }
 
-.lab-index > h2 {
-  align-self: center;
+.lab-index-heading {
+  padding: 8px 8px 0 4px;
+}
+
+.lab-index-heading h2 {
   margin: 0;
+}
+
+.lab-index-heading .section-action {
+  min-height: 40px;
+  justify-content: flex-start;
 }
 
 .lab-list {
@@ -626,15 +621,6 @@ button:active,
   white-space: nowrap;
 }
 
-.index-link {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  font-size: 11px;
-}
-
-.index-link svg,
 .row-link svg {
   width: 17px;
 }
@@ -709,6 +695,19 @@ button:active,
   font-size: 12px;
 }
 
+.section-action {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 8px/1.25 "SFMono-Regular", Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.section-action svg {
+  width: 17px;
+}
+
 .featured-story {
   position: relative;
   display: grid;
@@ -769,6 +768,7 @@ button:active,
   flex: 0 0 calc((100% - 48px) / 3);
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  box-shadow: none;
 }
 
 .paper-card {
@@ -823,6 +823,7 @@ button:active,
 
 .featured-cards .paper-card:hover {
   transform: translateY(-4px) rotate(0deg);
+  box-shadow: none;
 }
 
 .paper-card h3 {
@@ -1007,7 +1008,7 @@ button:active,
 .year-explorer {
   min-height: 78px;
   display: grid;
-  grid-template-columns: 155px 1fr 150px;
+  grid-template-columns: 155px minmax(0, 1fr) 178px;
   align-items: stretch;
   border-bottom: 1px solid var(--rule);
 }
@@ -1020,12 +1021,8 @@ button:active,
   margin: 0;
 }
 
-.year-heading > span {
-  display: block;
+.year-heading > a {
   margin-top: 8px;
-  color: var(--signal);
-  font: 8px/1.25 "SFMono-Regular", Consolas, monospace;
-  text-transform: uppercase;
 }
 
 .month-track {
@@ -1104,20 +1101,24 @@ button:active,
 }
 
 .curated-count {
+  min-width: 0;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 0 20px;
+  gap: 7px;
+  padding: 0 10px;
   border-left: 1px solid var(--rule);
   border-right: 1px solid var(--rule);
 }
 
 .curated-count strong {
-  font-size: 34px;
+  flex: none;
+  font-size: 32px;
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .curated-count span {
+  min-width: 0;
   font-size: 12px;
   line-height: 1;
 }
@@ -1546,7 +1547,7 @@ button:active,
   }
 
   .lab-index {
-    grid-template-columns: 170px 1fr;
+    grid-template-columns: 170px minmax(0, 1fr);
   }
 
   .lab-list {
@@ -1555,10 +1556,6 @@ button:active,
 
   .lab-list > a:nth-child(n + 4) {
     border-top: 1px solid var(--rule);
-  }
-
-  .lab-index .index-link {
-    display: none;
   }
 
   .atlas-grid {
@@ -1573,7 +1570,7 @@ button:active,
     border-right: 0;
   }
 
-  .year-explorer { grid-template-columns: 145px 1fr 150px; }
+  .year-explorer { grid-template-columns: 145px minmax(0, 1fr) 170px; }
 
   .personal-pick-card {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -1605,8 +1602,7 @@ button:active,
     width: 124px;
   }
 
-  .brand > small,
-  .about-link {
+  .brand > small {
     display: none;
   }
 
@@ -1672,8 +1668,8 @@ button:active,
     border-bottom: 1px solid var(--rule);
   }
 
-  .lab-index > h2 {
-    margin: 0 0 6px 2px;
+  .lab-index-heading {
+    padding: 0 2px 7px;
   }
 
   .lab-list {
@@ -1869,7 +1865,7 @@ button:active,
     margin: 0 0 15px 2px;
   }
 
-  .year-heading > span {
+  .year-heading > a {
     margin-top: 6px;
   }
 
@@ -3444,6 +3440,63 @@ button:active,
   background: #fff7f3;
 }
 
+.timeline-index {
+  margin-top: 44px;
+  margin-bottom: 100px;
+  border-top: 1px solid var(--ink);
+}
+
+.timeline-month {
+  min-height: 112px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 130px 140px;
+  gap: 24px;
+  align-items: center;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.timeline-month > div > p {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.timeline-month h2 {
+  margin: 0;
+  font-size: 37px;
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  transition: color 150ms ease;
+}
+
+.timeline-month > strong {
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.timeline-month > strong small {
+  color: var(--muted);
+  font: 9px/1 "SFMono-Regular", Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.timeline-month > span:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.timeline-month > span:last-child svg {
+  width: 17px;
+}
+
+.timeline-month:hover h2 {
+  color: var(--blue);
+}
+
 @media (min-width: 901px) and (max-width: 1100px) {
   .trending-ranking-copy h2 {
     min-height: 3.92em;
@@ -3517,6 +3570,31 @@ button:active,
   .trending-ranking {
     margin-top: 20px;
     margin-bottom: 65px;
+  }
+
+  .timeline-index {
+    margin-top: 20px;
+    margin-bottom: 65px;
+  }
+
+  .timeline-month {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 18px 0;
+  }
+
+  .timeline-month h2 {
+    font-size: 30px;
+  }
+
+  .timeline-month > strong {
+    font-size: 25px;
+  }
+
+  .timeline-month > span:last-child {
+    grid-column: 2 / -1;
+    min-height: 40px;
+    justify-content: flex-start;
   }
 
   .ranking-hero {

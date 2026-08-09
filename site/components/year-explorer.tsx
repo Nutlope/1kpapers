@@ -20,14 +20,13 @@ export function YearExplorer({
   totalCount?: number;
   totalLabel?: string;
 }) {
-  const activeEntry = months.find((month) => month.key === selectedMonth);
   const displayedTotal = totalCount ?? months.reduce((total, month) => total + month.count, 0);
 
   return (
     <section className="year-explorer page-shell rule-top" aria-labelledby="year-title">
       <div className="year-heading">
         <h2 id="year-title" className="mono-label">Explore the year</h2>
-        <span>{activeEntry ? `${activeEntry.month} ${activeEntry.year} · ${activeEntry.count} papers` : "Open a month"}</span>
+        <Link href="/timeline" className="signal-link section-action focus-ring">View all months →</Link>
       </div>
       <div className="month-track">
         {months.map((month) => (
