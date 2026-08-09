@@ -490,7 +490,7 @@ async function loadCoreSummaries(directory: string) {
     const run = await readJson<BenchmarkResult>(resolve(directory, file));
     if (run.methodologyVersion !== 11) continue;
     for (const row of run.rows ?? []) {
-      if (row.status !== "ok" || row.model.id !== "gpt-5.6-luna" || !row.finalSummary?.trim() || !row.source.arxivId) continue;
+      if (row.status !== "ok" || row.model.id !== "deepseek-ai/DeepSeek-V4-Flash-0731" || !row.finalSummary?.trim() || !row.source.arxivId) continue;
       const records = candidates.get(row.source.arxivId) ?? [];
       records.push({ summary: row.finalSummary.trim(), model: row.model.id, methodologyVersion: run.methodologyVersion, generatedAt: run.generatedAt });
       candidates.set(row.source.arxivId, records);
