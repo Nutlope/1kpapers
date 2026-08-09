@@ -3,12 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
+import { JsonLd } from "../../../components/json-ld";
 import { SiteHeader } from "../../../components/site-header";
 import { TogetherResearchLink } from "../../../components/together-research-link";
 import { getLabByName, labDisplayName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
-import { buildScholarlyArticleJsonLd, serializeJsonLd } from "../../../lib/paper-structured-data";
+import { buildScholarlyArticleJsonLd } from "../../../lib/paper-structured-data";
 import { formatCompactNumber, formatMonthYear, getPaperDetails, resolvePaperRoute } from "../../../lib/papers";
 import { paperHref } from "../../../lib/paper-url";
 import { absoluteSiteUrl } from "../../../lib/site-url";
@@ -66,10 +67,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
 
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(scholarlyArticle) }}
-      />
+      <JsonLd value={scholarlyArticle} />
       <SiteHeader />
       <article className="paper-page page-shell">
         <header className={`paper-page-header${artwork ? "" : " no-artwork"}`}>
