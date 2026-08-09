@@ -2,11 +2,13 @@ import type { MetadataRoute } from "next";
 import { labs } from "../lib/labs";
 import { monthDefinitions } from "../lib/months";
 import { getPaperCatalog } from "../lib/papers";
+import { buildPaperSlugMap } from "../lib/paper-url";
 import { absoluteSiteUrl } from "../lib/site-url";
 import { topics } from "../lib/topics";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { papers, generatedAt } = await getPaperCatalog();
+  const paperSlugs = buildPaperSlugMap(papers);
   const lastModified = new Date(generatedAt);
   const collections = [
     "/",
@@ -29,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: path === "/" ? 1 : 0.7,
     })),
     ...papers.map((paper) => ({
-      url: absoluteSiteUrl(`/papers/${paper.id}`),
+      url: absoluteSiteUrl(`/papers/${paperSlugs.get(paper.id)!}`),
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,

@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { buildPaperSlugMap } from "../shared/paper-slug.js";
 import { classifyTopics } from "./corpus.js";
 import { createPaperDatabase } from "./paper-database.js";
 
@@ -222,6 +223,7 @@ export function resolveCitation(
 
 async function main() {
   const root = resolve(process.cwd());
+  const previousSlugs = await readPublishedPaperSlugs(resolve(root, "metadata/papers.json"));
   const core = await readJson<{ papers: CorePaper[] }>(resolve(root, "corpus/papers.json"));
   const supplemental = await readJson<SupplementalPaper[]>(resolve(root, "supplemental/together-research/sources.json"));
   const coreProfile = await readJson<ProfileRecord[]>(resolve(root, "corpus/full-1000-profile.json"));
@@ -270,25 +272,42 @@ async function main() {
     })),
   ];
 
-  validateFinalDataset(papers);
+  const slugMap = buildPaperSlugMap(papers.map((paper) => ({
+    id: paper.collectionId,
+    title: paper.title,
+    ...(previousSlugs.get(paper.collectionId) ? { slug: previousSlugs.get(paper.collectionId)! } : {}),
+  })));
+  const papersWithSlugs = papers.map((paper) => ({ ...paper, slug: slugMap.get(paper.collectionId)! }));
+
+  validateFinalDataset(papersWithSlugs);
   const generatedAt = new Date().toISOString();
   const output = {
     schemaVersion: 1,
     generatedAt,
-    paperCount: papers.length,
+    paperCount: papersWithSlugs.length,
     sources: {
       semanticScholarSnapshotAt: semanticSnapshot.retrievedAt,
       publicationSnapshotAt: publicationSnapshot.generatedAt,
       huggingFaceSnapshotAt: hfSnapshot.generatedAt,
       githubSnapshotAt: githubSnapshot.generatedAt,
     },
-    papers,
+    papers: papersWithSlugs,
   };
-  const report = buildReport(papers, githubSnapshot.records, generatedAt);
+  const report = buildReport(papersWithSlugs, githubSnapshot.records, generatedAt);
   createPaperDatabase(output, resolve(root, "data/papers.sqlite"), { overwrite: true });
   await writeJson(resolve(root, "metadata/papers.json"), output);
   await writeJson(resolve(root, "metadata/report.json"), report);
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+}
+
+async function readPublishedPaperSlugs(file: string) {
+  try {
+    const previous = await readJson<{ papers: Array<{ collectionId: string; slug?: string }> }>(file);
+    return new Map(previous.papers.flatMap((paper) => paper.slug ? [[paper.collectionId, paper.slug]] : []));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return new Map<string, string>();
+    throw error;
+  }
 }
 
 type CommonInputs = {

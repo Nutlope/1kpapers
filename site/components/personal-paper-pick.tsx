@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { labDisplayName } from "../lib/labs";
 import { formatMonthYear, type PaperListing } from "../lib/papers";
+import { paperHref } from "../lib/paper-url";
 import { ArrowIcon } from "./icons";
 
 const previousPickKey = "year-in-ai-previous-personal-pick";
@@ -42,7 +43,7 @@ export function PersonalPaperPick({ papers }: { papers: PaperListing[] }) {
   return (
     <section className="personal-pick page-shell" aria-label="A paper picked for you" aria-live="polite">
       {paper ? (
-        <Link className="personal-pick-card focus-ring" href={`/papers/${paper.id}`}>
+        <Link className="personal-pick-card focus-ring" href={paperHref(paper)}>
           <div className="personal-pick-kicker">
             <span aria-hidden="true">✦</span>
             <p className="mono-label">This paper was picked just for you</p>

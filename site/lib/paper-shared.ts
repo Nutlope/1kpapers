@@ -1,5 +1,7 @@
 export type Paper = {
   id: string;
+  /** Canonical public URL segment. Optional while older generated data remains cached. */
+  slug?: string;
   arxivId: string | null;
   title: string;
   authors: string[];
@@ -28,6 +30,7 @@ export type Paper = {
 export type PaperListing = Pick<
   Paper,
   | "id"
+  | "slug"
   | "title"
   | "authors"
   | "publishedAt"
@@ -44,7 +47,7 @@ export type PaperListing = Pick<
   | "venue"
 >;
 
-export type PaperCardData = Pick<Paper, "id" | "title" | "publishedAt" | "lab" | "venue">;
+export type PaperCardData = Pick<Paper, "id" | "slug" | "title" | "publishedAt" | "lab" | "venue">;
 
 export function formatMonthYear(date: string) {
   return new Intl.DateTimeFormat("en", {

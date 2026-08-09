@@ -6,6 +6,7 @@ import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
 import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getHomepageData } from "../../lib/papers";
+import { paperHref } from "../../lib/paper-url";
 
 export const metadata: Metadata = {
   title: "Most trending AI papers",
@@ -47,13 +48,13 @@ export default async function MostTrendingPapersPage() {
             </div>
             <div className="trending-ranking-copy">
               <p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"}</p>
-              <h2 className="display-serif text-balance"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
+              <h2 className="display-serif text-balance"><Link href={paperHref(paper)}>{paper.title}</Link></h2>
               <dl>
                 <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
                 <div><dt>Citations</dt><dd className="tabular-nums">{formatCompactNumber(paper.citations)}</dd></div>
                 <div><dt>Code</dt><dd className="tabular-nums">{paper.githubStars !== null ? `${formatCompactNumber(paper.githubStars)} stars` : "Not linked"}</dd></div>
               </dl>
-              <Link className="signal-link ranking-card-link focus-ring" href={`/papers/${paper.id}`}>Read summary <ArrowIcon /></Link>
+              <Link className="signal-link ranking-card-link focus-ring" href={paperHref(paper)}>Read summary <ArrowIcon /></Link>
             </div>
           </article>
         ))}

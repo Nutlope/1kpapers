@@ -16,6 +16,7 @@ export function GET() {
 - [Research atlas](${absoluteSiteUrl("/")})
 - [Topics](${absoluteSiteUrl("/topics")})
 - [Research labs](${absoluteSiteUrl("/labs")})
+- [Publication timeline](${absoluteSiteUrl("/timeline")})
 - [Most trending papers](${absoluteSiteUrl("/most-trending-papers")})
 - [Most cited papers](${absoluteSiteUrl("/most-cited-papers")})
 - [Most starred papers](${absoluteSiteUrl("/most-starred-papers")})
@@ -29,7 +30,7 @@ export function GET() {
 
 ## Paper URLs
 
-Paper pages use the stable pattern \`${absoluteSiteUrl("/papers/{paper-id}")}\`. Each page includes a human-readable summary, the original abstract and publication metadata, and ScholarlyArticle JSON-LD. Prefer the paper's original arXiv or publisher link when verifying scientific claims.
+Paper pages use readable, stable title slugs, for example \`${absoluteSiteUrl("/papers/kimi-k2-5-visual-agentic-intelligence")}\`. Slugs are capped at 80 characters. Each page includes a human-readable summary, the original abstract and publication metadata, and ScholarlyArticle JSON-LD. Legacy source-ID URLs permanently redirect to the canonical title-slug URL. Prefer the paper's original arXiv or publisher link when verifying scientific claims.
 `;
 
   return new Response(body, {

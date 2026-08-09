@@ -10,6 +10,7 @@ function paper(overrides: Partial<SitePaper> & Pick<SitePaper, "id" | "title">):
   const { id, title, ...rest } = overrides;
   return {
     id,
+    slug: `paper-${id}`,
     arxivId: id.replace("arxiv-", ""),
     title,
     authors: ["Researcher"],
@@ -56,6 +57,7 @@ describe("generated site indexes", () => {
     assert.equal(mostStarredData.papers[0]?.id, "arxiv-second");
     assert.equal(mostStarredData.paperCount, 3);
     assert.equal("abstract" in catalogData.papers[0]!, false);
+    assert.equal(catalogData.papers[0]?.slug, "paper-arxiv-2512.02556");
     assert.doesNotMatch(catalogData.papers[0]?.summary ?? "", /Result one/);
   });
 

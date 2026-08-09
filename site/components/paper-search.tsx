@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { labDisplayName } from "../lib/labs";
 import { SEARCH_INDEX_URL } from "../lib/public-storage";
+import { paperHref } from "../lib/paper-url";
 import { SearchIcon } from "./icons";
 
 type SearchPaper = {
   id: string;
+  slug?: string;
   title: string;
   authors: string[];
   lab: string | null;
@@ -98,7 +100,7 @@ export function PaperSearch({ open, onClose }: { open: boolean; onClose: () => v
   if (!open) return null;
 
   function openResult(paper: SearchPaper) {
-    router.push(`/papers/${paper.id}`);
+    router.push(paperHref(paper));
     onClose();
   }
 
@@ -167,7 +169,7 @@ export function PaperSearch({ open, onClose }: { open: boolean; onClose: () => v
               <Link
                 id={`search-result-${paper.id}`}
                 key={paper.id}
-                href={`/papers/${paper.id}`}
+                href={paperHref(paper)}
                 className={`${index === activeIndex ? "active " : ""}search-command-result focus-ring`}
                 role="option"
                 aria-selected={index === activeIndex}

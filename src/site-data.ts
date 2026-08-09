@@ -1,9 +1,11 @@
 import path from "node:path";
+import { buildPaperSlugMap } from "../shared/paper-slug.js";
 import { assignmentToList, readEditorialTopics } from "./editorial-topics.js";
 import { readPaperDatabase } from "./paper-database.js";
 
 type SourcePaper = {
   collectionId: string;
+  slug?: string;
   arxivId: string | null;
   title: string;
   authors: string[];
@@ -46,6 +48,7 @@ export type SiteSearchData = {
   generatedAt: string;
   papers: Array<{
     id: string;
+    slug: string;
     title: string;
     authors: string[];
     lab: string | null;
@@ -109,7 +112,12 @@ export async function buildSiteData(
 }> {
   const source = readPaperDatabase(databasePath) as unknown as MetadataFile;
   const editorialTopics = readEditorialTopics(path.join(projectRoot, "data", "derived.sqlite"));
-  const papers = source.papers.map((paper) => toSitePaper(paper, editorialTopics));
+  const slugs = buildPaperSlugMap(source.papers.map((paper) => ({
+    id: paper.collectionId,
+    title: paper.title,
+    ...(paper.slug ? { slug: paper.slug } : {}),
+  })));
+  const papers = source.papers.map((paper) => toSitePaper(paper, editorialTopics, slugs.get(paper.collectionId)!));
 
   const indexes = buildSiteIndexes(papers, source.generatedAt);
 
@@ -125,6 +133,7 @@ export async function buildSiteData(
       generatedAt: source.generatedAt,
       papers: papers.map((paper) => ({
         id: paper.id,
+        slug: paper.slug,
         title: paper.title,
         authors: paper.authors,
         lab: paper.lab,
@@ -198,6 +207,7 @@ export function buildSiteIndexes(papers: SitePaper[], generatedAt: string): {
 export function toListingPaper(paper: SitePaper) {
   return {
     id: paper.id,
+    slug: paper.slug,
     title: paper.title,
     authors: paper.authors,
     publishedAt: paper.publishedAt,
@@ -266,9 +276,14 @@ function summaryExcerpt(summary: string, maxLength = 360) {
   return `${candidate || overview.slice(0, maxLength - 1)}…`;
 }
 
-function toSitePaper(paper: SourcePaper, editorialTopics: Map<string, { primary: string; secondary: string[] }>) {
+function toSitePaper(
+  paper: SourcePaper,
+  editorialTopics: Map<string, { primary: string; secondary: string[] }>,
+  slug: string,
+) {
   const sitePaper = {
     id: paper.collectionId,
+    slug,
     arxivId: paper.arxivId,
     title: paper.title,
     authors: paper.authors,

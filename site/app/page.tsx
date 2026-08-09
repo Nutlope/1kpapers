@@ -9,6 +9,7 @@ import { TopicStrip } from "../components/topic-strip";
 import { YearExplorer, type MonthEntry } from "../components/year-explorer";
 import { monthDefinitions } from "../lib/months";
 import { formatMonthYear, getHomepageData, getPaperCatalog } from "../lib/papers";
+import { paperHref } from "../lib/paper-url";
 import { getSectionPapers } from "../lib/topics";
 
 export const metadata: Metadata = {
@@ -129,7 +130,7 @@ export default async function HomePage() {
             {mostCited.slice(0, 3).map((paper, index) => (
               <li key={paper.id}>
                 <span className="topic-index">{String(index + 1).padStart(2, "0")}</span>
-                <Link href={`/papers/${paper.id}`} className="focus-ring">
+                <Link href={paperHref(paper)} className="focus-ring">
                   <strong>{paper.title}</strong>
                   <small>{formatMonthYear(paper.publishedAt)}</small>
                 </Link>

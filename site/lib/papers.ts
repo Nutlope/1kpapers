@@ -1,5 +1,6 @@
 import { cache } from "react";
 import type { Paper, PaperListing } from "./paper-shared";
+import { buildPaperSlugMap } from "./paper-url";
 import { HOMEPAGE_DATA_URL, MOST_CITED_DATA_URL, MOST_STARRED_DATA_URL, paperSummaryUrl, PAPER_CATALOG_URL } from "./public-storage";
 
 export type { Paper, PaperListing } from "./paper-shared";
@@ -34,12 +35,34 @@ export type PaperDetails = {
   relatedPapers: PaperListing[];
 };
 
+export type ResolvedPaperRoute = {
+  sourceId: string;
+  slug: string;
+  listing: PaperListing;
+};
+
 export const getPaperCatalog = cache(async (): Promise<PaperCatalogData> => {
   const response = await fetch(PAPER_CATALOG_URL, { next: { revalidate: 3600 } });
   if (!response.ok) {
     throw new Error(`Could not load paper catalog from ${PAPER_CATALOG_URL}: ${response.status}`);
   }
   return (await response.json()) as PaperCatalogData;
+});
+
+const getPaperRoutes = cache(async (): Promise<ResolvedPaperRoute[]> => {
+  const { papers } = await getPaperCatalog();
+  const slugs = buildPaperSlugMap(papers);
+  return papers.map((listing) => ({
+    sourceId: listing.id,
+    slug: slugs.get(listing.id)!,
+    listing,
+  }));
+});
+
+export const resolvePaperRoute = cache(async (identifier: string): Promise<ResolvedPaperRoute | undefined> => {
+  const routes = await getPaperRoutes();
+  return routes.find((route) => route.sourceId === identifier)
+    ?? routes.find((route) => route.slug === identifier);
 });
 
 export const getHomepageData = cache(async (): Promise<HomepageData> => {

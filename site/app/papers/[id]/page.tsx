@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowIcon, ExternalIcon } from "../../../components/icons";
 import { SiteHeader } from "../../../components/site-header";
 import { TogetherResearchLink } from "../../../components/together-research-link";
@@ -9,7 +9,8 @@ import { getLabByName, labDisplayName } from "../../../lib/labs";
 import { getPaperArtwork } from "../../../lib/paper-artwork";
 import { parsePaperSummaryMarkdown } from "../../../lib/paper-summary";
 import { buildScholarlyArticleJsonLd, serializeJsonLd } from "../../../lib/paper-structured-data";
-import { formatCompactNumber, formatMonthYear, getPaperDetails } from "../../../lib/papers";
+import { formatCompactNumber, formatMonthYear, getPaperDetails, resolvePaperRoute } from "../../../lib/papers";
+import { paperHref } from "../../../lib/paper-url";
 import { absoluteSiteUrl } from "../../../lib/site-url";
 import { getPaperEditorialTopics } from "../../../lib/topics";
 
@@ -17,19 +18,22 @@ type PaperPageProps = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: PaperPageProps): Promise<Metadata> {
   const { id } = await params;
-  const details = await getPaperDetails(id);
+  const route = await resolvePaperRoute(id);
+  if (!route) return {};
+  const details = await getPaperDetails(route.sourceId);
   if (!details) return {};
   const { paper } = details;
-  const artwork = getPaperArtwork(id);
+  const artwork = getPaperArtwork(route.sourceId);
   const description = paper.summary.slice(0, 155);
-  const canonicalUrl = absoluteSiteUrl(`/papers/${id}`);
+  const canonicalUrl = absoluteSiteUrl(`/papers/${route.slug}`);
+  const metadataTitle = `${paper.title} — AI Paper Summary`;
   return {
-    title: paper.title,
+    title: { absolute: metadataTitle },
     description,
     alternates: { canonical: canonicalUrl },
     openGraph: {
       type: "article",
-      title: paper.title,
+      title: metadataTitle,
       description,
       url: canonicalUrl,
       publishedTime: paper.publishedAt,
@@ -37,7 +41,7 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
     },
     twitter: {
       card: "summary_large_image",
-      title: paper.title,
+      title: metadataTitle,
       description,
       ...(artwork?.social ? { images: [artwork.social] } : {}),
     },
@@ -46,15 +50,19 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
 
 export default async function PaperPage({ params }: PaperPageProps) {
   const { id } = await params;
-  const details = await getPaperDetails(id);
+  const route = await resolvePaperRoute(id);
+  if (!route) notFound();
+  if (id !== route.slug) permanentRedirect(`/papers/${route.slug}`);
+
+  const details = await getPaperDetails(route.sourceId);
   if (!details) notFound();
   const { paper, relatedPapers } = details;
 
   const summary = parsePaperSummaryMarkdown(paper.summary);
   const lab = getLabByName(paper.lab);
-  const artwork = getPaperArtwork(id);
+  const artwork = getPaperArtwork(route.sourceId);
   const editorialTopics = getPaperEditorialTopics(paper);
-  const scholarlyArticle = buildScholarlyArticleJsonLd(paper, editorialTopics, artwork?.social);
+  const scholarlyArticle = buildScholarlyArticleJsonLd(paper, editorialTopics, artwork?.social, route.slug);
 
   return (
     <main>
@@ -161,12 +169,12 @@ export default async function PaperPage({ params }: PaperPageProps) {
                     <span>{labDisplayName(related.lab) ?? related.venue ?? "Research paper"}</span>
                   </div>
                   <h3 className="display-serif text-balance">
-                    <Link href={`/papers/${related.id}`}>{related.title}</Link>
+                    <Link href={paperHref(related)}>{related.title}</Link>
                   </h3>
                   <p className="text-pretty">{related.summary}</p>
                   <div className="related-paper-footer">
                     <time dateTime={related.publishedAt}>{formatMonthYear(related.publishedAt)}</time>
-                    <Link href={`/papers/${related.id}`}>Read summary <ArrowIcon /></Link>
+                    <Link href={paperHref(related)}>Read summary <ArrowIcon /></Link>
                   </div>
                 </article>
               ))}

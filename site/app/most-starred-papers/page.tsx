@@ -5,6 +5,7 @@ import { SiteHeader } from "../../components/site-header";
 import { TogetherResearchLink } from "../../components/together-research-link";
 import { labDisplayName } from "../../lib/labs";
 import { formatCompactNumber, formatMonthYear, getMostStarredData } from "../../lib/papers";
+import { paperHref } from "../../lib/paper-url";
 
 export const metadata: Metadata = {
   title: "Most starred AI papers on GitHub",
@@ -48,7 +49,7 @@ export default async function MostStarredPapersPage() {
               <span className="topic-paper-rank tabular-nums">{String(index + 1).padStart(2, "0")}</span>
               <div className="topic-paper-main">
                 <p className="mono-label">{labDisplayName(paper.lab) ?? paper.venue ?? "Independent research"}</p>
-                <h2 className="display-serif text-balance"><Link href={`/papers/${paper.id}`}>{paper.title}</Link></h2>
+                <h2 className="display-serif text-balance"><Link href={paperHref(paper)}>{paper.title}</Link></h2>
                 <p>{paper.summary}</p>
                 <span>{paper.authors.slice(0, 4).join(", ")}{paper.authors.length > 4 ? ", et al." : ""}</span>
               </div>
@@ -58,7 +59,7 @@ export default async function MostStarredPapersPage() {
                 <div><dt>Published</dt><dd>{formatMonthYear(paper.publishedAt)}</dd></div>
               </dl>
               <div className="topic-paper-links">
-                <Link href={`/papers/${paper.id}`}>Read summary <ArrowIcon /></Link>
+                <Link href={paperHref(paper)}>Read summary <ArrowIcon /></Link>
                 <a href={paper.githubRepository!} target="_blank" rel="noreferrer">View on GitHub <ExternalIcon /></a>
               </div>
             </article>
