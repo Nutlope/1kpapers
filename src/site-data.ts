@@ -1,5 +1,5 @@
 import path from "node:path";
-import { buildPaperSlugMap } from "../shared/paper-slug.js";
+import { buildPaperSlugMap } from "../site/lib/paper-slug.js";
 import { assignmentToList, readEditorialTopics } from "./editorial-topics.js";
 import { readPaperDatabase } from "./paper-database.js";
 

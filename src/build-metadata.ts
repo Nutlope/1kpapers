@@ -1,11 +1,13 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { buildPaperSlugMap } from "../shared/paper-slug.js";
+import { buildPaperSlugMap } from "../site/lib/paper-slug.js";
 import { classifyTopics } from "./corpus.js";
 import { createPaperDatabase } from "./paper-database.js";
 
 type JsonObject = Record<string, unknown>;
+
+export const PAPER_PAGE_SUMMARY_MODEL_ID = "deepseek-ai/DeepSeek-V4-Flash-0731";
 
 type CorePaper = {
   rank: number;
@@ -234,7 +236,10 @@ async function main() {
   const githubSnapshot = await readJson<{ generatedAt: string; records: GithubRecord[] }>(resolve(root, "metadata/raw/github.json"));
   const manualSnapshot = await readJson<{ generatedAt: string; records: ManualRecord[] }>(resolve(root, "metadata/manual.json"));
   const supplementalResults = await readJson<BenchmarkResult>(resolve(root, "supplemental/together-research/run-deepseek-v11/result.json"));
-  const coreSummaries = await loadCoreSummaries(resolve(root, "results/raw"));
+  const coreSummaries = await loadCoreSummaries(
+    resolve(root, "results"),
+    new Set(core.papers.map((paper) => paper.arxivId)),
+  );
   const supplementalSummaries = summaryMapFromResult(supplementalResults);
 
   const profileById = new Map([...coreProfile, ...supplementalProfile].map((record) => [record.id, record]));
@@ -483,14 +488,23 @@ type BenchmarkResult = {
   }>;
 };
 
-async function loadCoreSummaries(directory: string) {
-  const files = (await readdir(directory)).filter((file) => file.endsWith(".json"));
+async function loadCoreSummaries(directory: string, coreArxivIds: Set<string>) {
+  const files = (await readdir(directory, { recursive: true })).filter((file) =>
+    file.endsWith(".json") &&
+    (file.startsWith("raw/") || file.endsWith("/result.json") || file.endsWith("/checkpoint.json"))
+  );
   const candidates = new Map<string, SummaryRecord[]>();
   for (const file of files) {
     const run = await readJson<BenchmarkResult>(resolve(directory, file));
     if (run.methodologyVersion !== 11) continue;
     for (const row of run.rows ?? []) {
-      if (row.status !== "ok" || row.model.id !== "deepseek-ai/DeepSeek-V4-Flash-0731" || !row.finalSummary?.trim() || !row.source.arxivId) continue;
+      if (
+        row.status !== "ok" ||
+        row.model.id !== PAPER_PAGE_SUMMARY_MODEL_ID ||
+        !row.finalSummary?.trim() ||
+        !row.source.arxivId ||
+        !coreArxivIds.has(row.source.arxivId)
+      ) continue;
       const records = candidates.get(row.source.arxivId) ?? [];
       records.push({ summary: row.finalSummary.trim(), model: row.model.id, methodologyVersion: run.methodologyVersion, generatedAt: run.generatedAt });
       candidates.set(row.source.arxivId, records);
@@ -524,6 +538,9 @@ export function validateFinalDataset(papers: Array<Record<string, unknown>>) {
   if (arxivIds.length !== 1_017 || new Set(arxivIds).size !== 1_017) throw new Error("Expected 1,017 unique arXiv IDs");
   if (papers.filter((paper) => paper.arxivId === null).length !== 1) throw new Error("Expected one non-arXiv paper");
   for (const paper of papers) {
+    if (paper.summaryModel !== PAPER_PAGE_SUMMARY_MODEL_ID) {
+      throw new Error(`${paper.collectionId} uses ${String(paper.summaryModel)} instead of ${PAPER_PAGE_SUMMARY_MODEL_ID}`);
+    }
     if (paper.citationCount !== null && (!paper.citationSource || !paper.citationSnapshotAt)) {
       throw new Error(`${paper.collectionId} has a citation count without provenance`);
     }

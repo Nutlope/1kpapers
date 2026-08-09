@@ -4,4 +4,4 @@ export {
   paperHref,
   paperPublicSlug,
   slugifyPaperTitle,
-} from "../../shared/paper-slug";
+} from "./paper-slug";

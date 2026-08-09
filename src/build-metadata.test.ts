@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { chooseRepository, resolveCitation, resolveOfficialLab, validateFinalDataset, type GithubRecord } from "./build-metadata.js";
+import { chooseRepository, PAPER_PAGE_SUMMARY_MODEL_ID, resolveCitation, resolveOfficialLab, validateFinalDataset, type GithubRecord } from "./build-metadata.js";
 
 function repository(overrides: Partial<GithubRecord>): GithubRecord {
   return {
@@ -73,6 +73,7 @@ test("validates the exact collection cardinality and provenance", () => {
   const papers = Array.from({ length: 1_018 }, (_, index) => ({
     collectionId: index === 1_017 ? "openreview-parallel-kernel-bench" : `arxiv-${index}`,
     arxivId: index === 1_017 ? null : String(index),
+    summaryModel: PAPER_PAGE_SUMMARY_MODEL_ID,
     citationCount: 0,
     citationSource: "semantic-scholar",
     citationSnapshotAt: "2026-08-06T00:00:00Z",

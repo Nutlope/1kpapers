@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildPaperSlugMap, MAX_PAPER_SLUG_LENGTH, slugifyPaperTitle } from "../shared/paper-slug.js";
+import { buildPaperSlugMap, MAX_PAPER_SLUG_LENGTH, slugifyPaperTitle } from "../site/lib/paper-slug.js";
 
 describe("paper slugs", () => {
   it("keeps model version numbers readable", () => {

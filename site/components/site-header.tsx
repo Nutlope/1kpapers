@@ -102,7 +102,7 @@ function NavigationLinks({ pathname, onNavigate }: { pathname: string; onNavigat
       key={item.href}
       className={`${item.active(pathname) ? "active " : ""}focus-ring`}
       href={item.href}
-      onClick={onNavigate}
+      {...(onNavigate ? { onClick: onNavigate } : {})}
     >
       {item.label}
     </Link>
