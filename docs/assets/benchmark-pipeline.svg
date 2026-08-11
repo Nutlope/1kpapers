@@ -1,58 +1,93 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1800" height="760" viewBox="0 0 1800 760" role="img" aria-labelledby="title desc">
   <title id="title">Benchmark approach</title>
   <desc id="desc">One thousand public AI PDFs were locally extracted, summarized with the same prompt by three models, and measured using provider token usage and frozen prices.</desc>
-  <rect width="1800" height="760" fill="#ffffff"/>
-  <text x="90" y="88" fill="#EF2CC1" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" letter-spacing="4">BENCHMARK APPROACH</text>
-  <text x="90" y="160" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700">From public PDFs to measured cost.</text>
-  <line x1="90" y1="198" x2="1710" y2="198" stroke="#000000" stroke-width="2"/>
+  <defs>
+    <pattern id="pipelineDots" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.25" fill="#15156b"/>
+      <circle cx="7" cy="7" r=".8" fill="#15156b" opacity=".7"/>
+    </pattern>
+    <pattern id="pipelineHatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(18)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#15156b" stroke-width="1.5"/>
+    </pattern>
+  </defs>
 
-  <g font-family="Arial, Helvetica, sans-serif">
-    <g transform="translate(90 265)">
-      <rect width="350" height="300" rx="20" fill="#F7F2FD" stroke="#CAAEF5" stroke-width="3"/>
-      <rect width="350" height="15" rx="7" fill="#EF2CC1"/>
-      <text x="30" y="70" fill="#EF2CC1" font-size="24" font-weight="800">01 / CORPUS</text>
-      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">1,000</text>
-      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">public AI papers</text>
-      <text x="30" y="255" fill="#000000" font-size="23">30,681 PDF pages</text>
+  <rect width="1800" height="760" fill="#fffefb"/>
+  <g transform="translate(76 48)">
+    <circle cx="10" cy="10" r="9" fill="#caaef5"/>
+    <circle cx="27" cy="10" r="9" fill="#ee3f8f"/>
+    <circle cx="18" cy="26" r="9" fill="#fc4c02"/>
+    <text x="45" y="22" fill="#121212" font-family="Arial, Helvetica, sans-serif" font-size="22">YEAR IN AI PAPERS / METHOD</text>
+  </g>
+  <line x1="76" y1="110" x2="1724" y2="110" stroke="#d9d8d3"/>
+  <text x="76" y="205" fill="#121212" font-family="Iowan Old Style, Baskerville, Times New Roman, serif" font-size="76" letter-spacing="-2">From public PDFs to measured cost.</text>
+
+  <g transform="translate(76 278)" font-family="Arial, Helvetica, sans-serif">
+    <g>
+      <text x="0" y="25" fill="#ee3f8f" font-family="SFMono-Regular, Consolas, monospace" font-size="18" letter-spacing="2">01 / CORPUS</text>
+      <g transform="translate(0 58)" stroke="#15156b" stroke-width="2" fill="none">
+        <path d="M24 22h132v146H24z" fill="url(#pipelineHatch)"/>
+        <path d="M42 6h132v146"/>
+        <path d="M60-10h132v146"/>
+        <path d="M43 51h94M43 70h76M43 89h89"/>
+      </g>
+      <text x="220" y="101" fill="#121212" font-family="Iowan Old Style, Baskerville, serif" font-size="58">1,000</text>
+      <text x="220" y="137" fill="#121212" font-size="22" font-weight="700">public AI papers</text>
+      <text x="220" y="171" fill="#56544f" font-size="18">30,681 PDF pages</text>
     </g>
 
-    <path d="M465 415h55" stroke="#FC4C02" stroke-width="9"/>
-    <path d="m505 396 22 19-22 19" fill="none" stroke="#FC4C02" stroke-width="9"/>
+    <path d="M414 128h45m-13-13 13 13-13 13" fill="none" stroke="#fc4c02" stroke-width="3"/>
 
-    <g transform="translate(555 265)">
-      <rect width="350" height="300" rx="20" fill="#F1F8FF" stroke="#3D99F5" stroke-width="3"/>
-      <rect width="350" height="15" rx="7" fill="#3D99F5"/>
-      <text x="30" y="70" fill="#3D99F5" font-size="24" font-weight="800">02 / EXTRACT</text>
-      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">102.7M</text>
-      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">text characters</text>
-      <text x="30" y="255" fill="#000000" font-size="23">processed locally</text>
+    <g transform="translate(482 0)">
+      <text x="0" y="25" fill="#2f63ff" font-family="SFMono-Regular, Consolas, monospace" font-size="18" letter-spacing="2">02 / EXTRACT</text>
+      <g transform="translate(12 58)" stroke="#15156b" stroke-width="2" fill="none">
+        <rect x="0" y="18" width="126" height="150" fill="url(#pipelineDots)"/>
+        <circle cx="126" cy="63" r="48" fill="#fffefb"/>
+        <circle cx="126" cy="63" r="36"/>
+        <path d="m160 97 54 54M18 51h68M18 72h58M18 93h72M18 114h48"/>
+      </g>
+      <text x="230" y="101" fill="#121212" font-family="Iowan Old Style, Baskerville, serif" font-size="58">102.7M</text>
+      <text x="230" y="137" fill="#121212" font-size="22" font-weight="700">text characters</text>
+      <text x="230" y="171" fill="#56544f" font-size="18">processed locally</text>
     </g>
 
-    <path d="M930 415h55" stroke="#00C7D1" stroke-width="9"/>
-    <path d="m970 396 22 19-22 19" fill="none" stroke="#00C7D1" stroke-width="9"/>
+    <path d="M896 128h45m-13-13 13 13-13 13" fill="none" stroke="#00afaa" stroke-width="3"/>
 
-    <g transform="translate(1020 265)">
-      <rect width="350" height="300" rx="20" fill="#F1FCFA" stroke="#00C7D1" stroke-width="3"/>
-      <rect width="350" height="15" rx="7" fill="#00C7D1"/>
-      <text x="30" y="70" fill="#008E96" font-size="24" font-weight="800">03 / SUMMARIZE</text>
-      <text x="30" y="158" fill="#000000" font-size="64" font-weight="800">3</text>
-      <text x="30" y="203" fill="#000000" font-size="27" font-weight="700">models, same prompt</text>
-      <text x="30" y="255" fill="#000000" font-size="22">DeepSeek · Luna · Haiku</text>
+    <g transform="translate(964 0)">
+      <text x="0" y="25" fill="#00afaa" font-family="SFMono-Regular, Consolas, monospace" font-size="18" letter-spacing="2">03 / SUMMARIZE</text>
+      <g transform="translate(8 58)" stroke="#15156b" stroke-width="2" fill="none">
+        <circle cx="80" cy="82" r="56" fill="url(#pipelineHatch)"/>
+        <circle cx="80" cy="82" r="29" fill="#fffefb"/>
+        <circle cx="174" cy="44" r="34" fill="url(#pipelineDots)"/>
+        <circle cx="174" cy="44" r="16" fill="#fffefb"/>
+        <circle cx="177" cy="131" r="42" fill="url(#pipelineDots)"/>
+        <circle cx="177" cy="131" r="20" fill="#fffefb"/>
+        <path d="M80 11v-19M80 172v19M9 82h-19M151 82h20"/>
+      </g>
+      <text x="235" y="101" fill="#121212" font-family="Iowan Old Style, Baskerville, serif" font-size="58">3</text>
+      <text x="235" y="137" fill="#121212" font-size="20" font-weight="700">same prompt</text>
+      <text x="235" y="171" fill="#56544f" font-size="18">reasoning disabled</text>
     </g>
 
-    <path d="M1395 415h55" stroke="#0DCE74" stroke-width="9"/>
-    <path d="m1435 396 22 19-22 19" fill="none" stroke="#0DCE74" stroke-width="9"/>
+    <path d="M1325 128h38m-13-13 13 13-13 13" fill="none" stroke="#f2c600" stroke-width="3"/>
 
-    <g transform="translate(1485 265)">
-      <rect width="225" height="300" rx="20" fill="#F2FFF8" stroke="#0DCE74" stroke-width="3"/>
-      <rect width="225" height="15" rx="7" fill="#0DCE74"/>
-      <text x="25" y="70" fill="#008F4A" font-size="24" font-weight="800">04 / PRICE</text>
-      <text x="25" y="152" fill="#000000" font-size="42" font-weight="800">TOKENS</text>
-      <text x="25" y="198" fill="#000000" font-size="24" font-weight="700">× frozen rate</text>
-      <text x="25" y="250" fill="#000000" font-size="22">per model</text>
+    <g transform="translate(1375 0)">
+      <text x="0" y="25" fill="#fc4c02" font-family="SFMono-Regular, Consolas, monospace" font-size="18" letter-spacing="2">04 / PRICE</text>
+      <g transform="translate(7 53)" stroke="#15156b" stroke-width="2" fill="none">
+        <path d="M0 0h155v166l-14-10-14 10-14-10-14 10-14-10-14 10-14-10-14 10-14-10-15 10z" fill="url(#pipelineDots)"/>
+        <path d="M24 40h105M24 65h82M24 90h97M24 115h65"/>
+        <circle cx="116" cy="126" r="24" fill="#fffefb"/>
+        <path d="M116 113v26M107 120h13a7 7 0 0 1 0 14h-13"/>
+      </g>
+      <text x="170" y="101" fill="#121212" font-family="Iowan Old Style, Baskerville, serif" font-size="36">Tokens</text>
+      <text x="170" y="137" fill="#121212" font-size="18" font-weight="700">× frozen rate</text>
+      <text x="170" y="171" fill="#56544f" font-size="17">per model</text>
     </g>
   </g>
 
-  <text x="90" y="660" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="26">Full-text single pass when it fits · 50k-character map/reduce for oversized papers · reasoning disabled</text>
-  <circle cx="1640" cy="660" r="16" fill="#EF2CC1"/><circle cx="1675" cy="660" r="16" fill="#FC4C02"/><circle cx="1710" cy="660" r="16" fill="#3D99F5"/>
+  <line x1="76" y1="640" x2="1724" y2="640" stroke="#121212"/>
+  <text x="76" y="684" fill="#56544f" font-family="SFMono-Regular, Consolas, Liberation Mono, monospace" font-size="15">FULL-TEXT SINGLE PASS WHEN IT FITS · 50K-CHARACTER MAP/REDUCE FOR OVERSIZED PAPERS</text>
+  <circle cx="1638" cy="682" r="6" fill="#ee3f8f"/>
+  <circle cx="1666" cy="682" r="6" fill="#fc4c02"/>
+  <circle cx="1694" cy="682" r="6" fill="#00afaa"/>
+  <path d="M1724 668v28m-14-14h28" stroke="#2f63ff" stroke-width="2"/>
 </svg>
