@@ -2,13 +2,14 @@ import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const storageOrigin = "https://year-in-ai-papers.t3.tigrisfiles.io";
+const analyticsOrigin = "https://plausible.io";
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${analyticsOrigin}${isDevelopment ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' blob: data: ${storageOrigin}`,
   "font-src 'self' data:",
-  `connect-src 'self' ${storageOrigin}`,
+  `connect-src 'self' ${storageOrigin} ${analyticsOrigin}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
