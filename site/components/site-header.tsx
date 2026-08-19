@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import siteIcon from "../app/icon.png";
-import { SearchIcon } from "./icons";
+import { GithubIcon, SearchIcon } from "./icons";
 import { PaperSearch } from "./paper-search";
 
 const navigationItems = [
@@ -57,6 +57,15 @@ export function SiteHeader() {
         <NavigationLinks pathname={pathname} />
       </nav>
       <div className="header-actions">
+        <a
+          href="https://github.com/Nutlope/year-in-ai-papers"
+          target="_blank"
+          rel="noreferrer"
+          className="header-github-link focus-ring"
+          aria-label="View source on GitHub"
+        >
+          <GithubIcon />
+        </a>
         <button
           ref={searchButtonRef}
           type="button"

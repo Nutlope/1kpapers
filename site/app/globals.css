@@ -259,6 +259,31 @@ button:active,
   transform: translateY(-0.5px);
 }
 
+.header-github-link {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper);
+  box-shadow: 2px 2px 0 var(--paper-warm);
+  color: var(--ink);
+  transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease, scale 150ms ease;
+}
+
+.header-github-link:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+  background: #fff8f4;
+}
+
+.header-github-link svg {
+  width: 18px;
+  height: 18px;
+}
+
 .mobile-menu-button,
 .mobile-nav {
   display: none;
@@ -1691,6 +1716,12 @@ button:active,
     height: 44px;
     padding: 0;
     border-radius: 2px;
+    box-shadow: none;
+  }
+
+  .header-github-link {
+    width: 44px;
+    height: 44px;
     box-shadow: none;
   }
 
