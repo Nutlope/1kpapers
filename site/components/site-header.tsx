@@ -58,7 +58,7 @@ export function SiteHeader() {
       </nav>
       <div className="header-actions">
         <a
-          href="https://github.com/Nutlope/year-in-ai-papers"
+          href="https://github.com/Nutlope/1kpapers"
           target="_blank"
           rel="noreferrer"
           className="header-github-link focus-ring"
