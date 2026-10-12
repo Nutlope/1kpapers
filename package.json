@@ -33,6 +33,7 @@
     "site:typecheck": "pnpm --dir site typecheck",
     "test": "node --import tsx --test src/*.test.ts",
     "together-batch": "tsx src/together-batch.ts",
+    "tracker": "tsx src/discover-tracker.ts",
     "typecheck": "tsc --noEmit && pnpm site:typecheck"
   },
   "engines": {

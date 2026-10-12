@@ -19,3 +19,6 @@ site/tsconfig.tsbuildinfo
 
 .DS_Store
 /output
+
+# Output of `pnpm tracker` (regenerated on each run)
+/site/data/tracker/
